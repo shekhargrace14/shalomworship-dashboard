@@ -1,0 +1,62 @@
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
+import User from "../models/User"
+import { NextResponse } from "next/server"
+
+export async function loginService(data: any) {
+
+    const { email, password } = data
+
+    const user = await User.findOne({ email })
+
+    if (!user) {
+        throw new Error("User not found")
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password)
+
+    if (!isMatch) {
+        throw new Error("Invalid password")
+    }
+
+    const token = jwt.sign(
+        { id: user._id },
+        process.env.JWT_SECRET!,
+        { expiresIn: "1d" }
+    )
+
+
+    const response = NextResponse.json({
+        success: true
+    })
+
+    response.cookies.set("token", token, {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+        maxAge: 60 * 60 * 24
+    })
+    return token
+
+}
+
+export async function signupService(data: any) {
+
+    const { name, email, password } = data
+
+    const existingUser = await User.findOne({ email })
+
+    if (existingUser) {
+        throw new Error("User already exists")
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const user = await User.create({
+        name,
+        email,
+        password: hashedPassword
+    })
+
+    return user
+}
