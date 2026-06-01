@@ -6,23 +6,37 @@ export async function loginController(req: Request) {
 
   await connectDB()
 
-  const body = await req.json()
+  try {
+    const body = await req.json()
 
-  const token = await loginService(body)
+    const result = await loginService(body)
 
-  const response = NextResponse.json({
-    success: true
-  })
+    const response = NextResponse.json({
+      success: true,
+      message: result.message,
+      user: result.user,
+    })
 
-  response.cookies.set("token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24
-  })
+    response.cookies.set("token", result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24
+    })
+    return response
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        success: false,
 
-  return response
+        message: error.message || "Something went wrong",
+      },
+      {
+        status: 400,
+      }
+    );
+  }
 }
 
 export async function signupController(req: Request) {
@@ -40,7 +54,7 @@ export async function signupController(req: Request) {
       user
     })
 
-  } catch (error:any) {
+  } catch (error: any) {
 
     return NextResponse.json({
       success: false,

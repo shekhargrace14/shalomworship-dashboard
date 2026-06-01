@@ -31,36 +31,37 @@ export function LoginForm({
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
 
-const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      })
 
-  e.preventDefault()
+      const data = await res.json()
 
-  setLoading(true)
+      if (!data.success) {
+        toast(data.message)
+        return
+      } else {
+        toast.success(data.message || "Login Successful")
+      }
+      router.push("/dashboard")
 
-  const res = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      email,
-      password
-    })
-  })
-
-  const data = await res.json()
-
-  setLoading(false)
-
-  if (!data.success) {
-    toast(data.message)
-    return
+    } catch (error) {
+      toast.error("something went wrong")
+    } finally {
+      setLoading(false)
+    }
   }
-
-  toast("Login Successful")
-
-  router.push("/dashboard")
-}
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

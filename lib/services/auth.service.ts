@@ -10,13 +10,13 @@ export async function loginService(data: any) {
     const user = await User.findOne({ email })
 
     if (!user) {
-        throw new Error("User not found")
+        throw new Error("Invalid credentials")
     }
 
     const isMatch = await bcrypt.compare(password, user.password)
 
     if (!isMatch) {
-        throw new Error("Invalid password")
+        throw new Error("Invalid credentials")
     }
 
     const token = jwt.sign(
@@ -36,7 +36,18 @@ export async function loginService(data: any) {
         path: "/",
         maxAge: 60 * 60 * 24
     })
-    return token
+    return {
+    success: true,
+
+    message: "Login successful",
+
+    token,
+
+    user: {
+      id: user._id,
+      email: user.email,
+    },
+  };
 
 }
 

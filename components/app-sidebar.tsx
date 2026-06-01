@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import {
+  IconCalendar,
   IconCamera,
   IconChartBar,
   IconDashboard,
@@ -32,6 +33,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { ModeToggle } from "./ModeToggle"
 
 const data = {
   user: {
@@ -42,28 +44,33 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
-      url: "#",
+      title: "Song",
+      url: "/song",
       icon: IconListDetails,
     },
     {
-      title: "Analytics",
-      url: "#",
+      title: "Artist",
+      url: "/artist",
       icon: IconChartBar,
     },
     {
-      title: "Projects",
-      url: "#",
+      title: "Category",
+      url: "/category",
       icon: IconFolder,
     },
+    // {
+    //   title: "Team",
+    //   url: "#",
+    //   icon: IconUsers,
+    // },
     {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
+      title: "Event",
+      url: "/event",
+      icon: IconCalendar,
     },
   ],
   navClouds: [
@@ -164,14 +171,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <IconInnerShadowTop className="size-5!" />
                 <span className="text-base font-semibold">Acme Inc.</span>
               </a>
+              {/* <ModeToggle/> */}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        {/* <NavDocuments items={data.documents} /> */}
+        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

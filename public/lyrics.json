@@ -1,0 +1,68 @@
+{
+    "sections": [
+      {
+        "id": "verse1",
+        "type": "verse",
+        "repeat": 1,
+        "label": { "hi": "अंतरा 1", "en": "Verse 1" },
+        "lines": [
+          {
+            "chords": [
+              { "root": "Eb", "number": 1, "quality": "", "space": null },
+              { "root": "Bb", "number": 5, "quality": "", "space": 15 }
+            ],
+		    "indent":5,
+            "lyrics": { "en": "Hum Milkar Aaye", "hi": "हम मिलकर आये" },
+            "translation": { "en": "We Have Come Together" }
+          },
+          {
+            "chords": [
+              { "root": "F", "number": 2, "quality": "m", "space": 5 },
+              { "root": "Ab", "number": 4, "quality": "", "space": 20 }
+            ],
+            "lyrics": { "en": "Huzuri Ke Chahne Vaale", "hi": "हुज़ूरी के चाहने वाले" },
+            "translation": { "en": "Lovers Of Your Presence" }
+          },
+          {
+            "chords": [
+              { "root": "Eb", "number": 1, "quality": "", "space": null },
+              { "root": "Bb", "number": 5, "quality": "", "space": 20 }
+            ],
+	        "indent":5,
+            "lyrics": { "en": "Teri Rooh Ke Chalaye", "hi": "तेरी रूह के चलाये" },
+            "translation": { "en": "Led By Your Spirit" }
+          },
+          {
+            "chords": [
+              { "root": "F", "number": 2, "quality": "m", "space": null },
+              { "root": "Ab", "number": 4, "quality": "", "space": 20 }
+            ],
+            "lyrics": { "en": "Jaayein Duniya Mein", "hi": "जायें दुनिया में" },
+            "translation": { "en": "We Go Into The World" },
+            "break": true
+          }
+        ]
+      }
+    ]
+}
+
+{
+    "sections": [
+      {
+        "id": "verse1",
+        "type": "verse",
+        "repeat": 1,
+        "label": { "hi": "अंतरा 1", "en": "Verse 1" },
+        "lines": [
+          {
+            "chords": [
+              { "root": "Eb", "number": 1, "quality": "", "space": null },
+            ],
+		    "indent":5,
+            "lyrics": { "en": "Hum Milkar Aaye", "hi": "हम मिलकर आये" },
+            "translation": { "en": "We Have Come Together" }
+          }
+        ]
+      }
+    ]
+}

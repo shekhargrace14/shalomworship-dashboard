@@ -1,0 +1,328 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library" // for cloudeflare 
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model song {
+  id                   String        @id @default(auto()) @map("_id") @db.ObjectId
+  title                String
+  content              String
+  lyrics               Json?
+  type      SongSectionType?
+  lines                Json?
+  isChords             Boolean?      @default(false)
+  isTranslation        Boolean?      @default(false)
+  language             LanguageType? @default(en)
+  version              VersionType?  @default(version_3)
+  key                  String?
+  bpm                  String?
+  time                 String?
+  tempo                TempoType?
+  image                String?
+  video                String?
+  videoId              String?
+  audio                String?
+  color                String?
+  // SEO
+  slug                 String
+  status               StatusType?   @default(publish)
+  about                String?
+  searchVariant        String[]
+  searchVariantInTitle Boolean?      @default(false)
+  keyword              String[]
+  metaDescription      String
+  excerpt              String?
+
+  view      Int
+  like      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author   author? @relation(fields: [authorId], references: [id])
+  authorId String? @db.ObjectId
+
+  creator   artist? @relation(fields: [creatorId], references: [id])
+  creatorId String? @db.ObjectId
+
+  season   season? @relation(fields: [seasonId], references: [id])
+  seasonId String? @db.ObjectId
+
+  artist    SongArtist[] // Explicit relation
+  genre     SongGenre[] // Explicit relation
+  category  SongCategory[] // Explicit relation
+  scripture SongScripture[] // Explicit relation
+  album     SongAlbum[]
+}
+
+model artist {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  type         ArtistType? // <-- NEW: Enum to classify artist
+  link         String?
+  image        String?
+  about        String?
+  isVerified   Boolean?    @default(false)
+  slug         String       @unique
+  color        String?
+  email        String?
+  instagram    String?
+  youtube      String?
+  spotify      String?
+  appleMusic   String?
+  amazonMusic  String?
+  youTubeMusic String?
+  tidal        String?
+  deezer       String?
+  soundCloud   String?
+  pandora      String?
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  season       season[]
+  song         SongArtist[] // Explicit relation
+  creator      song[]
+  album        ArtistAlbum[]
+  artistEvents EventArtist[]
+}
+
+model author {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  image     String
+  about     String?
+  color     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  song      song[]
+}
+
+enum ArtistType {
+  individual
+  band
+  label
+  channel
+}
+
+enum SongSectionType {
+  INTRO
+  VERSE
+  PRE_CHORUS
+  CHORUS
+  POST_CHORUS
+  BRIDGE
+  INTERLUDE
+  INSTRUMENTAL
+  SOLO
+  RAP
+  HOOK
+  REFRAIN
+  BREAKDOWN
+  OUTRO
+  ENDING
+  SPOKEN
+  ADLIB
+  OTHER
+}
+
+enum VersionType {
+  version_2
+  version_3
+  version_4
+  version_5
+}
+
+enum StatusType {
+  draft
+  publish
+  upcoming
+  archived
+  cancelled
+  completed
+}
+
+enum LanguageType {
+  bn
+  en
+  es
+  gu
+  hi
+  kn
+  ml
+  mr
+  ne
+  pa
+  pt
+  sa
+  ta
+  te
+  ur
+}
+
+enum TempoType {
+  largo // very slow
+  adagio // slow
+  andante // walking pace
+  moderato // medium
+  allegro // fast
+  presto // very fast
+}
+
+model genre {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  image     String
+  color     String?
+  about     String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  song      SongGenre[] // Explicit relation
+}
+
+model category {
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  image     String?
+  about     String?
+  color     String?
+  slug      String?        @unique // ✅ UNIQUE URL
+  catType   catType?       @default(theme)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  song      SongCategory[] // Explicit relation
+}
+
+enum catType {
+  theme
+  mood
+  activity
+  occasion
+}
+
+model scripture {
+  id        String          @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  image     String
+  slug      String?
+  color     String?
+  about     String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  song      SongScripture[] // Explicit relation
+}
+
+model album {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  image        String?
+  video        String?
+  slug         String
+  color        String?
+  about        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  song         SongAlbum[]
+  artist       ArtistAlbum[]
+
+}
+
+model event {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  image     String?
+  video     String?
+  startDate DateTime?
+  endDate   DateTime?
+  venue     String?
+  details   Json?
+  registration String?
+  link      String?
+  slug      String          @unique
+  color     String?
+  about     String?
+  status    StatusType @default(draft)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  artist    EventArtist[]
+}
+
+model season {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  image     String
+  slug      String
+  color     String?
+  about     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  artist    artist   @relation(fields: [artistId], references: [id])
+  artistId  String   @db.ObjectId
+  song      song[]
+}
+
+// Intermediate table for SongArtist many-to-many
+model SongArtist {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  songId    String    @db.ObjectId
+  artistId  String    @db.ObjectId
+  isCreator Boolean?  @default(false)
+  isArtist  Boolean?  @default(true)
+  song      song      @relation(fields: [songId], references: [id])
+  artist    artist    @relation(fields: [artistId], references: [id])
+  createdAt DateTime? @default(now())
+}
+
+// Intermediate table for song-genre many-to-many
+model SongGenre {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  songId  String @db.ObjectId
+  genreId String @db.ObjectId
+  song    song   @relation(fields: [songId], references: [id])
+  genre   genre  @relation(fields: [genreId], references: [id])
+}
+
+// Intermediate table SongCategory many-to-many
+model SongCategory {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  songId     String   @db.ObjectId
+  categoryId String   @db.ObjectId
+  song       song     @relation(fields: [songId], references: [id])
+  category   category @relation(fields: [categoryId], references: [id])
+}
+
+// Intermediate table for SongScripture many-to-many
+model SongScripture {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  songId      String    @db.ObjectId
+  scriptureId String    @db.ObjectId
+  song        song      @relation(fields: [songId], references: [id])
+  scripture   scripture @relation(fields: [scriptureId], references: [id])
+}
+
+model SongAlbum {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  songId  String @db.ObjectId
+  albumId String @db.ObjectId
+  song    song   @relation(fields: [songId], references: [id])
+  album   album  @relation(fields: [albumId], references: [id])
+}
+
+model ArtistAlbum {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  artistId String @db.ObjectId
+  albumId  String @db.ObjectId
+  artist   artist @relation(fields: [artistId], references: [id])
+  album    album  @relation(fields: [albumId], references: [id])
+}
+
+model EventArtist {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  eventId  String? @db.ObjectId
+  artistId String  @db.ObjectId
+  event    event?  @relation(fields: [eventId], references: [id])
+  artist   artist  @relation(fields: [artistId], references: [id])
+}
