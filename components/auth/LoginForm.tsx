@@ -54,6 +54,7 @@ export function LoginForm({
       } else {
         toast.success(data.message || "Login Successful")
       }
+      router.refresh() // or // window.location.href = "/dashboard"
       router.push("/dashboard")
 
     } catch (error) {
