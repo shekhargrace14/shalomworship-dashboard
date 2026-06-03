@@ -1,32 +1,75 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { success } from "zod";
 
 export async function GET(req: Request) {
 
-  const { searchParams } = new URL(req.url);
+  try {
 
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "50");
+    const { searchParams } = new URL(req.url)
 
-  const skip = (page - 1) * limit;
+    const page = Math.max(
+      1,
+      parseInt(searchParams.get("page") || "1")
+    )
 
-  const songs = await prisma.song.findMany({
-    skip: skip,
-    take: limit,
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+    const limitParam = searchParams.get("limit")
 
-  const total = await prisma.song.count();
+    const limit = limitParam
+      ? Math.max(1, parseInt(limitParam))
+      : undefined
 
-  return NextResponse.json({
-    success: true,
-    data: songs,
-    page,
-    totalPages: Math.ceil(total / limit),
-    total,
-  });
+    const songs = await prisma.song.findMany({
+      skip: limit
+        ? (page - 1) * limit
+        : undefined,
+
+      take: limit,
+
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+
+    const total = await prisma.song.count()
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: songs,
+        page,
+        totalPages: limit
+          ? Math.ceil(total / limit)
+          : 1,
+
+        total,
+      },
+      {
+        status: 200,
+      }
+    )
+
+  } catch (error: any) {
+
+    console.error(
+      "GET SONG ERROR:",
+      error
+    )
+
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          error.message ||
+          "Failed to fetch songs",
+      },
+      {
+        status: 500,
+      }
+    )
+
+  }
+
 }
 
 
@@ -40,7 +83,7 @@ export async function POST(req: Request) {
       data: {
         title: body.title,
         content: body.content,
-        lyrics:body.lyrics,
+        lyrics: body.lyrics,
         slug: body.slug,
 
         metaDescription: body.metaDescription || "",

@@ -13,7 +13,7 @@ model song {
   title                String
   content              String
   lyrics               Json?
-  type      SongSectionType?
+  type                  StatusType?
   lines                Json?
   isChords             Boolean?      @default(false)
   isTranslation        Boolean?      @default(false)
