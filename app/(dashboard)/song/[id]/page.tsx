@@ -10,6 +10,7 @@ import Lyrics from "@/components/song/lyrics"
 import SongBasicForm from "@/components/song/form/SongBasicForm"
 import { useParams } from "next/navigation"
 import StatusButton from "@/components/shared/StatusButton"
+import { StatusType } from "@prisma/client"
 
 // Define the form state interface
 interface FormState {
@@ -235,7 +236,7 @@ export default function Page() {
         )}
       </Card>
 
-      {isEdit && <StatusButton id={id} type="song" status="TRASH" />}
+      {isEdit && <StatusButton id={id} type="song" status={StatusType.TRASH} />}
 
     </div>
   )
