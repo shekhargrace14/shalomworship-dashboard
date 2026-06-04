@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea"
 import AddCreditDialog from "@/components/song/credits/AddCreditDialog"
 import Lyrics from "@/components/song/lyrics"
 import SongBasicForm from "@/components/song/form/SongBasicForm"
-import { prisma } from "@/lib/prisma"
 import { useParams } from "next/navigation"
 import StatusButton from "@/components/shared/StatusButton"
 
@@ -47,6 +46,14 @@ export default function Page() {
   useEffect(() => {
     async function load() {
       const res = await fetch(`/api/song/${id}`)
+
+      if (!res.ok) {
+        console.error("API Error", res.status)
+        const text = await res.text()
+        console.error(text)
+        return
+      }
+
       const data = await res.json()
 
       setSong(data.song)
@@ -56,7 +63,7 @@ export default function Page() {
       load()
     }
 
-  }, [id,StatusButton])
+  }, [id])
 
   // console.log(song)
 

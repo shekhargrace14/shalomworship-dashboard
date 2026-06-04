@@ -16,7 +16,6 @@ import { Archive, ArrowDownUp, Trash2, X } from "lucide-react"
 import Link from "next/link"
 import { Badge } from "../ui/badge"
 import { IconCircleCheckFilled, IconLoader } from "@tabler/icons-react"
-import { CANCELLED } from "dns"
 
 type Props = {
   data: song[]
@@ -28,10 +27,10 @@ const statusIcons = {
   DRAFT: <IconLoader />,
   TRASH: <Trash2 className="text-red-500" />,
   ARCHIVE: <Archive className="text-yellow-500" />,
-  CANCELLE: <X className="text-red-500" />,
+  CANCELLED: <X className="text-red-500" />,
 }
 
-export default function DataTable({ data, type }: Props) {
+export default function DataTable({ data = [], type }: Props) {
 
   const {
     sortedData,

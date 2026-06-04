@@ -28,6 +28,8 @@ export async function GET(req: Request) {
       orderBy: {
         createdAt: "desc",
       },
+      // take: 1,
+
     })
 
     const total = await prisma.song.count()
@@ -48,26 +50,19 @@ export async function GET(req: Request) {
       }
     )
 
-  } catch (error: any) {
+  } 
+catch (error: any) {
+  console.error(error)
 
-    console.error(
-      "GET SONG ERROR:",
-      error
-    )
-
-    return NextResponse.json(
-      {
-        success: false,
-        message:
-          error.message ||
-          "Failed to fetch songs",
-      },
-      {
-        status: 500,
-      }
-    )
-
-  }
+  return NextResponse.json(
+    {
+      success: false,
+      message: error.message,
+      stack: error.stack,
+    },
+    { status: 500 }
+  )
+}
 
 }
 

@@ -1,24 +1,30 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
+import { success } from "zod"
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params
+  try {
+    const { id } = await params
 
-  const song = await prisma.song.findUnique({
-    where: { id }
-  })
+    console.log("ID:", id)
 
-  if (!song) {
-    return NextResponse.json(
-      { error: "Song not found" },
-      { status: 404 }
-    )
+    const song = await prisma.song.findUnique({
+      where: { id }
+    })
+
+    console.log("SONG:", song)
+
+    return NextResponse.json({
+      song,
+      success: true
+    })
+  } catch (error) {
+    console.error("FULL ERROR:", error)
+    throw error
   }
-
-  return NextResponse.json({ song })
 }
 
 export async function DELETE(

@@ -14,78 +14,24 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
+import { getSongBasicFormData, SongBasicFormData } from "@/lib/forms/song"
 
 const Status =
   Object.values(StatusType)
 
 const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }: any) => {
-  // console.log(initialData)
+  console.log(initialData)
   const router = useRouter()
   const [slugEdited, setSlugEdited] = useState(false)
   const [variantInput, setVariantInput] = useState("")
-  const [formData, setFormData] = useState<SongFormData>({
-    title: initialData?.title || "",
-    content: initialData?.content || "",
-    lyrics: initialData?.lyrics || "",
-    lines: initialData?.lines || "",
-    isChords: initialData?.isChords || false,
-    isTranslation: initialData?.isTranslation || false,
-    language: initialData?.language || LanguageType.en,
-    version: initialData?.version || VersionType.version_5,
-    key: initialData?.key || "",
-    bpm: initialData?.bpm || "",
-    time: initialData?.time || "",
-    tempo: initialData?.tempo || undefined,
-    image: initialData?.image || "",
-    video: initialData?.video || "",
-    videoId: initialData?.videoId || "",
-    audio: initialData?.audio || "",
-    color: initialData?.color || "#000000",
-    slug: initialData?.slug || "",
-    status: initialData?.status || StatusType.DRAFT,
-    about: initialData?.about || "",
-    excerpt: initialData?.excerpt || "",
-    searchVariant: initialData?.searchVariant || [],
-    searchVariantInTitle: initialData?.searchVariantInTitle || false,
-    keyword: initialData?.keyword || [],
-    metaDescription: initialData?.metaDescription || "",
-    view: initialData?.view || 0,
-    like: initialData?.like || 0,
-
-  })
+const [formData, setFormData] =
+  useState<SongBasicFormData>(
+    getSongBasicFormData(initialData)
+  )
 
   useEffect(() => {
     if (!initialData) return
-    setFormData({
-      title: initialData?.title || "",
-      content: initialData?.content || "",
-      lyrics: initialData?.lyrics || "",
-      lines: initialData?.lines || "",
-      isChords: initialData?.isChords || false,
-      isTranslation: initialData?.isTranslation || false,
-      language: initialData?.language || LanguageType.en,
-      version: initialData?.version || VersionType.version_5,
-      key: initialData?.key || "",
-      bpm: initialData?.bpm || "",
-      time: initialData?.time || "",
-      tempo: initialData?.tempo || undefined,
-      image: initialData?.image || "",
-      video: initialData?.video || "",
-      videoId: initialData?.videoId || "",
-      audio: initialData?.audio || "",
-      color: initialData?.color || "#000000",
-      slug: initialData?.slug || "",
-      status: initialData?.status || StatusType.DRAFT,
-      about: initialData?.about || "",
-      excerpt: initialData?.excerpt || "",
-      searchVariant: initialData?.searchVariant || [],
-      searchVariantInTitle: initialData?.searchVariantInTitle || false,
-      keyword: initialData?.keyword || [],
-      metaDescription: initialData?.metaDescription || "",
-      view: initialData?.view || 0,
-      like: initialData?.like || 0,
-
-    })
+    setFormData(getSongBasicFormData(initialData))
   }, [initialData])
 
   const addVariant = () => {
@@ -361,10 +307,7 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
               </FieldGroup>
             </FieldSet>
 
-          </form>
-        </CardContent>
-        <CardFooter>
-          {/* ACTIONS */}
+                      {/* ACTIONS */}
           <div className="w-full flex justify-between">
 
             <Button
@@ -387,6 +330,11 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
               </Button>
             </div>
           </div>
+
+          </form>
+        </CardContent>
+        <CardFooter>
+
 
         </CardFooter>
       </Card>
