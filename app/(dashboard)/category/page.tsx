@@ -1,5 +1,5 @@
 "use client"
-import { CategoryTable } from "@/components/tables/category-table"
+import { CategoryTable } from "@/components/table/category-table"
 import PaginationComponent from "@/components/PaginationComponent"
 import { PaginationIconsOnly } from "@/components/PaginationIconsOnly"
 import { SongTable } from "@/components/song-table"

@@ -1,5 +1,5 @@
 "use client"
-import { CategoryTable } from "@/components/tables/category-table"
+import { CategoryTable } from "@/components/table/category-table"
 import PaginationComponent from "@/components/PaginationComponent"
 import { PaginationIconsOnly } from "@/components/PaginationIconsOnly"
 import { SongTable } from "@/components/song-table"
@@ -8,8 +8,8 @@ import { song } from "@prisma/client"
 import { Plus } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { ArtistTable } from "@/components/tables/artist-table"
-import { EventTable } from "@/components/tables/event-table"
+import { ArtistTable } from "@/components/table/artist-table"
+import { EventTable } from "@/components/table/event-table"
 
 
 export default function Page() {

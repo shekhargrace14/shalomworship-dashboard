@@ -13,7 +13,6 @@ model song {
   title                String
   content              String
   lyrics               Json?
-  type                  StatusType?
   lines                Json?
   isChords             Boolean?      @default(false)
   isTranslation        Boolean?      @default(false)
@@ -30,7 +29,7 @@ model song {
   color                String?
   // SEO
   slug                 String
-  status               StatusType?   @default(publish)
+  status               StatusType?   @default(PUBLISH)
   about                String?
   searchVariant        String[]
   searchVariantInTitle Boolean?      @default(false)
@@ -52,11 +51,12 @@ model song {
   season   season? @relation(fields: [seasonId], references: [id])
   seasonId String? @db.ObjectId
 
-  artist    SongArtist[] // Explicit relation
   genre     SongGenre[] // Explicit relation
   category  SongCategory[] // Explicit relation
   scripture SongScripture[] // Explicit relation
   album     SongAlbum[]
+  credits   SongCredit[]
+  artist    SongArtist[] // Explicit relation
 }
 
 model artist {
@@ -67,7 +67,7 @@ model artist {
   image        String?
   about        String?
   isVerified   Boolean?    @default(false)
-  slug         String       @unique
+  slug         String      @unique
   color        String?
   email        String?
   instagram    String?
@@ -88,6 +88,8 @@ model artist {
   creator      song[]
   album        ArtistAlbum[]
   artistEvents EventArtist[]
+  songCredits  SongCredit[]
+  eventCredits EventCredit[]
 }
 
 model author {
@@ -99,77 +101,6 @@ model author {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   song      song[]
-}
-
-enum ArtistType {
-  individual
-  band
-  label
-  channel
-}
-
-enum SongSectionType {
-  INTRO
-  VERSE
-  PRE_CHORUS
-  CHORUS
-  POST_CHORUS
-  BRIDGE
-  INTERLUDE
-  INSTRUMENTAL
-  SOLO
-  RAP
-  HOOK
-  REFRAIN
-  BREAKDOWN
-  OUTRO
-  ENDING
-  SPOKEN
-  ADLIB
-  OTHER
-}
-
-enum VersionType {
-  version_2
-  version_3
-  version_4
-  version_5
-}
-
-enum StatusType {
-  draft
-  publish
-  upcoming
-  archived
-  cancelled
-  completed
-}
-
-enum LanguageType {
-  bn
-  en
-  es
-  gu
-  hi
-  kn
-  ml
-  mr
-  ne
-  pa
-  pt
-  sa
-  ta
-  te
-  ur
-}
-
-enum TempoType {
-  largo // very slow
-  adagio // slow
-  andante // walking pace
-  moderato // medium
-  allegro // fast
-  presto // very fast
 }
 
 model genre {
@@ -216,38 +147,38 @@ model scripture {
 }
 
 model album {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  title        String
-  image        String?
-  video        String?
-  slug         String
-  color        String?
-  about        String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  song         SongAlbum[]
-  artist       ArtistAlbum[]
-
-}
-
-model event {
   id        String        @id @default(auto()) @map("_id") @db.ObjectId
   title     String
   image     String?
   video     String?
-  startDate DateTime?
-  endDate   DateTime?
-  venue     String?
-  details   Json?
-  registration String?
-  link      String?
-  slug      String          @unique
+  slug      String
   color     String?
   about     String?
-  status    StatusType @default(draft)
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
-  artist    EventArtist[]
+  song      SongAlbum[]
+  artist    ArtistAlbum[]
+}
+
+model event {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  image        String?
+  video        String?
+  startDate    DateTime?
+  endDate      DateTime?
+  venue        String?
+  details      Json?
+  registration String?
+  link         String?
+  slug         String        @unique
+  color        String?
+  about        String?
+  status       StatusType    @default(DRAFT)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  artist       EventArtist[]
+  credits      EventCredit[]
 }
 
 model season {
@@ -262,6 +193,147 @@ model season {
   artist    artist   @relation(fields: [artistId], references: [id])
   artistId  String   @db.ObjectId
   song      song[]
+}
+
+// ENUM
+
+enum ArtistType {
+  individual
+  band
+  label
+  channel
+}
+
+enum SongSectionType {
+  INTRO
+  VERSE
+  PRE_CHORUS
+  CHORUS
+  POST_CHORUS
+  BRIDGE
+  INTERLUDE
+  INSTRUMENTAL
+  SOLO
+  RAP
+  HOOK
+  REFRAIN
+  BREAKDOWN
+  OUTRO
+  ENDING
+  SPOKEN
+  ADLIB
+  OTHER
+}
+
+enum VersionType {
+  version_2
+  version_3
+  version_4
+  version_5
+}
+
+enum StatusType {
+  DRAFT
+  PUBLISH
+  ARCHIVE
+  UPCOMING
+  CANCELLE
+  COMPLETE
+  TRASH
+}
+
+enum LanguageType {
+  bn
+  en
+  es
+  gu
+  hi
+  kn
+  ml
+  mr
+  ne
+  pa
+  pt
+  sa
+  ta
+  te
+  ur
+}
+
+enum TempoType {
+  largo // very slow
+  adagio // slow
+  andante // walking pace
+  moderato // medium
+  allegro // fast
+  presto // very fast
+}
+
+enum CreditRole {
+  ACTOR
+  DIRECTOR
+  PRODUCER
+
+  SINGER
+  WRITER
+  COMPOSER
+  PERFORMER
+
+  ELECTRIC_GUITAR
+  ACOUSTIC_GUITAR
+  BASS
+  DRUMS
+  KEYBOARD
+
+  ORGANIZER
+
+  MIX_ENGINEER
+  MASTERING_ENGINEER
+  LEAD_VOCAL
+  BACKING_VOCAL
+  TRANSLATOR
+  ARRANGER
+  MUSIC_DIRECTOR
+  
+  BAND
+  CREATOR
+}
+
+enum CreditDepartment {
+  CAST
+  CREW
+}
+
+// Intermediate table for Song  Artist and Role many-to-many
+
+model SongCredit {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  songId   String @db.ObjectId
+  artistId String @db.ObjectId
+
+  department CreditDepartment
+  role       CreditRole
+
+  song   song   @relation(fields: [songId], references: [id])
+  artist artist @relation(fields: [artistId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+// Intermediate table for Event  Artist and Role many-to-many
+model EventCredit {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  eventId  String @db.ObjectId
+  artistId String @db.ObjectId
+
+  department CreditDepartment
+  role       CreditRole
+
+  event  event  @relation(fields: [eventId], references: [id])
+  artist artist @relation(fields: [artistId], references: [id])
+
+  createdAt DateTime @default(now())
 }
 
 // Intermediate table for SongArtist many-to-many

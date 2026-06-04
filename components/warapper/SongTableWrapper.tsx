@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SongTableClient from "../SongTableClient";
 import PaginationComponent from "../PaginationComponent";
 import { PaginationIconsOnly } from "../PaginationIconsOnly";
-import { DataTable } from "../data-table";
+import DataTable from "../table/DataTable";
+// import { DataTable } from "../data-table";
 
 export default function SongTableWrapper() {
 
@@ -37,7 +37,8 @@ export default function SongTableWrapper() {
   return (
     <>
         <>Page {page}/{totalPages}</>
-        <SongTableClient songs={songs} />
+        <DataTable data={songs} type="song"/>
+
         <div className="flex flex-wrap justify-center items-center ">
 
       <PaginationIconsOnly
@@ -49,10 +50,6 @@ export default function SongTableWrapper() {
       />
       <PaginationComponent page={page} setPage={setPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
         </div>
-
-
-      {/* <DataTable data={songs} /> */}
-
     </>
   );
 }

@@ -1,525 +1,235 @@
-// app/song/[slug]/page.tsx
+"use client"
 
-import Image from "next/image"
-import Link from "next/link"
-
-// import prisma from "@/lib/prisma"
-
-import { notFound } from "next/navigation"
-
-import { format } from "date-fns"
-
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-
-import { Badge } from "@/components/ui/badge"
-
+import React, { useEffect, useState } from "react"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-
-import {
-  Calendar,
-  Clock3,
-  Eye,
-  Heart,
-  Languages,
-  Music2,
-  PlayCircle,
-} from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import AddCreditDialog from "@/components/song/credits/AddCreditDialog"
+import Lyrics from "@/components/song/lyrics"
+import SongBasicForm from "@/components/song/form/SongBasicForm"
 import { prisma } from "@/lib/prisma"
+import { useParams } from "next/navigation"
+import StatusButton from "@/components/shared/StatusButton"
 
-type PageProps = {
-  params: Promise<{
-    slug: string
-  }>
+// Define the form state interface
+interface FormState {
+  title: string
+  genre: string
+  producer: string
+  songwriter: string
+  lyrics: string
+  metaTitle: string
+  metaDescription: string
 }
 
-export default async function SongPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
+const initialFormState: FormState = {
+  title: "",
+  genre: "",
+  producer: "",
+  songwriter: "",
+  lyrics: "",
+  metaTitle: "",
+  metaDescription: "",
+}
 
-  const { id } = await params
-  console.log(id, "[id]...")
+export default function Page() {
+  const isEdit = true
+  const params = useParams()
 
-  const song = await prisma.song.findFirst({
-    where: {
-      id,
-    },
+  const id = params.id as string
 
-    include: {
-      artist: {
-        include: {
-          artist: true,
-        },
-      },
+  // console.log(id)
 
-      category: {
-        include: {
-          category: true,
-        },
-      },
+  const [song, setSong] = useState()
 
-      genre: {
-        include: {
-          genre: true,
-        },
-      },
 
-      scripture: {
-        include: {
-          scripture: true,
-        },
-      },
+  useEffect(() => {
+    async function load() {
+      const res = await fetch(`/api/song/${id}`)
+      const data = await res.json()
 
-      album: {
-        include: {
-          album: true,
-        },
-      },
+      setSong(data.song)
+    }
 
-      creator: true,
-    },
-  })
+    if (id) {
+      load()
+    }
 
-  if (!song) {
-    notFound()
+  }, [id,StatusButton])
+
+  // console.log(song)
+
+
+  const [step, setStep] = useState<number>(1)
+  const [formData, setFormData] = useState<FormState>(initialFormState)
+
+  const updateField = (key: keyof FormState, value: string) => {
+    setFormData((prev) => ({ ...prev, [key]: value }))
+  }
+
+  const handleNext = () => {
+    if (step < 4) setStep((prev) => prev + 1)
+  }
+
+  const handleBack = () => {
+    if (step > 1) setStep((prev) => prev - 1)
+  }
+
+  const handleSaveDraft = () => {
+    // console.log("Saving draft data...", formData)
+    alert("Draft saved successfully!")
+  }
+
+  const handlePublish = () => {
+    // console.log("Publishing final data...", formData)
+    alert("Song published successfully!")
   }
 
   return (
-    <div className="mx-auto max-w-7xl p-4 md:p-6">
-      {/* HERO */}
-      <div
-        className="
-          relative overflow-hidden
-          rounded-3xl border
-        "
-      >
-        {/* BG IMAGE */}
-        {song.image && (
-          <Image
-            src={song?.image}
-            alt={song.title}
-            fill
-            className="
-              absolute inset-0
-              object-cover object-top
-            "
+    <div className="w-full max-w-5xl mx-auto p-4">
+      {/* Step Progress Bar */}
+      <div className="flex items-center justify-between mb-8 px-2">
+        {[1, 2, 3, 4].map((num) => (
+          <div key={num} className="flex items-center flex-1 last:flex-none">
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border transition-colors ${step === num
+                ? "bg-primary text-primary-foreground border-primary"
+                : step > num
+                  ? "bg-muted text-muted-foreground border-muted"
+                  : "bg-background text-muted-foreground border-input"
+                }`}
+            >
+              {num}
+            </div>
+            {num < 4 && (
+              <div
+                className={`h-[2px] flex-1 mx-2 transition-colors ${step > num ? "bg-muted" : "bg-input"
+                  }`}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+      {/* Form Wizard Card */}
+      <Card className="w-full">
+        {step === 1 && (
+          <>
+            {/* <CardHeader>
+              <CardTitle>Create Song</CardTitle>
+              <CardDescription>Enter the core details of your track.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Input
+                  placeholder="Song Title"
+                  value={formData.title}
+                  onChange={(e) => updateField("title", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Input
+                  placeholder="Genre"
+                  value={formData.genre}
+                  onChange={(e) => updateField("genre", e.target.value)}
+                />
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <Button variant="outline" onClick={handleSaveDraft}>
+                Save Draft
+              </Button>
+              <Button onClick={handleNext}>Next: Manage Credits</Button>
+            </CardFooter> */}
+            <SongBasicForm onHandleNext={handleNext} onHandleSaveDraft={handleSaveDraft} initialData={song} isEdit />
+          </>
+        )}
+
+        {step === 2 && (
+          <AddCreditDialog
+            formData={formData}
+            updateField={updateField}
+            handleBack={handleBack}
+            handleNext={handleNext}
           />
         )}
 
-        {/* OVERLAY */}
-        <div
-          className="
-            absolute inset-0
-            bg-gradient-to-r
-            from-black/90
-            via-black/70
-            via-black/70
-            to-black/20
-          "
-        />
+        {step === 3 && (
+          <>
+            <CardHeader>
+              <CardTitle>Manage Lyrics</CardTitle>
+              <CardDescription>Provide the full lyrics for the song.</CardDescription>
+            </CardHeader>
+            <CardFooter className="flex justify-between">
+              <Button variant="outline" onClick={handleBack}>
+                Back
+              </Button>
+              <Button onClick={handleNext}>Next: Manage SEO</Button>
+            </CardFooter>
+            <CardContent className="space-y-4">
+              {/* <div className="space-y-2">
+                <Textarea
+                  placeholder="Type or paste lyrics here..."
+                  className="min-h-[150px]"
+                  value={formData.lyrics}
+                  onChange={(e) => updateField("lyrics", e.target.value)}
+                />
+              </div> */}
+              <Lyrics />
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <Button variant="outline" onClick={handleBack}>
+                Back
+              </Button>
+              <Button onClick={handleNext}>Next: Manage SEO</Button>
+            </CardFooter>
 
-        {/* CONTENT */}
-        <div
-          className="
-            relative z-10
-            grid grid-cols-1
-            lg:grid-cols-[320px_1fr]
-            gap-6
-            p-6 md:p-10
-          "
-        >
-          {/* LEFT */}
-          <div className="space-y-4">
-            {/* COVER */}
-            {song.image && (
-              <div
-                className="
-                  relative aspect-square
-                  overflow-hidden
-                  rounded-2xl border
-                "
-              >
-                <Image
-                  src={song.image}
-                  alt={song.title}
-                  fill
-                  className="object-cover"
+
+          </>
+        )}
+
+        {step === 4 && (
+          <>
+            <CardHeader>
+              <CardTitle>Manage SEO</CardTitle>
+              <CardDescription>Optimize your song page visibility for search engines.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Input
+                  placeholder="Meta Title"
+                  value={formData.metaTitle}
+                  onChange={(e) => updateField("metaTitle", e.target.value)}
                 />
               </div>
-            )}
-
-            {/* ACTIONS */}
-            <div className="flex gap-2">
-              {song.video && (
-                <Button asChild>
-                  <Link
-                    href={song.video}
-                    target="_blank"
-                  >
-                    <PlayCircle className="mr-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              )}
-
-              {song.audio && (
-                <Button
-                  variant="secondary"
-                  asChild
-                >
-                  <Link
-                    href={song.audio}
-                    target="_blank"
-                  >
-                    <Music2 className="mr-2 h-4 w-4" />
-                    Audio
-                  </Link>
-                </Button>
-              )}
-            </div>
-          </div>
-
-          {/* RIGHT */}
-          <div className="space-y-6 text-white">
-            {/* TITLE */}
-            <div className="space-y-3">
-              <h1
-                className="
-                  text-4xl font-bold
-                  tracking-tight
-                  md:text-5xl
-                "
-              >
-                {song.title}
-              </h1>
-
-              {/* EXCERPT */}
-              {song.excerpt && (
-                <p
-                  className="
-                    max-w-3xl
-                    text-white/80
-                  "
-                >
-                  {song.excerpt}
-                </p>
-              )}
-            </div>
-
-            {/* BADGES */}
-            <div className="flex flex-wrap gap-2">
-              {song.language && (
-                <Badge variant="secondary">
-                  <Languages className="mr-1 h-3 w-3" />
-                  {song.language}
-                </Badge>
-              )}
-
-              {song.version && (
-                <Badge variant="secondary">
-                  {song.version}
-                </Badge>
-              )}
-
-              {song.status && (
-                <Badge>
-                  {song.status}
-                </Badge>
-              )}
-
-              {song.isTranslation && (
-                <Badge variant="outline">
-                  Translation
-                </Badge>
-              )}
-
-              {song.isChords && (
-                <Badge variant="outline">
-                  Chords
-                </Badge>
-              )}
-            </div>
-
-            {/* META */}
-            <div
-              className="
-                grid grid-cols-2
-                md:grid-cols-4
-                gap-4
-              "
-            >
-              {/* BPM */}
-              {song.bpm && (
-                <Card className="bg-white/10 backdrop-blur">
-                  <CardContent className="p-4">
-                    <p className="text-xs text-white/70">
-                      BPM
-                    </p>
-
-                    <p className="font-semibold">
-                      {song.bpm}
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* SCALE */}
-              {song.key && (
-                <Card className="bg-white/10 backdrop-blur">
-                  <CardContent className="p-4">
-                    <p className="text-xs text-white/70">
-                      Scale
-                    </p>
-
-                    <p className="font-semibold">
-                      {song.key}
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* TIME */}
-              {song.time && (
-                <Card className="bg-white/10 backdrop-blur">
-                  <CardContent className="p-4">
-                    <p className="text-xs text-white/70">
-                      Time
-                    </p>
-
-                    <p className="font-semibold">
-                      {song.time}
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* TEMPO */}
-              {song.tempo && (
-                <Card className="bg-white/10 backdrop-blur">
-                  <CardContent className="p-4">
-                    <p className="text-xs text-white/70">
-                      Tempo
-                    </p>
-
-                    <p className="font-semibold">
-                      {song.tempo}
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-
-            {/* STATS */}
-            <div className="flex flex-wrap gap-4 text-sm text-white/70">
-              <div className="flex items-center gap-2">
-                <Eye className="h-4 w-4" />
-                {song.view} Views
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Heart className="h-4 w-4" />
-                {song.like} Likes
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                {format(
-                  new Date(song.createdAt),
-                  "PPP"
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* MAIN */}
-      <div
-        className="
-          mt-8
-          grid grid-cols-1
-          lg:grid-cols-[1fr_350px]
-          gap-6
-        "
-      >
-        {/* LEFT */}
-        <div className="space-y-6">
-          {/* LYRICS */}
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                Lyrics
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent>
-              <div
-                className="
-                  whitespace-pre-wrap
-                  leading-8
-                "
-              >
-                {song.content}
+              <div className="space-y-2">
+                <Textarea
+                  placeholder="Meta Description"
+                  className="min-h-[100px]"
+                  value={formData.metaDescription}
+                  onChange={(e) => updateField("metaDescription", e.target.value)}
+                />
               </div>
             </CardContent>
-          </Card>
+            <CardFooter className="flex justify-between gap-2">
+              <Button variant="outline" onClick={handleBack}>
+                Back
+              </Button>
+              <div className="flex gap-2">
+                <Button variant="secondary" onClick={handleSaveDraft}>
+                  Save Draft
+                </Button>
+                <Button onClick={handlePublish}>
+                  Publish Song
+                </Button>
+              </div>
+            </CardFooter>
+          </>
+        )}
+      </Card>
 
-          {/* ABOUT */}
-          {song.about && (
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  About Songg
-                </CardTitle>
-              </CardHeader>
+      {isEdit && <StatusButton id={id} type="song" status="TRASH" />}
 
-              <CardContent>
-                <p className="leading-7 text-muted-foreground">
-                  {song.about}
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* RIGHT */}
-        <div className="space-y-6">
-          {/* ARTISTS */}
-          {song.artist.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  Artists
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent className="flex flex-wrap gap-2">
-                {song.artist.map(
-                  (artistItem) => (
-                    <Badge
-                      key={
-                        artistItem.artist.id
-                      }
-                    >
-                      {
-                        artistItem.artist
-                          .title
-                      }
-                    </Badge>
-                  )
-                )}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* GENRES */}
-          {song.genre.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  Genres
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent className="flex flex-wrap gap-2">
-                {song.genre.map((g) => (
-                  <Badge
-                    key={g.genre.id}
-                    variant="secondary"
-                  >
-                    {g.genre.title}
-                  </Badge>
-                ))}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* CATEGORIES */}
-          {song.category.length >
-            0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  Categories
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent className="flex flex-wrap gap-2">
-                {song.category.map(
-                  (c) => (
-                    <Badge
-                      key={
-                        c.category.id
-                      }
-                      variant="outline"
-                    >
-                      {
-                        c.category
-                          .title
-                      }
-                    </Badge>
-                  )
-                )}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* SEARCH VARIANTS */}
-          {song.searchVariant
-            .length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  Search Variants
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent className="flex flex-wrap gap-2">
-                {song.searchVariant.map(
-                  (v, i) => (
-                    <Badge
-                      key={i}
-                      variant="secondary"
-                    >
-                      {v}
-                    </Badge>
-                  )
-                )}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* KEYWORDS */}
-          {song.keyword.length >
-            0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  Keywords
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent className="flex flex-wrap gap-2">
-                {song.keyword.map(
-                  (k, i) => (
-                    <Badge
-                      key={i}
-                      variant="outline"
-                    >
-                      {k}
-                    </Badge>
-                  )
-                )}
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </div>
     </div>
   )
 }

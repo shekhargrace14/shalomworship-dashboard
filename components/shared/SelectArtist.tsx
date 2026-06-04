@@ -34,12 +34,14 @@ type ArtistSelectProps = {
   setSelectedArtists: React.Dispatch<
     React.SetStateAction<Artist[]>
   >
+  type?: string
 }
 
-export function SelectEventArtist({
+export function SelectArtist({
   artists,
   selectedArtists,
   setSelectedArtists,
+  type
 }: ArtistSelectProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -82,7 +84,7 @@ export function SelectEventArtist({
           >
             {selectedArtists.length > 0
               ? `${selectedArtists.length} artist selected`
-              : "Search `artist..."}
+              :  `Search ${type}...`}
  
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -97,7 +99,7 @@ export function SelectEventArtist({
 
             <CommandList>
               <CommandEmpty>
-                No artist found.
+                No {type} found.
               </CommandEmpty>
 
               <CommandGroup>

@@ -2,24 +2,16 @@
 import { ChevronUp, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { ChevronDown, ArrowUp, ArrowDown, X } from 'lucide-react';
-
 import { Card, CardContent } from '@/components/ui/card';
-
 import { Button } from '@/components/ui/button';
-
 import { Input } from '@/components/ui/input';
-
-import { Textarea } from '@/components/ui/textarea';
-
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { SongSectionType } from '@prisma/client';
-import { SectionLabels } from '@/utils/SectionLabels';
 import ChordEditor from './ChordEditor';
+import { SONG_SECTION_OPTIONS } from "@/lib/constants/song-sections"
 
-export const sectionOptions = Object.values(SongSectionType);
+const sectionOptions = SONG_SECTION_OPTIONS
 
 type LyricsSection = {
   id: number;

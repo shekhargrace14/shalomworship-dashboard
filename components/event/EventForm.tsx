@@ -31,7 +31,7 @@ import {
 import { Calendar } from "@/components/ui/calendar"
 import { useRouter } from "next/navigation"
 import TiptapEditor from "../editor/TiptapEditor"
-import { SelectEventArtist } from "./SelectEventArtist"
+import { SelectArtist } from "../shared/SelectArtist"
 
 type Artist = {
     id: string
@@ -398,7 +398,7 @@ export default function EventForm({
                             Artists
                         </label>
 
-                        <SelectEventArtist
+                        <SelectArtist
                             artists={artists}
                             selectedArtists={selectedArtists}
                             setSelectedArtists={

@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { success } from "zod";
 
 export async function GET(req: Request) {
 
@@ -73,64 +72,45 @@ export async function GET(req: Request) {
 }
 
 
-
-
 export async function POST(req: Request) {
   try {
     const body = await req.json()
+    const {
+      view,
+      like,
+      createdAt,
+      updatedAt,
+      ...songData
+    } = body
 
     const song = await prisma.song.create({
       data: {
-        title: body.title,
-        content: body.content,
-        lyrics: body.lyrics,
-        slug: body.slug,
-
-        metaDescription: body.metaDescription || "",
-        keyword: body.keyword || [],
-
-        searchVariant: body.searchVariant || [],
-
+        ...songData,
+        status: songData.status || "DRAFT",
         view: 0,
         like: 0,
-
-        isChords: body.isChords,
-        isTranslation: body.isTranslation || false,
-
-        language: body.language,
-        version: body.version,
-
-        key: body.key,
-        bpm: body.bpm,
-        tempo: body.tempo,
-        time: body.time,
-
-        image: body.image,
-        video: body.video,
-        videoId: body.videoId,
-        audio: body.audio,
-        color: body.color,
-
-        status: body.status,
-        about: body.about,
-        excerpt: body.excerpt,
-
-        searchVariantInTitle: body.searchVariantInTitle || false
       }
     })
-    return NextResponse.json({
-      success: true,
-      song
-    })
+    return NextResponse.json(
+      {
+        message: "Song Created",
+        success: true,
+        song
+      },
+      {
+        status: 201
+      }
+    )
 
-  } catch (error) {
-    console.error("CREATE SONG ERROR:", error)
-    return NextResponse.json({
-      success: false,
-      message: "Failed to create song"
-    }, {
-      status: 500
-    })
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message || "Failed to create song"
+      },
+      {
+        status: 500
+      })
 
   }
 }

@@ -50,15 +50,14 @@ type Chord = {
 type Props = {
     onSongChange: (song: Song) => void
 }
-const Editor = ({onSongChange}:Props) => {
+export default function Lyrics(){
 
-    // const [arrangement, setArrangement] = useState<ArrangementSection[]>([])
     const [song, setSong] = useState<Song>({ arrangement: [] })
 
     // console.log(song, "song")
     useEffect(() => {
 
-        onSongChange(song)
+        // onSongChange(song)
 
     }, [song])
 
@@ -644,7 +643,7 @@ const Editor = ({onSongChange}:Props) => {
 
 
     return (
-        <div className='p-4   border border-accent-foreground border-l-4 rounded-3xl'>
+        <div className='p-4 rounded-3xl'>
             <div className="flex gap-4 mb-4">
                 {song.arrangement.map((a) => (
                     <Badge key={a.id}>
@@ -685,8 +684,6 @@ const Editor = ({onSongChange}:Props) => {
                     />
                 ))
             }
-
-
             <Button
                 type="button"
                 variant="outline"
@@ -698,5 +695,3 @@ const Editor = ({onSongChange}:Props) => {
         </div>
     )
 }
-
-export default Editor
