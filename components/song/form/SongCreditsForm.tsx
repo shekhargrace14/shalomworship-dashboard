@@ -1,7 +1,7 @@
 "use client"
 import { PATCH } from '@/app/api/event/[id]/route'
 import { Button } from '@/components/ui/button'
-import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -134,7 +134,7 @@ const SongCreditsForm = ({ initialData, handleBack, handleNext }: any) => {
     return (
         <div>
 
-            <Table>
+            {/* <Table>
                 <TableCaption>A list of your recent invoices.</TableCaption>
                 <TableHeader>
                     <TableRow>
@@ -160,8 +160,8 @@ const SongCreditsForm = ({ initialData, handleBack, handleNext }: any) => {
                         <TableCell className="text-right">$2,500.00</TableCell>
                     </TableRow>
                 </TableFooter>
-            </Table>
-            <>
+            </Table> */}
+            <Card>
                 <CardHeader>
                     <CardTitle>Manage Credits</CardTitle>
                     <CardDescription>Attribute the creators behind this piece.</CardDescription>
@@ -188,7 +188,7 @@ const SongCreditsForm = ({ initialData, handleBack, handleNext }: any) => {
                     </Button>
                     <Button onClick={handleNext}>Next: Manage Lyrics</Button>
                 </CardFooter>
-            </>
+            </Card>
 
 
         </div>
