@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { StatusType } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -81,7 +82,7 @@ export async function POST(req: Request) {
     const song = await prisma.song.create({
       data: {
         ...songData,
-        status: songData.status || "DRAFT",
+        status: songData.status || StatusType.DRAFT,
         view: 0,
         like: 0,
       }
@@ -98,6 +99,7 @@ export async function POST(req: Request) {
     )
 
   } catch (error: any) {
+    console.error("CREATE SONG ERROR:", error)
     return NextResponse.json(
       {
         success: false,

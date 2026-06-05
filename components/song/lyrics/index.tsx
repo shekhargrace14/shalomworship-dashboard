@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button'
 import React, { useEffect, useState } from 'react'
 import Section from './Section'
 import { Badge } from '@/components/ui/badge'
+import { toast } from "sonner"
+
 // import Section from './Section'
 
 
@@ -50,56 +52,42 @@ type Chord = {
 type Props = {
     onSongChange: (song: Song) => void
 }
-export default function Lyrics(){
+export default function Lyrics({initialData,isEdit}:any){
+
+    console.log(initialData.lyrics, "initialData")
 
     const [song, setSong] = useState<Song>({ arrangement: [] })
 
-    // console.log(song, "song")
+    console.log(song, "song")
+
     useEffect(() => {
-
-        // onSongChange(song)
-
-    }, [song])
+        if(!initialData?.lyrics) return
+        setSong(initialData.lyrics)
+    }, [initialData])
 
     const addArrangement = () => {
         setSong((prev) => ({
-
             ...prev,
-
             arrangement: [
-
                 ...prev.arrangement,
-
                 {
                     id: Date.now(),
-
                     type: "verse",
-
                     label: "Verse",
-
                     repeat: 1,
-
                     lines: [],
                 },
-
             ],
-
         }))
     }
-
     const removeArrangment = (id: number) => {
-
         setSong((prev) => ({
-
             ...prev,
-
             arrangement: prev.arrangement.filter(
                 (section) => section.id !== id
             ),
-
         }))
     }
-
     const updateArrangement = (
         id: number,
         field: string,
@@ -377,7 +365,6 @@ export default function Lyrics(){
     }
 
     // Move sections 
-
     const moveSectionUp = (
         sectionId: number
     ) => {
@@ -448,7 +435,6 @@ export default function Lyrics(){
             }
         })
     }
-
 
     // Move lines 
 
@@ -641,6 +627,29 @@ export default function Lyrics(){
         }))
     }
 
+    // SAVE DATA
+    const handleSubmit = async () =>{
+        const payload = { lyrics:song}
+        console.log(payload, "lyircs after payload")
+        try{
+            const res = await fetch(`/api/song/${initialData.id}`,
+                {
+                    method: "PATCH",
+                    headers: {"Content-Type":"application/json",},
+                    body: JSON.stringify(payload)
+                }
+            )
+            if(!res.ok){
+                throw new Error("Failed to Create Song")
+            }
+            toast.success("Lyrics Updated Sucessfully")
+        }
+        catch(error){
+            console.error(error)
+            toast.error("Fail To Update Lyrics")
+        }
+    }
+
 
     return (
         <div className='p-4 rounded-3xl'>
@@ -691,6 +700,15 @@ export default function Lyrics(){
                 onClick={addArrangement}
             >
                 +   Add Section
+            </Button>
+
+            <Button
+                type="button"
+                variant="outline"
+                className="w-full cursor-pointer"
+                onClick={handleSubmit}
+            >
+                Save
             </Button>
         </div>
     )

@@ -11,7 +11,7 @@ datasource db {
 model song {
   id                   String        @id @default(auto()) @map("_id") @db.ObjectId
   title                String
-  content              String
+  content              String?      
   lyrics               Json?
   lines                Json?
   isChords             Boolean?      @default(false)
@@ -28,17 +28,17 @@ model song {
   audio                String?
   color                String?
   // SEO
-  slug                 String
+  slug                 String?
   status               StatusType?   @default(PUBLISH)
   about                String?
   searchVariant        String[]
   searchVariantInTitle Boolean?      @default(false)
   keyword              String[]
-  metaDescription      String
+  metaDescription      String?
   excerpt              String?
 
-  view      Int
-  like      Int
+  view      Int?
+  like      Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

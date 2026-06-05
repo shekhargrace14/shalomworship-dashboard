@@ -6,7 +6,14 @@ import {
 } from "@prisma/client"
 
 
+export type Credit = {
+    artistId: string
+    artistName: string
 
+    department: "CAST" | "CREW"
+
+    role: string
+}
 
 export type SongFormData = {
   title: string

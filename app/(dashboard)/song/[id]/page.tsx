@@ -5,12 +5,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import AddCreditDialog from "@/components/song/credits/AddCreditDialog"
+
 import Lyrics from "@/components/song/lyrics"
 import SongBasicForm from "@/components/song/form/SongBasicForm"
 import { useParams } from "next/navigation"
-import StatusButton from "@/components/shared/StatusButton"
-import { StatusType } from "@prisma/client"
+
+import SongCreditsForm from "@/components/song/form/SongCreditsForm"
 
 // Define the form state interface
 interface FormState {
@@ -39,10 +39,9 @@ export default function Page() {
 
   const id = params.id as string
 
-  // console.log(id)
 
   const [song, setSong] = useState()
-
+  console.log(song)
 
   useEffect(() => {
     async function load() {
@@ -120,123 +119,80 @@ export default function Page() {
         ))}
       </div>
       {/* Form Wizard Card */}
-      <Card className="w-full">
-        {step === 1 && (
-          <>
-            {/* <CardHeader>
-              <CardTitle>Create Song</CardTitle>
-              <CardDescription>Enter the core details of your track.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Input
-                  placeholder="Song Title"
-                  value={formData.title}
-                  onChange={(e) => updateField("title", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Input
-                  placeholder="Genre"
-                  value={formData.genre}
-                  onChange={(e) => updateField("genre", e.target.value)}
-                />
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" onClick={handleSaveDraft}>
-                Save Draft
-              </Button>
-              <Button onClick={handleNext}>Next: Manage Credits</Button>
-            </CardFooter> */}
-            <SongBasicForm onHandleNext={handleNext} onHandleSaveDraft={handleSaveDraft} initialData={song} isEdit />
-          </>
-        )}
+      {step === 1 && (
+        <>
+          <SongBasicForm onHandleNext={handleNext} onHandleSaveDraft={handleSaveDraft} initialData={song} isEdit />
+          {/* <Button variant="outline" onClick={handleSaveDraft}>
+            Save Draft
+          </Button>
+          <Button onClick={handleNext}>Next: Manage Credits</Button> */}
+        </>
+      )}
 
-        {step === 2 && (
-          <AddCreditDialog
-            formData={formData}
+      {step === 2 && (
+        <>
+          <SongCreditsForm
+            initialData={song}
             updateField={updateField}
             handleBack={handleBack}
             handleNext={handleNext}
           />
-        )}
+        </>
 
-        {step === 3 && (
-          <>
-            <CardHeader>
-              <CardTitle>Manage Lyrics</CardTitle>
-              <CardDescription>Provide the full lyrics for the song.</CardDescription>
-            </CardHeader>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" onClick={handleBack}>
-                Back
+      )}
+
+      {step === 3 && (
+        <>
+          <Lyrics initialData={song} />
+          <div className="flex justify-between">
+
+            <Button variant="outline" onClick={handleBack}>
+              Back
+            </Button>
+            <Button onClick={handleNext}>Next: Manage SEO</Button>
+          </div>
+        </>
+      )}
+
+      {step === 4 && (
+        <>
+          <CardHeader>
+            <CardTitle>Manage SEO</CardTitle>
+            <CardDescription>Optimize your song page visibility for search engines.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Input
+                placeholder="Meta Title"
+                value={formData.metaTitle}
+                onChange={(e) => updateField("metaTitle", e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Textarea
+                placeholder="Meta Description"
+                className="min-h-[100px]"
+                value={formData.metaDescription}
+                onChange={(e) => updateField("metaDescription", e.target.value)}
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-between gap-2">
+            <Button variant="outline" onClick={handleBack}>
+              Back
+            </Button>
+            <div className="flex gap-2">
+              <Button variant="secondary" onClick={handleSaveDraft}>
+                Save Draft
               </Button>
-              <Button onClick={handleNext}>Next: Manage SEO</Button>
-            </CardFooter>
-            <CardContent className="space-y-4">
-              {/* <div className="space-y-2">
-                <Textarea
-                  placeholder="Type or paste lyrics here..."
-                  className="min-h-[150px]"
-                  value={formData.lyrics}
-                  onChange={(e) => updateField("lyrics", e.target.value)}
-                />
-              </div> */}
-              <Lyrics />
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" onClick={handleBack}>
-                Back
+              <Button onClick={handlePublish}>
+                Publish Song
               </Button>
-              <Button onClick={handleNext}>Next: Manage SEO</Button>
-            </CardFooter>
+            </div>
+          </CardFooter>
+        </>
+      )}
 
-
-          </>
-        )}
-
-        {step === 4 && (
-          <>
-            <CardHeader>
-              <CardTitle>Manage SEO</CardTitle>
-              <CardDescription>Optimize your song page visibility for search engines.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Input
-                  placeholder="Meta Title"
-                  value={formData.metaTitle}
-                  onChange={(e) => updateField("metaTitle", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Textarea
-                  placeholder="Meta Description"
-                  className="min-h-[100px]"
-                  value={formData.metaDescription}
-                  onChange={(e) => updateField("metaDescription", e.target.value)}
-                />
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between gap-2">
-              <Button variant="outline" onClick={handleBack}>
-                Back
-              </Button>
-              <div className="flex gap-2">
-                <Button variant="secondary" onClick={handleSaveDraft}>
-                  Save Draft
-                </Button>
-                <Button onClick={handlePublish}>
-                  Publish Song
-                </Button>
-              </div>
-            </CardFooter>
-          </>
-        )}
-      </Card>
-
-      {isEdit && <StatusButton id={id} type="song" status={StatusType.TRASH} />}
 
     </div>
   )

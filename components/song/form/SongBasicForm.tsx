@@ -15,19 +15,23 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
 import { getSongBasicFormData, SongBasicFormData } from "@/lib/forms/song"
+import StatusButton from "@/components/shared/StatusButton"
 
 const Status =
   Object.values(StatusType)
 
 const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }: any) => {
-  console.log(initialData)
+  if (isEdit) { 
+    var id = initialData?.id
+    // console.log(initialData, id)
+  }
   const router = useRouter()
   const [slugEdited, setSlugEdited] = useState(false)
   const [variantInput, setVariantInput] = useState("")
-const [formData, setFormData] =
-  useState<SongBasicFormData>(
-    getSongBasicFormData(initialData)
-  )
+  const [formData, setFormData] =
+    useState<SongBasicFormData>(
+      getSongBasicFormData(initialData)
+    )
 
   useEffect(() => {
     if (!initialData) return
@@ -89,7 +93,7 @@ const [formData, setFormData] =
       ...formData,
     }
 
-    console.log(payload, "payload")
+    // console.log(payload, "payload")
 
     const endpoint = isEdit
       ? `/api/song/${initialData?.id}`
@@ -98,7 +102,7 @@ const [formData, setFormData] =
     const method = isEdit
       ? "PATCH"
       : "POST"
-    console.log(endpoint, method, "--------")
+    // console.log(endpoint, method, "--------")
 
     try {
       const res = await fetch(
@@ -124,7 +128,7 @@ const [formData, setFormData] =
 
       {
         isEdit
-          ? toast.success("Save Sucessfully")
+          ? toast.success("Basic Detials Save Sucessfully")
           : toast.success("Song Created")
       }
     } catch (error) {
@@ -307,33 +311,34 @@ const [formData, setFormData] =
               </FieldGroup>
             </FieldSet>
 
-                      {/* ACTIONS */}
-          <div className="w-full flex justify-between">
+            {/* ACTIONS */}
+            <div className="w-full flex justify-between mt-6">
 
-            <Button
-              className="cursor-pointer"
-              variant="outline"
-              type="button"
+              <Button
+                className="cursor-pointer"
+                variant="outline"
+                type="button"
 
-            >
-              <Link href={"/song"}>
-                Cancel
-              </Link>
-            </Button>
-
-            <div className="flex gap-2">
-              <Button className="cursor-pointer" variant="outline" onClick={onHandleNext}>Next: Manage Credits</Button>
-              <Button className="cursor-pointer" type="submit"
-              // onClick={onHandleSaveDraft}
               >
-                Save Draft
+                <Link href={"/song"}>
+                  Cancel
+                </Link>
               </Button>
+
+              <div className="flex gap-2">
+                <Button className="cursor-pointer" variant="outline" onClick={onHandleNext}>Next: Manage Credits</Button>
+                <Button className="cursor-pointer" type="submit"
+                // onClick={onHandleSaveDraft}
+                >
+                  Save Draft
+                </Button>
+              </div>
             </div>
-          </div>
 
           </form>
         </CardContent>
         <CardFooter>
+      {isEdit && <StatusButton id={id} type="song" status={StatusType.TRASH} />}  
 
 
         </CardFooter>
