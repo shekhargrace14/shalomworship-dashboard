@@ -131,12 +131,18 @@ export default function Page() {
 
       {step === 2 && (
         <>
-          <SongCreditsForm
+          {/* <SongCreditsForm
             initialData={song}
             updateField={updateField}
             handleBack={handleBack}
             handleNext={handleNext}
-          />
+          /> */}
+          <div className="flex justify-between">
+            <Button variant="outline" onClick={handleBack}>
+              Back
+            </Button>
+            <Button onClick={handleNext}>Next: Manage Lyrics</Button>
+          </div>
         </>
 
       )}
