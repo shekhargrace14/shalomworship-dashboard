@@ -41,7 +41,7 @@ export default function Page() {
 
 
   const [song, setSong] = useState()
-  console.log(song)
+  console.log(song, "song at page")
 
   useEffect(() => {
     async function load() {
@@ -63,7 +63,7 @@ export default function Page() {
       load()
     }
 
-  }, [id])
+  }, [id, setSong])
 
   // console.log(song)
 
@@ -82,9 +82,7 @@ export default function Page() {
   const handleBack = () => {
     if (step > 1) setStep((prev) => prev - 1)
   }
-
   const handleSaveDraft = () => {
-    // console.log("Saving draft data...", formData)
     alert("Draft saved successfully!")
   }
 
@@ -122,10 +120,6 @@ export default function Page() {
       {step === 1 && (
         <>
           <SongBasicForm onHandleNext={handleNext} onHandleSaveDraft={handleSaveDraft} initialData={song} isEdit />
-          {/* <Button variant="outline" onClick={handleSaveDraft}>
-            Save Draft
-          </Button>
-          <Button onClick={handleNext}>Next: Manage Credits</Button> */}
         </>
       )}
 

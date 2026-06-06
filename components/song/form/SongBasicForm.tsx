@@ -9,35 +9,41 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { SongFormData } from '@/types/song'
 import { LanguageType, StatusType, VersionType } from '@prisma/client'
 import React, { useEffect, useState } from 'react'
-import { X } from "lucide-react"
+import { ArrowBigRight, ArrowRight, X } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
-import { getSongBasicFormData, SongBasicFormData } from "@/lib/forms/song"
+import { getSongBasicFormData, getSongLyricsSettingFormData, SongBasicFormData, SongLyricsSettingFormData } from "@/lib/forms/song"
 import StatusButton from "@/components/shared/StatusButton"
+import { getLanguageOptions } from "@/utils/getLanguageName"
+import Setting from "../lyrics/Setting"
 
-const Status =
-  Object.values(StatusType)
+const Status = Object.values(StatusType)
+const Version = Object.values(VersionType)
+const Language = Object.values(LanguageType)
 
 const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }: any) => {
-  if (isEdit) { 
+  if (isEdit) {
     var id = initialData?.id
-    // console.log(initialData, id)
+    console.log(initialData, "initialData")
   }
   const router = useRouter()
   const [slugEdited, setSlugEdited] = useState(false)
   const [variantInput, setVariantInput] = useState("")
-  const [formData, setFormData] =
-    useState<SongBasicFormData>(
-      getSongBasicFormData(initialData)
-    )
+  const [language, setLanguage] = useState()
+  const [formData, setFormData] = useState<SongBasicFormData>(getSongBasicFormData(initialData))
 
   useEffect(() => {
     if (!initialData) return
     setFormData(getSongBasicFormData(initialData))
   }, [initialData])
 
+  // SETTING
+  const [setting, setSetting] = useState<SongLyricsSettingFormData>(getSongLyricsSettingFormData(initialData))
+  console.log(setting, "setting on SongBasicForm")
+
+  // VARIENT 
   const addVariant = () => {
     if (!variantInput.trim()) return
 
@@ -62,6 +68,7 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
         ),
     }))
   }
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement
@@ -90,7 +97,7 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
     e.preventDefault()
 
     const payload = {
-      ...formData,
+      ...formData, ...setting
     }
 
     // console.log(payload, "payload")
@@ -274,6 +281,42 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
                   </Button>
                 </Field>
 
+
+                {/* LANGUAGE */}
+                <Field >
+                  <FieldLabel>
+                    Language
+                  </FieldLabel>
+
+                  <Select
+                    value={formData.language}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        language: value as LanguageType,
+                      }))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectGroup>
+                        {getLanguageOptions().map((item) => (
+                          <SelectItem
+                            key={item.value}
+                            value={item.value}
+                          >
+                            {item.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+
+
                 {/* STATUS */}
                 <Field >
                   <FieldLabel>
@@ -311,34 +354,39 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
               </FieldGroup>
             </FieldSet>
 
+            {isEdit &&
+              <Setting
+                initialData={initialData}
+                onSetSetting={setSetting}
+              />
+            }
+
             {/* ACTIONS */}
             <div className="w-full flex justify-between mt-6">
 
-              <Button
-                className="cursor-pointer"
-                variant="outline"
-                type="button"
 
-              >
-                <Link href={"/song"}>
-                  Cancel
-                </Link>
-              </Button>
 
               <div className="flex gap-2">
-                <Button className="cursor-pointer" variant="outline" onClick={onHandleNext}>Next: Manage Credits</Button>
-                <Button className="cursor-pointer" type="submit"
-                // onClick={onHandleSaveDraft}
-                >
-                  Save Draft
+                <Button className="cursor-pointer" variant="outline" type="button">
+                  <Link href={"/song"}>
+                    Cancel
+                  </Link>
                 </Button>
+                {isEdit &&
+                  <Button className="cursor-pointer" variant="outline" onClick={onHandleNext}>Next: Manage Credits <ArrowRight /> </Button>
+                }
+
               </div>
+              <Button className="cursor-pointer" type="submit" // onClick={onHandleSaveDraft} 
+              >
+                Save
+              </Button>
             </div>
 
           </form>
         </CardContent>
         <CardFooter>
-      {isEdit && <StatusButton id={id} type="song" status={StatusType.TRASH} />}  
+          {isEdit && <StatusButton id={id} type="song" status={StatusType.TRASH} />}
 
 
         </CardFooter>

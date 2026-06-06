@@ -4,11 +4,13 @@ import React, { useEffect, useState } from 'react'
 import Section from './Section'
 import { Badge } from '@/components/ui/badge'
 import { toast } from "sonner"
+import Setting from './Setting'
+import { getSongLyricsSettingFormData, SongLyricsSettingFormData } from '@/lib/forms/song'
 
 // import Section from './Section'
 
 
-type Song = {
+type Lyrics = {
     arrangement: Section[]
 }
 type Section = {
@@ -49,24 +51,22 @@ type Chord = {
 
     position: number
 }
-type Props = {
-    onSongChange: (song: Song) => void
-}
-export default function Lyrics({initialData,isEdit}:any){
 
-    console.log(initialData.lyrics, "initialData")
+export default function Lyrics({ initialData, isEdit }: any) {
 
-    const [song, setSong] = useState<Song>({ arrangement: [] })
+    // console.log(initialData.lyrics, "initialData")
 
-    console.log(song, "song")
+    const [lyrics, setLyrics] = useState<Lyrics>({ arrangement: [] })
+
+    console.log(lyrics, "lyrics")
 
     useEffect(() => {
-        if(!initialData?.lyrics) return
-        setSong(initialData.lyrics)
+        if (!initialData?.lyrics) return
+        setLyrics(initialData.lyrics)
     }, [initialData])
 
     const addArrangement = () => {
-        setSong((prev) => ({
+        setLyrics((prev) => ({
             ...prev,
             arrangement: [
                 ...prev.arrangement,
@@ -81,7 +81,7 @@ export default function Lyrics({initialData,isEdit}:any){
         }))
     }
     const removeArrangment = (id: number) => {
-        setSong((prev) => ({
+        setLyrics((prev) => ({
             ...prev,
             arrangement: prev.arrangement.filter(
                 (section) => section.id !== id
@@ -94,20 +94,15 @@ export default function Lyrics({initialData,isEdit}:any){
         value: any
     ) => {
 
-        setSong((prev) => ({
-
+        setLyrics((prev) => ({
             ...prev,
-
             arrangement: prev.arrangement.map(
                 (section) =>
-
                     section.id === id
-
                         ? {
                             ...section,
                             [field]: value,
                         }
-
                         : section
             ),
 
@@ -118,7 +113,7 @@ export default function Lyrics({initialData,isEdit}:any){
 
     const addLine = (sectionId: number) => {
 
-        setSong((prev) => ({
+        setLyrics((prev) => ({
 
             ...prev,
 
@@ -165,7 +160,7 @@ export default function Lyrics({initialData,isEdit}:any){
         value: string
     ) => {
 
-        setSong((prev) => ({
+        setLyrics((prev) => ({
 
             ...prev,
 
@@ -204,7 +199,7 @@ export default function Lyrics({initialData,isEdit}:any){
         lineId: number
     ) => {
 
-        setSong((prev) => ({
+        setLyrics((prev) => ({
 
             ...prev,
 
@@ -234,7 +229,7 @@ export default function Lyrics({initialData,isEdit}:any){
         value: number | boolean
     ) => {
 
-        setSong((prev) => ({
+        setLyrics((prev) => ({
 
             ...prev,
 
@@ -272,7 +267,7 @@ export default function Lyrics({initialData,isEdit}:any){
     ) => {
         //   console.log("ADD CHORD", sectionId, lineId)
 
-        setSong((prev) => ({
+        setLyrics((prev) => ({
 
             ...prev,
 
@@ -323,7 +318,7 @@ export default function Lyrics({initialData,isEdit}:any){
         value: string
     ) => {
 
-        setSong((prev) => ({
+        setLyrics((prev) => ({
 
             ...prev,
 
@@ -364,172 +359,45 @@ export default function Lyrics({initialData,isEdit}:any){
         }))
     }
 
-    // Move sections 
-    const moveSectionUp = (
-        sectionId: number
-    ) => {
+const deleteChord = (
+  sectionId: number,
+  lineId: number,
+  chordId: number,
+) => {
+  setLyrics((prev) => ({
+    ...prev,
 
-        setSong((prev) => {
+    arrangement: prev.arrangement.map((section) =>
+      section.id === sectionId
+        ? {
+            ...section,
 
-            const arrangement = [
-                ...prev.arrangement
-            ]
+            lines: section.lines.map((line) =>
+              line.id === lineId
+                ? {
+                    ...line,
 
-            const index =
-                arrangement.findIndex(
-                    (section) =>
-                        section.id === sectionId
-                )
-
-            if (index <= 0)
-                return prev
-
-                    ;[
-                        arrangement[index - 1],
-                        arrangement[index]
-                    ] = [
-                            arrangement[index],
-                            arrangement[index - 1]
-                        ]
-
-            return {
-                ...prev,
-                arrangement,
-            }
-        })
-    }
-
-    const moveSectionDown = (
-        sectionId: number
-    ) => {
-
-        setSong((prev) => {
-
-            const arrangement = [
-                ...prev.arrangement
-            ]
-
-            const index =
-                arrangement.findIndex(
-                    (section) =>
-                        section.id === sectionId
-                )
-
-            if (
-                index === -1 ||
-                index === arrangement.length - 1
-            )
-                return prev
-
-                    ;[
-                        arrangement[index],
-                        arrangement[index + 1]
-                    ] = [
-                            arrangement[index + 1],
-                            arrangement[index]
-                        ]
-
-            return {
-                ...prev,
-                arrangement,
-            }
-        })
-    }
-
-    // Move lines 
-
-    const moveLineUp = (
-        sectionId: number,
-        lineId: number
-    ) => {
-
-        setSong((prev) => ({
-
-            ...prev,
-
-            arrangement: prev.arrangement.map((section) => {
-
-                if (section.id !== sectionId)
-                    return section
-
-                const lines = [...section.lines]
-
-                const index = lines.findIndex(
-                    (line) => line.id === lineId
-                )
-
-                console.log("LINE INDEX", index)
-
-                if (index <= 0)
-                    return section
-
-                        ;[
-                            lines[index - 1],
-                            lines[index]
-                        ] = [
-                                lines[index],
-                                lines[index - 1]
-                            ]
-
-                return {
-                    ...section,
-                    lines,
-                }
-            }),
-        }))
-    }
-
-    const moveLineDown = (
-        sectionId: number,
-        lineId: number
-    ) => {
-
-        setSong((prev) => ({
-
-            ...prev,
-
-            arrangement: prev.arrangement.map((section) => {
-
-                if (section.id !== sectionId)
-                    return section
-
-                const lines = [...section.lines]
-
-                const index = lines.findIndex(
-                    (line) => line.id === lineId
-                )
-
-                if (
-                    index === -1 ||
-                    index === lines.length - 1
-                )
-                    return section
-
-                        ;[
-                            lines[index],
-                            lines[index + 1]
-                        ] = [
-                                lines[index + 1],
-                                lines[index]
-                            ]
-
-                return {
-                    ...section,
-                    lines,
-                }
-            }),
-        }))
-    }
+                    chords: line.chords.filter(
+                      (chord) => chord.id !== chordId
+                    ),
+                  }
+                : line
+            ),
+          }
+        : section
+    ),
+  }))
+}
 
 
-    // Move Chords
+        // Move Chords
     const moveChordLeft = (
         sectionId: number,
         lineId: number,
         chordId: number
     ) => {
 
-        setSong((prev) => ({
+        setLyrics((prev) => ({
 
             ...prev,
 
@@ -579,7 +447,7 @@ export default function Lyrics({initialData,isEdit}:any){
         chordId: number
     ) => {
 
-        setSong((prev) => ({
+        setLyrics((prev) => ({
 
             ...prev,
 
@@ -627,24 +495,185 @@ export default function Lyrics({initialData,isEdit}:any){
         }))
     }
 
+    // Move sections 
+    const moveSectionUp = (
+        sectionId: number
+    ) => {
+
+        setLyrics((prev) => {
+
+            const arrangement = [
+                ...prev.arrangement
+            ]
+
+            const index =
+                arrangement.findIndex(
+                    (section) =>
+                        section.id === sectionId
+                )
+
+            if (index <= 0)
+                return prev
+
+                    ;[
+                        arrangement[index - 1],
+                        arrangement[index]
+                    ] = [
+                            arrangement[index],
+                            arrangement[index - 1]
+                        ]
+
+            return {
+                ...prev,
+                arrangement,
+            }
+        })
+    }
+
+    const moveSectionDown = (
+        sectionId: number
+    ) => {
+
+        setLyrics((prev) => {
+
+            const arrangement = [
+                ...prev.arrangement
+            ]
+
+            const index =
+                arrangement.findIndex(
+                    (section) =>
+                        section.id === sectionId
+                )
+
+            if (
+                index === -1 ||
+                index === arrangement.length - 1
+            )
+                return prev
+
+                    ;[
+                        arrangement[index],
+                        arrangement[index + 1]
+                    ] = [
+                            arrangement[index + 1],
+                            arrangement[index]
+                        ]
+
+            return {
+                ...prev,
+                arrangement,
+            }
+        })
+    }
+
+    // Move lines 
+
+    const moveLineUp = (
+        sectionId: number,
+        lineId: number
+    ) => {
+
+        setLyrics((prev) => ({
+
+            ...prev,
+
+            arrangement: prev.arrangement.map((section) => {
+
+                if (section.id !== sectionId)
+                    return section
+
+                const lines = [...section.lines]
+
+                const index = lines.findIndex(
+                    (line) => line.id === lineId
+                )
+
+                console.log("LINE INDEX", index)
+
+                if (index <= 0)
+                    return section
+
+                        ;[
+                            lines[index - 1],
+                            lines[index]
+                        ] = [
+                                lines[index],
+                                lines[index - 1]
+                            ]
+
+                return {
+                    ...section,
+                    lines,
+                }
+            }),
+        }))
+    }
+
+    const moveLineDown = (
+        sectionId: number,
+        lineId: number
+    ) => {
+
+        setLyrics((prev) => ({
+
+            ...prev,
+
+            arrangement: prev.arrangement.map((section) => {
+
+                if (section.id !== sectionId)
+                    return section
+
+                const lines = [...section.lines]
+
+                const index = lines.findIndex(
+                    (line) => line.id === lineId
+                )
+
+                if (
+                    index === -1 ||
+                    index === lines.length - 1
+                )
+                    return section
+
+                        ;[
+                            lines[index],
+                            lines[index + 1]
+                        ] = [
+                                lines[index + 1],
+                                lines[index]
+                            ]
+
+                return {
+                    ...section,
+                    lines,
+                }
+            }),
+        }))
+    }
+
+
+    
+
+
     // SAVE DATA
-    const handleSubmit = async () =>{
-        const payload = { lyrics:song}
-        console.log(payload, "lyircs after payload")
-        try{
+    const handleSubmit = async () => {
+        const payload = { lyrics: lyrics }
+        // console.log(payload, "lyircs after payload")
+        try {
             const res = await fetch(`/api/song/${initialData.id}`,
                 {
                     method: "PATCH",
-                    headers: {"Content-Type":"application/json",},
+                    headers: { "Content-Type": "application/json", },
                     body: JSON.stringify(payload)
                 }
             )
-            if(!res.ok){
+            if (!res.ok) {
                 throw new Error("Failed to Create Song")
             }
             toast.success("Lyrics Updated Sucessfully")
         }
-        catch(error){
+        catch (error) {
             console.error(error)
             toast.error("Fail To Update Lyrics")
         }
@@ -653,22 +682,24 @@ export default function Lyrics({initialData,isEdit}:any){
 
     return (
         <div className='p-4 rounded-3xl'>
+
+            
             <div className="flex gap-4 mb-4">
-                {song.arrangement.map((a) => (
+                {lyrics.arrangement.map((a) => (
                     <Badge key={a.id}>
-                        {a.type}-
-                        {a.label}
+                        {/* {a.type} */}
+                         {a.label}
                     </Badge>
                 ))}
             </div>
             {
-                song.arrangement.map((section) => (
+                lyrics.arrangement.map((section) => (
                     <Section
                         key={section.id}
-                        lang="default"
                         label={section.label}
-
+                        lyrics={lyrics}
                         section={section}
+                        initialData = {initialData}
 
                         onRemoveArrangment={removeArrangment}
                         onUpdate={updateArrangement}
@@ -679,6 +710,7 @@ export default function Lyrics({initialData,isEdit}:any){
                         onDeleteLine={deleteLine}
 
                         onAddChord={addChord}
+                        onDeleteChord={deleteChord}
                         onUpdateChord={updateChord}
 
                         onMoveUp={moveSectionUp}

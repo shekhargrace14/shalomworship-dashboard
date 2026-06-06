@@ -14,19 +14,23 @@ export type SongBasicFormData = {
   status: StatusType
   searchVariant: string[]
   searchVariantInTitle: boolean
+  
 }
 
-export type SongLyricsFormData = {
-  version: VersionType
-  content: string
-  lyrics: string
-  lines: any
+export type SongLyricsSettingFormData = {
   isChords: boolean
   isTranslation: boolean
   key: string
   bpm: string
   time: string
   tempo?: TempoType
+}
+
+export type SongLyricsFormData = {
+  content: string
+  lyrics: string
+  lines: any
+
 }
 
 export type SongSeoFormData = {
@@ -122,17 +126,21 @@ export const getSongBasicFormData = (initialData?: any) => ({
     searchVariantInTitle: initialData?.searchVariantInTitle || false,
 
 })
-export const getSongLyricsFormData = (initialData?: any) => ({
+export const getSongLyricsSettingFormData = (initialData?: any) => ({
     version: initialData?.version || VersionType.version_5,
-    content: initialData?.content || "",
-    lyrics: initialData?.lyrics || "",
-    lines: initialData?.lines || "",
     isChords: initialData?.isChords || false,
     isTranslation: initialData?.isTranslation || false,
     key: initialData?.key || "",
     bpm: initialData?.bpm || "",
     time: initialData?.time || "",
     tempo: initialData?.tempo,
+})
+export const getSongLyricsFormData = (initialData?: any) => ({
+    version: initialData?.version || VersionType.version_5,
+    content: initialData?.content || "",
+    lyrics: initialData?.lyrics || "",
+    lines: initialData?.lines || "",
+
 })
 export const getSongSeoFormData = (initialData?: any) => ({
     about: initialData?.about || "",

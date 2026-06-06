@@ -1,13 +1,8 @@
 "use client"
 
-import { useState } from "react"
-
 import { ArrowDown, ArrowUp, X } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
-
 import { Input } from "@/components/ui/input"
-
 import {
   Select,
   SelectContent,
@@ -15,188 +10,116 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
-type Chord = {
-  root: string
-  number: string
-  quality: string
-  space: string
-}
-
-const ROOTS = [
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "A",
-  "B",
-  "Bb",
-  "Ab",
-]
+import { useSongStore } from "@/store/useSongStore"
+import { getNashville } from "@/utils/getNashville"
+import NashvilleHelpPopup from "@/components/NashvilleHelpPopup"
 
 const QUALITIES = [
   "major",
-  "minor",
   "m",
   "m7",
-  "sus4",
   "maj7",
+  "sus4",
+  "dim"
 ]
+
 type Props = {
   line: any,
   sectionId: any,
-  onAddChord: (
-
-    sectionId: number,
-    lineId: number
-  ) => void
+  onAddChord: (sectionId: number, lineId: number) => void
   onUpdateChord: any,
   onMoveChordLeft: any,
   onMoveChordRight: any,
+  initialData: any,
+  onDeleteChord: any,
 }
 
 export default function ChordsEditor({
   line,
   sectionId,
   onAddChord,
+  onDeleteChord,
   onUpdateChord,
   onMoveChordLeft,
   onMoveChordRight,
-
 }: Props) {
 
-  // console.log(
-  //   "CHORDS LENGTH",
-  //   line.chords.length,
-  //   line.chords
-  // )
-
-  const [showChordEditor, setShowChordEditor] = useState(false);
-
-
+  // const key = useSongStore((state) => state.key)
+  const key = "C"
 
   return (
     <div className="space-y-6">
       {/* HEADER */}
       <div className="flex items-center justify-between">
-        <h2 className="text-foreground">
-          Chords
+        <div className="flex gap-2 justify-center items-center">
+
+        <h2 className="text-foreground font-semibold">
+          Chords (Key: {key ? key : "-"})
         </h2>
+        <NashvilleHelpPopup key={"C"}/>
+        </div>
 
         <Button
           type="button"
           variant="outline"
-          onClick={() => {
-            // console.log("BUTTON CLICKED")
-            setShowChordEditor(true)
-            onAddChord(
-              sectionId,
-              line.id
-            )
-
-          }}
+          onClick={() => onAddChord(sectionId, line.id)}
         >
           + Add chord
         </Button>
       </div>
 
-      {line.chords.length > 0 ?
-
+      {line.chords.length > 0 ? (
         <div className="space-y-5">
-          <p>
-            Total chords:
-            {line.chords.length}
+          <p className="text-sm text-muted-foreground">
+            Total chords: {line.chords.length}
           </p>
-          {line.chords.map(
-            (chord: any, index: any) => (
+
+          {line.chords.map((chord: any, index: any) => {
+            // Evaluates instantly regardless of whether the user typed 'bb', 'F#', 'g', etc.
+            // const currentNashville = getNashville(key, chord.root, chord.bass) ?? ""
+
+            return (
               <div
-                key={index}
-                className="
-              flex
-              justify-between
-              gap-4
-              group
-              "
+                key={chord.id || index}
+                className="flex items-end justify-between gap-4 group border-b pb-4 last:border-0 last:pb-0"
               >
-                <div className="w-[15%] space-y-2 ">
-                  <label>
-                    Root {chord.root}
+                {/* ROOT */}
+                <div className="w-[12%] space-y-2">
+                  <label className="text-xs font-medium text-muted-foreground">
+                    Root
                   </label>
-
-                  <Select
-                    value={chord.root}
-
-                    onValueChange={(value) =>
-                      onUpdateChord(
-                        sectionId,
-                        line.id,
-                        index,
-                        "root",
-                        value
-                      )
-                    }
-                  >
-                    <SelectTrigger
-                      className="w-20"
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-
-                    <SelectContent>
-                      {ROOTS.map(
-                        (root) => (
-                          <SelectItem
-                            key={root}
-                            value={root}
-                          >
-                            {root}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* NUMBER */}
-                <div className="w-[15%] space-y-2 ">
-                  <label>
-                    Number
-                  </label>
-
                   <Input
-                    className=""
-                    value={
-                      chord.number
-                    }
-                    onChange={(e) =>
-                      onUpdateChord(
-                        sectionId,
-                        line.id,
-                        index,
-                        "number",
-                        Number(e.target.value)
+                    value={chord.root ?? ""}
+                    placeholder="e.g. F#, Bb"
+                    onChange={(e) => {
 
-                      )
+                      const val = e.target.value;
+                      // 1. Force the first character to be Uppercase, and subsequent characters to be Lowercase
+                      const formattedVal = val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
+                      // Allows letters and the symbols # or b
+                      if (formattedVal === "" || /^[a-gA-G#b]+$/.test(formattedVal)) {
+                        onUpdateChord(
+                          sectionId,
+                          line.id,
+                          index,
+                          "root",
+                          formattedVal
+                        )
+                      }
                     }
 
+                    }
                   />
                 </div>
 
                 {/* QUALITY */}
-                <div className="w-[15%] space-y-2 ">
-                  <label>
+                <div className="w-[12%] space-y-2">
+                  <label className="text-xs font-medium text-muted-foreground">
                     Quality
                   </label>
-
                   <Select
-
-                    value={
-                      chord.quality
-                    }
-                    onValueChange={(
-                      value
-                    ) =>
+                    value={chord.quality || "major"}
+                    onValueChange={(value) =>
                       onUpdateChord(
                         sectionId,
                         line.id,
@@ -206,132 +129,196 @@ export default function ChordsEditor({
                       )
                     }
                   >
-                    <SelectTrigger
-                      className="w-24"
-
-                    >
+                    <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>
-
                     <SelectContent>
-                      {QUALITIES.map(
-                        (
-                          quality
-                        ) => (
-                          <SelectItem
-                            key={
-                              quality
-                            }
-                            value={
-                              quality
-                            }
-                          >
-                            {
-                              quality
-                            }
-                          </SelectItem>
-                        )
-                      )}
+                      {QUALITIES.map((quality) => (
+                        <SelectItem key={quality} value={quality}>
+                          {quality}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
-
-                {/* POSITION */}
-                <div className="w-[15%] space-y-2 ">
-                  <label>
-                    Position
+                {/* NASHVILLE */}
+                <div className="w-[12%] space-y-2">
+                  <label className="text-xs font-medium text-muted-foreground">
+                    Nashville
                   </label>
-
                   <Input
-                    value={
-                      chord.space
-                    }
+                    value={chord.nashville || 0}
+                    placeholder="e.g. 1, 6, 4, 5"
                     onChange={(e) =>
                       onUpdateChord(
                         sectionId,
                         line.id,
                         index,
-                        "position",
+                        "nashville",
                         Number(e.target.value)
                       )
                     }
                   />
                 </div>
 
-                {/* FUNCTIONS */}
-                <div className="w-[15%]">
-                  <div className={`h-full hidden transition group-hover:flex items-center justify-between`}>
-                    <Button size="icon" variant="outline" onClick={() => onMoveChordLeft(sectionId, line.id, chord.id)}>
-                      <ArrowUp />
-                    </Button>
+                {/* BASS */}
+                <div className="w-[12%] space-y-2">
+                  <label className="text-xs font-medium text-muted-foreground">
+                    Bass <span className="text-[10px] opacity-60">(Optional)</span>
+                  </label>
+                  <Input
+                    value={chord.bass ?? ""}
+                    placeholder="e.g. F#, Bb"
+                    onChange={(e) => {
 
-                    <Button size="icon" variant="outline" onClick={() => onMoveChordRight(sectionId, line.id, chord.id)}>
-                      <ArrowDown />
+                      const val = e.target.value;
+                      // 1. Force the first character to be Uppercase, and subsequent characters to be Lowercase
+                      const formattedVal = val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
+                      // Allows letters and the symbols # or b
+                      if (formattedVal === "" || /^[a-gA-G#b]+$/.test(formattedVal)) {
+                        onUpdateChord(
+                          sectionId,
+                          line.id,
+                          index,
+                          "bass",
+                          formattedVal
+                        )
+                      }
+                    }
+
+                    }
+                  />
+                </div>
+                {/* BASS NASHVILLE */}
+                {/* <div className="w-[12%] space-y-2">
+                  <label className="text-xs font-medium text-muted-foreground">
+                    Bass Nashville
+                  </label>
+                  <Input
+                    value={chord.bassNash ?? null}
+                    placeholder="e.g. 1, 6, 4, 5"
+                    onChange={(e) =>
+                      onUpdateChord(
+                        sectionId,
+                        line.id,
+                        index,
+                        "bassNash",
+                        Number(e.target.value)
+                      )
+                    }
+                  />
+                </div> */}
+
+                {/* POSITION */}
+                <div className="w-[12%] space-y-2">
+                  <label className="text-xs font-medium text-muted-foreground">
+                    Position
+                  </label>
+                  <Input
+                    value={chord.position ?? ""}
+                    placeholder="e.g. 5, 18..."
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      // Allow an empty string (so they can backspace) or digits only
+                      if (val === "" || /^[0-9]+$/.test(val)) {
+                        onUpdateChord(
+                          sectionId,
+                          line.id,
+                          index,
+                          "position",
+                          val === "" ? "" : Number(val)
+                        );
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* FUNCTIONS */}
+                <div className="w-[12%] flex items-center justify-end gap-1 h-10">
+                  <div className="hidden transition group-hover:flex items-center gap-1">
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="h-8 w-8"
+                      onClick={() => onMoveChordLeft(sectionId, line.id, chord.id)}
+                    >
+                      <ArrowUp className="h-4 w-4" />
                     </Button>
-                    {/* DELETE */}
 
                     <Button
                       size="icon"
                       variant="outline"
-                      className="text-red-500"
-                    // onClick={() => onDeleteLine(section.id, line.id)}
+                      className="h-8 w-8"
+                      onClick={() => onMoveChordRight(sectionId, line.id, chord.id)}
                     >
-                      <X />
+                      <ArrowDown className="h-4 w-4" />
+                    </Button>
+
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                      onClick={() => onDeleteChord(sectionId, line.id, chord.id)}
+                    >
+                      <X className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
 
                 {/* PREVIEW */}
-                <div className="w-[10%] flex items-end justify-center">
-                  <div
-                    className="
-                    flex items-end gap-1
+                <div className="w-[10%] flex justify-end">
+                  <div className="grid items-center gap-1 rounded-xl bg-slate-900 px-2 py-2 text-white w-fit justify-center shadow-sm">
+                    <div className="flex items-center justify-center">
 
-                    rounded-2xl
+                      <span className="text-sm font-bold">
+                        {chord.root || "?"}
+                      </span>
 
-                    bg-slate-900
+                      {chord.quality && chord.quality !== "major" && (
+                        <span className="text-xs font-medium text-slate-300">
+                          {chord.quality === "major" ? "" : chord.quality}
+                        </span>
+                      )}
 
-                    px-4 py-3
+                      {chord.bass && (
+                        <>
+                          /
+                          <span className="text-sm font-semibold text-slate-400">
+                            {chord.bass}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <div className="">
+                      <span className="text-xs ml-0 px-1.5 py-0.5 rounded bg-slate-800 text-emerald-400 font-mono font-bold">
+                        {chord.nashville}
+                        {chord.quality !== "major" && (
+                          chord.quality
+                        )}
+                      </span>
+                    </div>
 
-                    text-white
-                  "
-                  >
-                    <span
-                      className="
-                      text-lg
-                      font-semibold
-                    "
-                    >
-                      {chord.root}
-                    </span>
-
-
-
-                    <span
-                      className="
-                      text-sm
-                      opacity-80
-                    "
-                    >
-                      {chord.quality}
-                    </span>
-                    /
-                    <span
-                      className="
-                      text-base
-                      opacity-80
-                    "
-                    >
-                      {chord.number}
-                    </span>
+                    {/* {currentNashville ? (
+                      <span className="text-xs ml-1.5 px-1.5 py-0.5 rounded bg-slate-800 text-emerald-400 font-mono font-bold">
+                        {currentNashville}
+                      </span>
+                    ) : (
+                      <span className="text-[10px] ml-1.5 px-1.5 py-0.5 rounded bg-slate-800 text-amber-500 font-mono">
+                        -
+                      </span>
+                    )} */}
                   </div>
                 </div>
+
               </div>
             )
-          )}
+          })}
         </div>
-        : "Click on Add Chord"
-      }
+      ) : (
+        <div className="text-sm text-muted-foreground border-2 border-dashed rounded-lg p-6 text-center">
+          Click on Add Chord to begin styling this section.
+        </div>
+      )}
     </div>
   )
 }
