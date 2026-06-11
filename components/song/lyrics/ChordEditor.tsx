@@ -53,10 +53,10 @@ export default function ChordsEditor({
       <div className="flex items-center justify-between">
         <div className="flex gap-2 justify-center items-center">
 
-        <h2 className="text-foreground font-semibold">
-          Chords (Key: {key ? key : "-"})
-        </h2>
-        <NashvilleHelpPopup key={"C"}/>
+          <h2 className="text-foreground font-semibold">
+            Chords (Key: {key ? key : "-"})
+          </h2>
+          <NashvilleHelpPopup key={"C"} />
         </div>
 
         <Button
@@ -215,20 +215,20 @@ export default function ChordsEditor({
                     Position
                   </label>
                   <Input
-                    value={chord.position ?? ""}
+                    type="number"
+                    min={0}
+                    value={chord.position ?? 0}
                     placeholder="e.g. 5, 18..."
                     onChange={(e) => {
-                      const val = e.target.value;
-                      // Allow an empty string (so they can backspace) or digits only
-                      if (val === "" || /^[0-9]+$/.test(val)) {
-                        onUpdateChord(
-                          sectionId,
-                          line.id,
-                          index,
-                          "position",
-                          val === "" ? "" : Number(val)
-                        );
-                      }
+                      const value = Number(e.target.value)
+
+                      onUpdateChord(
+                        sectionId,
+                        line.id,
+                        index,
+                        "position",
+                        Math.max(0, value)
+                      )
                     }}
                   />
                 </div>

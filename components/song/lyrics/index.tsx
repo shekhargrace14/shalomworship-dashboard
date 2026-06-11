@@ -57,14 +57,16 @@ export default function Lyrics({ initialData, isEdit }: any) {
     // console.log(initialData.lyrics, "initialData")
 
     const [lyrics, setLyrics] = useState<Lyrics>({ arrangement: [] })
+    const generateId = () => Date.now() + Math.random()
 
-    console.log(lyrics, "lyrics")
+    // console.log(lyrics, "lyrics")
 
     useEffect(() => {
         if (!initialData?.lyrics) return
         setLyrics(initialData.lyrics)
     }, [initialData])
 
+    // section
     const addArrangement = () => {
         setLyrics((prev) => ({
             ...prev,
@@ -108,7 +110,39 @@ export default function Lyrics({ initialData, isEdit }: any) {
 
         }))
     }
+    const duplicateSection = (sectionId: number) => {
+        setLyrics(prev => ({
+            ...prev,
 
+            arrangement: prev.arrangement.flatMap(section => {
+                if (section.id !== sectionId) {
+                    return [section]
+                }
+
+                const duplicatedSection = {
+                    ...section,
+
+                    id: Date.now(),
+
+                    lines: section.lines.map(line => ({
+                        ...line,
+
+                        id: Date.now() + Math.random(),
+
+                        chords: line.chords.map(chord => ({
+                            ...chord,
+                            id: Date.now() + Math.random(),
+                        })),
+                    })),
+                }
+
+                return [
+                    section,
+                    duplicatedSection,
+                ]
+            }),
+        }))
+    }
     // Line
 
     const addLine = (sectionId: number) => {
@@ -259,6 +293,45 @@ export default function Lyrics({ initialData, isEdit }: any) {
         }))
     }
 
+    const duplicateLine = (
+        sectionId: number,
+        lineId: number
+    ) => {
+        setLyrics(prev => ({
+            ...prev,
+
+            arrangement: prev.arrangement.map(section =>
+                section.id === sectionId
+                    ? {
+                        ...section,
+
+                        lines: section.lines.flatMap(line => {
+                            if (line.id !== lineId) {
+                                return [line]
+                            }
+
+                            const duplicatedLine = {
+                                ...line,
+
+                                id: generateId(),
+
+                                chords: line.chords.map(chord => ({
+                                    ...chord,
+                                    id: generateId(),
+                                })),
+                            }
+
+                            return [
+                                line,
+                                duplicatedLine,
+                            ]
+                        }),
+                    }
+                    : section
+            ),
+        }))
+    }
+    
     // Chords
 
     const addChord = (
@@ -359,38 +432,38 @@ export default function Lyrics({ initialData, isEdit }: any) {
         }))
     }
 
-const deleteChord = (
-  sectionId: number,
-  lineId: number,
-  chordId: number,
-) => {
-  setLyrics((prev) => ({
-    ...prev,
+    const deleteChord = (
+        sectionId: number,
+        lineId: number,
+        chordId: number,
+    ) => {
+        setLyrics((prev) => ({
+            ...prev,
 
-    arrangement: prev.arrangement.map((section) =>
-      section.id === sectionId
-        ? {
-            ...section,
+            arrangement: prev.arrangement.map((section) =>
+                section.id === sectionId
+                    ? {
+                        ...section,
 
-            lines: section.lines.map((line) =>
-              line.id === lineId
-                ? {
-                    ...line,
+                        lines: section.lines.map((line) =>
+                            line.id === lineId
+                                ? {
+                                    ...line,
 
-                    chords: line.chords.filter(
-                      (chord) => chord.id !== chordId
-                    ),
-                  }
-                : line
+                                    chords: line.chords.filter(
+                                        (chord) => chord.id !== chordId
+                                    ),
+                                }
+                                : line
+                        ),
+                    }
+                    : section
             ),
-          }
-        : section
-    ),
-  }))
-}
+        }))
+    }
 
 
-        // Move Chords
+    // Move Chords
     const moveChordLeft = (
         sectionId: number,
         lineId: number,
@@ -653,7 +726,7 @@ const deleteChord = (
     }
 
 
-    
+
 
 
     // SAVE DATA
@@ -683,12 +756,12 @@ const deleteChord = (
     return (
         <div className='p-4 rounded-3xl'>
 
-            
+
             <div className="flex gap-4 mb-4">
                 {lyrics.arrangement.map((a) => (
                     <Badge key={a.id}>
                         {/* {a.type} */}
-                         {a.label}
+                        {a.label}
                     </Badge>
                 ))}
             </div>
@@ -699,15 +772,18 @@ const deleteChord = (
                         label={section.label}
                         lyrics={lyrics}
                         section={section}
-                        initialData = {initialData}
+                        initialData={initialData}
 
                         onRemoveArrangment={removeArrangment}
                         onUpdate={updateArrangement}
+                        onUpdateSectionField={updateArrangement} 
+                        onDuplicateSection={duplicateSection}
 
                         onUpdateLine={updateLine}
                         onAddLine={addLine}
                         onUpdateLineField={updateLineField}
                         onDeleteLine={deleteLine}
+                        onDuplicateLine={duplicateLine}
 
                         onAddChord={addChord}
                         onDeleteChord={deleteChord}

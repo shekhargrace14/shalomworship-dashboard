@@ -1,5 +1,5 @@
 'use client';
-import { ChevronUp, Trash2 } from 'lucide-react';
+import { ChevronUp, CopyPlus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { ChevronDown, ArrowUp, ArrowDown, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -11,6 +11,11 @@ import { Badge } from '@/components/ui/badge';
 import ChordEditor from './ChordEditor';
 import { SONG_SECTION_OPTIONS } from "@/lib/constants/song-sections"
 import { getLanguageName } from '@/utils/getLanguageName';
+import Render from './render';
+import { Field } from '@/components/ui/field';
+import { Label } from '@/components/ui/label';
+import { se } from 'date-fns/locale';
+import { RenderLineWithChords } from './renderLineWithChords';
 
 const sectionOptions = SONG_SECTION_OPTIONS
 
@@ -39,15 +44,20 @@ type Props = {
   onAddChord: (sectionId: number, lineId: number) => void;
   onDeleteChord: any;
   onUpdateChord: any;
-  
+
   onMoveUp: any;
   onMoveDown: any;
   onMoveLineUp: (sectionId: number, lineId: number) => void;
   onMoveLineDown: any;
   onMoveChordLeft: any;
   onMoveChordRight: any;
-  initialData:any;
-  lyrics:any
+  initialData: any;
+  lyrics: any;
+
+  onDuplicateSection: any;
+  onDuplicateLine: any;
+  onUpdateSectionField: any;
+
 };
 
 export default function Section({
@@ -55,14 +65,18 @@ export default function Section({
   lyrics,
   section,
   onRemoveArrangment,
+  onDuplicateSection,
   onUpdate,
+  onUpdateSectionField,
 
   label,
+
   onAddLine,
   onDeleteLine,
   onUpdateLine,
   onUpdateLineField,
-  
+  onDuplicateLine,
+
   onAddChord,
   onDeleteChord,
   onUpdateChord,
@@ -77,10 +91,10 @@ export default function Section({
   onMoveChordRight,
 }: Props) {
   // const [language, setLanguage] = useState(lang);
-  // console.log(initialData, "initialData section")
+  console.log(initialData.lyrics.arrangement, "initialData section")
 
 
-  const nativeLanguage = getLanguageName( initialData.language)
+  const nativeLanguage = getLanguageName(initialData.language)
   const [lable, setLable] = useState('New Section');
   const [openLines, setOpenLines] = useState<number[]>([]);
   const [sectionOpen, setSectionOpen] = useState(false);
@@ -100,22 +114,13 @@ export default function Section({
 
   return (
     <>
-      <Card
-        className="
-        overflow-hidden
-        border border-accent-foreground border-l-4
-        rounded-xl
-        mb-4
-       p-0
-       hover:bg-background
-      "
-      >
+      <Card className="overflow-hidden border border-accent-foreground border-l-4 rounded-xl mb-4 p-0 hover:bg-background">
         {/* HEADER */}
         <div
           className="flex items-center justify-between border-b border-border  px-4 py-4  cursor-pointer"
           onClick={() => handleOpen()}
         >
-          
+
           {/* LEFT */}
           <div className="flex items-center gap-4">
             {/* <ChevronDown size={16} /> */}
@@ -129,12 +134,33 @@ export default function Section({
             <h2 className="text-base font-semibold text-foreground">
               {section.label}
             </h2>
+            <p>
+              {section.sectionTranspose
+                ? (
+                  `Transpose ${section.step > 0
+                    ? `+${section.step}`
+                    : `${section.step}`}`
+                )
+                : ""
+              }
+            </p>
           </div>
 
           {/* RIGHT */}
           <div className="flex items-center gap-3">
             <Button
-            type="button"
+              type="button"
+              size="icon"
+              variant="outline"
+              onClick={(e) => {
+                (e.stopPropagation(), onDuplicateSection(section.id));
+              }}
+            >
+              <CopyPlus />
+
+            </Button>
+            <Button
+              type="button"
               size="icon"
               variant="outline"
               onClick={(e) => {
@@ -145,7 +171,7 @@ export default function Section({
             </Button>
 
             <Button
-            type="button"
+              type="button"
               size="icon"
               variant="outline"
               onClick={(e) => {
@@ -156,13 +182,10 @@ export default function Section({
             </Button>
 
             <Button
-            type="button"
+              type="button"
               size="icon"
               variant="outline"
-              className="
-
-              text-red-500
-            "
+              className="text-red-500"
               onClick={() => onRemoveArrangment(section.id)}
             >
               <X />
@@ -172,40 +195,24 @@ export default function Section({
 
         {/* CONTENT */}
         {sectionOpen && (
-          <CardContent className="space-y-8 px-4 pt-0 pb-8">
+          <CardContent className="space-y-4 px-4 pt-0 pb-8">
             {/* TOP GRID */}
-            <div
-              className="
-            grid
-            grid-cols-1
-            gap-6
-
-            md:grid-cols-4
-          "
-            >
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
               {/* TYPE */}
               <div className="space-y-2">
-                <label
-                  className="
-                text-base
-                font-semibold
-                text-foreground
-              "
-                >
-                  Type
-                </label>
+                <label className="text-base font-semibold text-foreground"> Type </label>
 
-                <Select value={section.type} onValueChange={(value) => onUpdate(section.id, 'type', value)}>
+                <Select value={section.type} onValueChange={(value) => onUpdateSectionField(section.id, 'type', value)}>
                   <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Select a fruit"/>
+                    <SelectValue placeholder="Select a fruit" />
                   </SelectTrigger>
                   <SelectContent>
-                    {sectionOptions.map((item,index) => (
-                      
-                        <SelectItem key={index} value={item}>
-                          {item}
-                        </SelectItem>
-                      
+                    {sectionOptions.map((item, index) => (
+
+                      <SelectItem key={index} value={item}>
+                        {item}
+                      </SelectItem>
+
                     ))}
                   </SelectContent>
                 </Select>
@@ -213,72 +220,83 @@ export default function Section({
 
               {/* ENGLISH */}
               <div className="space-y-2">
-                <label
-                  className="
-                text-base
-                font-semibold
-                text-foreground
-              "
-                >
-                  English label
-                </label>
-
+                <label className="text-base font-semibold text-foreground">English label</label>
                 <Input
                   defaultValue={section.label}
                   onChange={(e) => {
                     handleOnChange(e.target.value);
-                    onUpdate(section.id, 'label', e.target.value);
+                    onUpdateSectionField(section.id, 'label', e.target.value);
                   }}
                 />
               </div>
 
               {/* Default / HINDI */}
               <div className="space-y-2">
-                <label
-                  className="
-                text-base
-                font-semibold
-                text-foreground
-              "
-                >
-                  {nativeLanguage} label <span className='text-xs'> (Optional) </span> 
+                <label className="text-base font-semibold text-foreground">
+                  {nativeLanguage} label <span className='text-xs'> (Optional) </span>
                 </label>
-
                 <Input />
               </div>
 
               {/* REPEAT */}
               <div className="space-y-2">
-                <label
-                  className="
-                text-base
-                font-semibold
-                text-foreground
-              "
-                >
-                  Repeat
-                </label>
-
+                <label className="text-base font-semibold text-foreground">Repeat</label>
                 <Input
                   type="number"
                   defaultValue={1}
                   onChange={(e) => {
                     handleOnChange(e.target.value);
-                    onUpdate(section.id, 'repeat', e.target.value);
+                    onUpdateSectionField(section.id, 'repeat', e.target.value);
                   }}
                 />
               </div>
+
+              {/* TRANSPOSE  */}
+              <Field orientation="horizontal">
+                <Checkbox
+                  id="terms-checkbox"
+                  name="terms-checkbox"
+                  checked={section.sectionTranspose}
+                  onCheckedChange={(checked) => onUpdate(section.id, 'sectionTranspose', !!checked)}
+
+                />
+                <Label htmlFor="terms-checkbox">Transpose</Label>
+              </Field>
+              {/* TRANSPOSE STEP */}
+              {section.sectionTranspose &&
+                <div className="space-y-2">
+                  <label className="text-base font-semibold text-foreground">STEP</label>
+                  <Input
+                    type="number"
+                    defaultValue={0}
+                    min={-11}
+                    max={11}
+                    value={section.step}
+                    onChange={(e) => {
+                      const value = Number(e.target.value)
+                      onUpdate(
+                        section.id,
+                        "step",
+                        Math.max(-11, Math.min(11, value))
+                      )
+                      handleOnChange(value)
+                    }}
+                  />
+                </div>
+              }
+              {/* {console.log(section)} */}
+
             </div>
 
             {/* LINE CARD */}
             {section.lines.map((line: any, index: any) => (
               <div
-                className="overflow-hidden rounded-xl border"
                 key={line.id}
+                className="overflow-hidden rounded-xl border"
               >
                 {/* LINE HEADER */}
                 <div className="flex items-center justify-between border-b bg-muted/30 px-4 py-2"
-                  onClick={() => toggleLine(line.id)}
+                  onClick={(e) => { e.stopPropagation(), toggleLine(line.id) }}
                 >
                   <div className="flex items-center gap-3">
                     {openLines[0] === line.id ? (
@@ -289,17 +307,28 @@ export default function Section({
 
                     <span className="text-base font-semibold text-foreground">
                       Line {index + 1}
-                      {line.lyrics.english}
                     </span>
+                    <div className="flex flex-col border-l-2 pl-1">
+                      {/* <Render line={line} /> */}
+                      <RenderLineWithChords line={line}/>
+                      {/* <div className="" style={{ marginLeft: `${line.indent}px` }}>
+                        {console.log(line.indent, "indent")}
+                        {line.lyrics.english}
+                      </div> */}
+                    </div>
                   </div>
 
                   {/* RIGHT */}
                   <div className="flex items-center gap-3">
-                    <Button type="button" size="icon" variant="outline" onClick={() => onMoveLineUp(section.id, line.id)}>
+                    <Button type="button" size="icon" variant="outline" onClick={(e) => { (e.stopPropagation(), onDuplicateLine(section.id, line.id)); }}>
+                      <CopyPlus />
+                    </Button>
+
+                    <Button type="button" size="icon" variant="outline" onClick={(e) => { e.stopPropagation(), onMoveLineUp(section.id, line.id) }}>
                       <ArrowUp />
                     </Button>
 
-                    <Button type="button" size="icon" variant="outline" onClick={() => onMoveLineDown(section.id, line.id)}>
+                    <Button type="button" size="icon" variant="outline" onClick={(e) => { e.stopPropagation(), onMoveLineDown(section.id, line.id) }}>
                       <ArrowDown />
                     </Button>
 
@@ -358,15 +387,7 @@ export default function Section({
 
                         {/* TRANSLATION */}
                         <div className="space-y-3 flex gap-4 justify-between">
-                          <label
-                            className="
-                        w-fit
-                      text-base
-                      text-slate-400
-                    "
-                          >
-                            Translation
-                          </label>
+                          <label className="w-fit text-base text-slate-400">Translation</label>
 
                           <Input
                             className="w-[80%]"
@@ -386,9 +407,11 @@ export default function Section({
                         {/* <Input type="number" defaultValue={0} /> */}
                         <Input
                           type="number"
+                          min={0}
                           value={line.indent}
                           onChange={(e) => onUpdateLineField(section.id, line.id, 'indent', Number(e.target.value))}
                         />
+                        <p>e.g. 4,8,12,16</p>
                       </div>
 
                       {/* BREAK */}
@@ -398,7 +421,7 @@ export default function Section({
                           onCheckedChange={(checked) => onUpdateLineField(section.id, line.id, 'sectionBreak', !!checked)}
                         />
                         <span className="text-base text-foreground">
-                          Section break after this line
+                          Line break
                         </span>
                       </div>
                     </div>
@@ -409,7 +432,7 @@ export default function Section({
 
             {/* ADD LINE */}
             <Button
-            type="button"
+              type="button"
               variant="outline"
               className="w-full"
               // onClick={addLine}
