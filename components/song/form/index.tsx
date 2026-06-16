@@ -128,7 +128,7 @@ export default function SongForm({
             isChords: initialData?.title || false,
             isTranslation: initialData?.title || false,
             language: initialData?.title || LanguageType.en,
-            version: initialData?.title || VersionType.version_3,
+            version: initialData?.title || VersionType.version_4,
             key: initialData?.title || "",
             bpm: initialData?.title || "",
             time: initialData?.title || "",

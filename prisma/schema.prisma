@@ -17,7 +17,7 @@ model song {
   isChords             Boolean?      @default(false)
   isTranslation        Boolean?      @default(false)
   language             LanguageType? @default(en)
-  version              VersionType?  @default(version_3)
+  version              VersionType?  @default(version_4)
   key                  String?
   bpm                  String?
   time                 String?
@@ -90,6 +90,26 @@ model artist {
   artistEvents EventArtist[]
   songCredits  SongCredit[]
   eventCredits EventCredit[]
+}
+
+model user {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  username    String?
+  email        String   @unique
+  password     String
+  verified       Boolean  @default(false)
+  role         Role     @default(USER)
+
+  image       String?
+  bio         String?
+  phone       String?
+  website     String?
+
+  isActive     Boolean  @default(true)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model author {
@@ -195,6 +215,28 @@ model season {
   song      song[]
 }
 
+model submission {
+
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  type        SubmissionType
+
+  status      SubmissionStatus @default(PENDING)
+
+  name        String?
+  email       String?
+
+  title       String?
+  message     String?
+
+  payload     Json?
+
+  userId      String? @db.ObjectId
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 // ENUM
 
 enum ArtistType {
@@ -234,6 +276,7 @@ enum VersionType {
 
 enum StatusType {
   DRAFT
+  REVIEW
   PUBLISH
   ARCHIVE
   UPCOMING
@@ -302,6 +345,31 @@ enum CreditRole {
 enum CreditDepartment {
   CAST
   CREW
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+  AUTHOR
+  USER
+}
+
+enum SubmissionType {
+  SONG_REQUEST
+  LYRICS_SUBMISSION
+  SUGGESTION
+  CONTACT
+  ARTIST_REQUEST
+  BUG_REPORT
+}
+
+enum SubmissionStatus {
+  PENDING
+  REVIEWING
+  APPROVED
+  REJECTED
+  COMPLETED
 }
 
 // Intermediate table for Song  Artist and Role many-to-many

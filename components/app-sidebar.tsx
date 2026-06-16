@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import {
   IconCalendar,
   IconCamera,
@@ -11,6 +10,7 @@ import {
   IconFileDescription,
   IconFileWord,
   IconFolder,
+  IconForms,
   IconHelp,
   IconInnerShadowTop,
   IconListDetails,
@@ -34,8 +34,13 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { ModeToggle } from "./ModeToggle"
+import { useUserStore } from "@/store/useUserStore"
+import { useEffect, useState } from "react"
 
 const data = {
+
+
+
   user: {
     name: "shadcn",
     email: "m@example.com",
@@ -62,15 +67,20 @@ const data = {
       url: "/category",
       icon: IconFolder,
     },
-    // {
-    //   title: "Team",
-    //   url: "#",
-    //   icon: IconUsers,
-    // },
+    {
+      title: "User",
+      url: "/user",
+      icon: IconUsers,
+    },
     {
       title: "Event",
       url: "/event",
       icon: IconCalendar,
+    },
+        {
+      title: "Submission",
+      url: "/submission",
+      icon: IconForms,
     },
   ],
   navClouds: [
@@ -158,6 +168,23 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+  const [user, setUser] = useState<any>()
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const res =
+        await fetch(
+          "/api/auth/me"
+        )
+
+      const data =
+        await res.json()
+        setUser(data.user)
+    }
+    fetchUsers()
+  },[])
+
+  // console.log(user,"menubar")
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -169,7 +196,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="/dashboard">
                 {/* <IconInnerShadowTop className="size-5!" /> */}
-                <img src="./logo.png" alt="" className="size-5!"/>
+                <img src="./logo.png" alt="" className="size-5!" />
                 <span className="text-base font-semibold">Shalom Worship</span>
               </a>
               {/* <ModeToggle/> */}
@@ -183,7 +210,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )

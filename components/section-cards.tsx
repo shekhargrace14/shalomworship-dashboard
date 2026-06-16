@@ -37,12 +37,14 @@ export function SectionCards() {
   const [totalSongs, setTotalSongs] = useState(1);
   const [totalCategories, setTotalCategories] = useState(1);
   const [totalArtist, setTotalArtist] = useState(1);
+  const [totalEvent, setTotalEvents] = useState(1);
 
   useEffect(() => {
     fetchSongs();
     fetchCategories();
     fetchArtists();
-  }, [totalSongs, totalCategories, totalArtist]);
+    fetchEvents();
+  }, [totalSongs, totalCategories, totalArtist, totalEvent]);
 
   async function fetchSongs() {
     const res = await fetch(`/api/song`);
@@ -58,6 +60,11 @@ export function SectionCards() {
     const res = await fetch(`/api/category`);
     const data = await res.json();
     setTotalCategories(data.total);
+  }
+    async function fetchEvents() {
+    const res = await fetch(`/api/event`);
+    const data = await res.json();
+    setTotalEvents(data.total);
   }
   const data = [
     {
@@ -78,6 +85,13 @@ export function SectionCards() {
       title: "Artists",
       link: "/artist",
       count: totalArtist,
+      description: "it gonna be fine",
+      text: "do it as much as you can, she will be back soon"
+    },
+        {
+      title: "Events",
+      link: "/event",
+      count: totalEvent,
       description: "it gonna be fine",
       text: "do it as much as you can, she will be back soon"
     },

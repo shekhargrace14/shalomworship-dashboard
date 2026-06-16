@@ -10,8 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useSongStore } from "@/store/useSongStore"
-import { getNashville } from "@/utils/getNashville"
 import NashvilleHelpPopup from "@/components/NashvilleHelpPopup"
 
 const QUALITIES = [

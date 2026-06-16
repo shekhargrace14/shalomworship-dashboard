@@ -3,168 +3,277 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
 
-import { useSort } from "@/hooks/useSort"
-import { song, StatusType } from "@prisma/client"
-import { Archive, ArrowDownUp, Trash2, X } from "lucide-react"
 import Link from "next/link"
 import { Badge } from "../ui/badge"
-import { IconCircleCheckFilled, IconLoader } from "@tabler/icons-react"
+
+import {
+  Archive,
+  Ellipsis,
+  Trash2,
+  X,
+} from "lucide-react"
+
+import {
+  IconCircleCheckFilled,
+  IconLoader,
+} from "@tabler/icons-react"
 
 type Props = {
-  data: song[]
+  data: any[]
   type: string
 }
 
 const statusIcons = {
-  PUBLISH: (<IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />),
+  PUBLISH: (
+    <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+  ),
+
   DRAFT: <IconLoader />,
-  TRASH: <Trash2 className="text-red-500" />,
-  ARCHIVE: <Archive className="text-yellow-500" />,
-  CANCELLED: <X className="text-red-500" />,
+
+  TRASH: (
+    <Trash2 className="text-red-500" />
+  ),
+
+  ARCHIVE: (
+    <Archive className="text-yellow-500" />
+  ),
+
+  CANCELLED: (
+    <X className="text-red-500" />
+  ),
+
+  PENDING: <Ellipsis />,
+
+  REVIEWING: <IconLoader />,
+
+  APPROVED: (
+    <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+  ),
+
+  REJECTED: (
+    <X className="text-red-500" />
+  ),
+
+  COMPLETED: (
+    <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+  ),
 }
 
-export default function DataTable({ data = [], type }: Props) {
-
-  const {
-    sortedData,
-    sortField,
-    handleSort
-  } = useSort(data, "createdAt")
-
-  const capitalCase = (s: any) =>
-    s
-      .toLowerCase()
-      .split(" ")
-      .map(
-        (word: any) =>
-          word.charAt(0).toUpperCase() +
-          word.slice(1)
-      )
-      .join(" ")
-
-
+export default function DataTable({
+  data = [],
+  type,
+}: Props) {
   return (
     <div className="mx-4 my-6">
+      <Table className="overflow-hidden rounded-lg border border-amber-400 mx-4 m-auto">
 
-    <Table className="overflow-hidden rounded-lg border border-amber-400  mx-4 m-auto" >
+        <TableHeader className="sticky top-0 z-10 bg-muted">
 
-      <TableHeader className="sticky top-0 z-10 bg-muted">
-        <TableRow>
+          <TableRow>
 
-          {/* 1. ID */}
-          {/* <TableHead onClick={() => handleSort("id")}>
-            id {sortField === "id" && <ArrowDownUp size={16} />}
-          </TableHead> */}
+            <TableHead>
+              Title
+            </TableHead>
 
-          {/* 2. TITLE */}
-          <TableHead onClick={() => handleSort("title")} >
-            <div className="flex items-center gap-2">
-              Title {sortField === "title" && <ArrowDownUp size={16} />}
-            </div>
-          </TableHead>
+            {(type === "song" ||
+              type === "submission") && (
+              <TableHead>
+                Status
+              </TableHead>
+            )}
 
-          {/*3. STATUS */}
-          <TableHead onClick={() => handleSort("status")}>
-            <div className="flex items-center gap-2">
-              Status {sortField === "status" && <ArrowDownUp size={16} />}
-            </div>
+            {type === "user" && (
+              <TableHead>
+                Role
+              </TableHead>
+            )}
 
-          </TableHead>
+            {type === "submission" && (
+              <TableHead>
+                Type
+              </TableHead>
+            )}
 
-          {/* 4. SLUG */}
-          <TableHead onClick={() => handleSort("slug")}>
-            <div className="flex items-center gap-2">
-              Slug {sortField === "slug" && <ArrowDownUp size={16} />}
-            </div>
-          </TableHead>
+            {type === "user" && (
+              <TableHead>
+                Email
+              </TableHead>
+            )}
 
-          {/* 5. KEY */}
-          <TableHead onClick={() => handleSort("key")}>
-            <div className="flex items-center gap-2">
-              Key {sortField === "key" && <ArrowDownUp size={16} />}
-            </div>
-          </TableHead>
+            {type === "song" && (
+              <TableHead>
+                Slug
+              </TableHead>
+            )}
 
-          {/* 6. CREATEDAT  */}
-          <TableHead onClick={() => handleSort("createdAt")}>
-            <div className="flex items-center gap-2">
-              Created {sortField === "createdAt" && <ArrowDownUp size={16} />}
-            </div>
-          </TableHead>
+            {type === "song" && (
+              <TableHead>
+                Key
+              </TableHead>
+            )}
 
-          {/* 7. UPDATEDAT  */}
-          <TableHead onClick={() => handleSort("updatedAt")}>
-            <div className="flex items-center gap-2">
-              Updated {sortField === "updatedAt" && <ArrowDownUp size={16} />}
-            </div>
-          </TableHead>
+            <TableHead>
+              Created
+            </TableHead>
 
-        </TableRow>
-      </TableHeader>
-
-      <TableBody>
-        {sortedData.map((item) => (
-          <TableRow key={item.id}>
-
-            {/* 1. ID */}
-
-            {/* <TableCell>{item.id}</TableCell> */}
-
-            {/* 2. TITLE */}
-            <TableCell>
-              <Link href={`/${type}/${item.id}`}>
-                {item.title}
-              </Link>
-            </TableCell>
-
-            {/*3. STATUS */}
-            <TableCell>
-
-              <Badge
-                variant="outline"
-                className="px-1.5 text-muted-foreground"
-              >
-                {statusIcons[item.status as keyof typeof statusIcons] ?? <IconLoader />}
-                {capitalCase(item.status)}
-              </Badge>
-            </TableCell>
-
-            {/* 4. SLUG */}
-            <TableCell>
-              {item.slug}
-            </TableCell>
-
-            {/* 5. KEY */}
-            <TableCell>
-
-              {item.key
-                ? item.key
-                : "-"
-              }
-            </TableCell>
-
-            {/* 6. CREATEDAT  */}
-            <TableCell>
-              {new Date(item.createdAt).toLocaleDateString()}
-            </TableCell>
-
-            {/* 7. UPDATEDAT  */}
-            <TableCell>
-              {new Date(item.updatedAt).toLocaleDateString()}
-            </TableCell>
+            <TableHead>
+              Updated
+            </TableHead>
 
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-    </div>
 
+        </TableHeader>
+
+        <TableBody>
+
+          {data?.map((item: any) => (
+
+            <TableRow key={item.id}>
+
+              {/* TITLE */}
+
+              <TableCell>
+
+                <Link
+                  href={`/${type}/${item.id}`}
+                >
+                  {item.title ||
+                    item.name ||
+                    "-"}
+                </Link>
+
+              </TableCell>
+
+              {/* STATUS */}
+
+              {(type === "song" ||
+                type === "submission") && (
+
+                <TableCell>
+
+                  <Badge
+                    variant="outline"
+                    className="px-1.5 text-muted-foreground"
+                  >
+                    {
+                      statusIcons[
+                        item.status as keyof typeof statusIcons
+                      ] ?? (
+                        <IconLoader />
+                      )
+                    }
+
+                    <span className="ml-2">
+                      {item.status}
+                    </span>
+
+                  </Badge>
+
+                </TableCell>
+
+              )}
+
+              {/* ROLE */}
+
+              {type === "user" && (
+
+                <TableCell>
+
+                  <Badge
+                    variant="outline"
+                    className="px-1.5 text-muted-foreground"
+                  >
+                    {item.role}
+                  </Badge>
+
+                </TableCell>
+
+              )}
+
+              {/* SUBMISSION TYPE */}
+
+              {type === "submission" && (
+
+                <TableCell>
+
+                  <Badge
+                    variant="outline"
+                    className="px-1.5 text-muted-foreground"
+                  >
+                    {item.type}
+                  </Badge>
+
+                </TableCell>
+
+              )}
+
+              {/* EMAIL */}
+
+              {type === "user" && (
+
+                <TableCell>
+                  {item.email}
+                </TableCell>
+
+              )}
+
+              {/* SONG SLUG */}
+
+              {type === "song" && (
+
+                <TableCell>
+                  {item.slug || "-"}
+                </TableCell>
+
+              )}
+
+              {/* SONG KEY */}
+
+              {type === "song" && (
+
+                <TableCell>
+                  {item.key || "-"}
+                </TableCell>
+
+              )}
+
+              {/* CREATED */}
+
+              <TableCell>
+
+                {item.createdAt
+                  ? new Date(
+                      item.createdAt
+                    ).toLocaleDateString()
+                  : "-"}
+
+              </TableCell>
+
+              {/* UPDATED */}
+
+              <TableCell>
+
+                {item.updatedAt
+                  ? new Date(
+                      item.updatedAt
+                    ).toLocaleDateString()
+                  : "-"}
+
+              </TableCell>
+
+            </TableRow>
+
+          ))}
+
+        </TableBody>
+
+      </Table>
+    </div>
   )
 }

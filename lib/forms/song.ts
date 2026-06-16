@@ -14,12 +14,13 @@ export type SongBasicFormData = {
   status: StatusType
   searchVariant: string[]
   searchVariantInTitle: boolean
+  isTranslation: boolean
+
   
 }
 
 export type SongLyricsSettingFormData = {
   isChords: boolean
-  isTranslation: boolean
   key: string
   bpm: string
   time: string
@@ -89,7 +90,7 @@ export const getDefaultSongData = () => ({
   slug: "",
   status: StatusType.DRAFT,
 
-  version: VersionType.version_5,
+  version: VersionType.version_4,
   content: "",
   lyrics: "",
   lines: "",
@@ -120,23 +121,22 @@ export const getDefaultSongData = () => ({
 export const getSongBasicFormData = (initialData?: any) => ({
     title: initialData?.title || "",
     language: initialData?.language || LanguageType.en,
+    isTranslation: initialData?.isTranslation || false,
     slug: initialData?.slug || "",
     status: initialData?.status || StatusType.DRAFT,
     searchVariant: initialData?.searchVariant || [],
     searchVariantInTitle: initialData?.searchVariantInTitle || false,
-
 })
 export const getSongLyricsSettingFormData = (initialData?: any) => ({
-    version: initialData?.version || VersionType.version_5,
+    version: initialData?.version || VersionType.version_4,
     isChords: initialData?.isChords || false,
-    isTranslation: initialData?.isTranslation || false,
     key: initialData?.key || "",
     bpm: initialData?.bpm || "",
     time: initialData?.time || "",
     tempo: initialData?.tempo,
 })
 export const getSongLyricsFormData = (initialData?: any) => ({
-    version: initialData?.version || VersionType.version_5,
+    version: initialData?.version || VersionType.version_4,
     content: initialData?.content || "",
     lyrics: initialData?.lyrics || "",
     lines: initialData?.lines || "",

@@ -23,9 +23,7 @@ export async function GET(
         credits: true,
         artist: true,
       }
-
     })
-
     console.log("SONG:", song)
 
     return NextResponse.json({

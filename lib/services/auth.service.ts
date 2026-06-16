@@ -1,73 +1,141 @@
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import User from "../models/User"
-import { NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
+import { cookies } from "next/headers"
 
-export async function loginService(data: any) {
+export async function loginService(data: {
+  email: string
+  password: string
+}) {
 
-    const { email, password } = data
+  const { email, password } = data
 
-    const user = await User.findOne({ email })
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  })
 
-    if (!user) {
-        throw new Error("Invalid credentials")
+  if (!user) {
+    throw new Error("Invalid credentials")
+  }
+
+  const isMatch = await bcrypt.compare(
+    password,
+    user.password
+  )
+
+  if (!isMatch) {
+    throw new Error("Invalid credentials")
+  }
+
+  const token = jwt.sign(
+    {
+      id: user.id,
+      role: user.role,
+    },
+    process.env.JWT_SECRET!,
+    {
+      expiresIn: "1d",
     }
+  )
 
-    const isMatch = await bcrypt.compare(password, user.password)
-
-    if (!isMatch) {
-        throw new Error("Invalid credentials")
-    }
-
-    const token = jwt.sign(
-        { id: user._id },
-        process.env.JWT_SECRET!,
-        { expiresIn: "1d" }
-    )
-
-
-    const response = NextResponse.json({
-        success: true
-    })
-
-    response.cookies.set("token", token, {
-        httpOnly: true,
-        secure: true,
-        path: "/",
-        maxAge: 60 * 60 * 24
-    })
-    return {
-    success: true,
-
-    message: "Login successful",
-
+  return {
     token,
 
     user: {
-      id: user._id,
+      id: user.id,
+      name: user.name,
       email: user.email,
+      role: user.role,
     },
-  };
+    message:"User fetched successful"
+  }
 
 }
 
-export async function signupService(data: any) {
+export async function signupService(data: {
+  name: string
+  email: string
+  password: string
+}) {
 
-    const { name, email, password } = data
+  const {
+    name,
+    email,
+    password,
+  } = data
 
-    const existingUser = await User.findOne({ email })
-
-    if (existingUser) {
-        throw new Error("User already exists")
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10)
-
-    const user = await User.create({
-        name,
+  const existingUser =
+    await prisma.user.findUnique({
+      where: {
         email,
-        password: hashedPassword
+      },
     })
 
-    return user
+  if (existingUser) {
+    throw new Error(
+      "User already exists"
+    )
+  }
+
+  const hashedPassword =
+    await bcrypt.hash(password, 10)
+
+  const user =
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+      },
+    })
+
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  }
+
+}
+
+export async function getCurrentUser() {
+  // verify JWT
+  // return user
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value
+  if (!token) {
+    throw new Error("Unauthorized")
+  }
+
+  const decoded = jwt.verify(
+    token,
+    process.env.JWT_SECRET!
+  ) as {
+    id: string
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: decoded.id,
+    },
+    select :{
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      isActive: true,
+    },
+  })
+
+  if (!user) {
+    throw new Error(
+      "User not found"
+    )
+  }
+
+  return user
+
 }

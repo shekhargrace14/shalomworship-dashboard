@@ -18,6 +18,7 @@ import { getSongBasicFormData, getSongLyricsSettingFormData, SongBasicFormData, 
 import StatusButton from "@/components/shared/StatusButton"
 import { getLanguageOptions } from "@/utils/getLanguageName"
 import Setting from "../lyrics/Setting"
+import { Checkbox } from "@/components/ui/checkbox"
 
 const Status = Object.values(StatusType)
 const Version = Object.values(VersionType)
@@ -315,6 +316,34 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
                     </SelectContent>
                   </Select>
                 </Field>
+
+                {/* TRANSLATION  */}
+
+                <FieldSet>
+                  <div className="flex h-full items-center gap-3">
+                    <Checkbox
+                      checked={
+                        formData.isTranslation
+                      }
+                      onCheckedChange={(
+                        checked
+                      ) =>
+                        setSetting(
+                          (prev) => ({
+                            ...prev,
+                            isTranslation:
+                              Boolean(
+                                checked
+                              ),
+                          })
+                        )
+                      }
+                    />
+                    <FieldLegend className="mb-0">
+                      Translation
+                    </FieldLegend>
+                  </div>
+                </FieldSet>
 
 
                 {/* STATUS */}

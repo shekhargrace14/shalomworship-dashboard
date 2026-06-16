@@ -91,10 +91,10 @@ export default function Section({
   onMoveChordRight,
 }: Props) {
   // const [language, setLanguage] = useState(lang);
-  console.log(initialData.lyrics.arrangement, "initialData section")
+  // console.log(initialData?.lyrics?.arrangement, "initialData section")
 
 
-  const nativeLanguage = getLanguageName(initialData.language)
+  const nativeLanguage = getLanguageName(initialData?.language)
   const [lable, setLable] = useState('New Section');
   const [openLines, setOpenLines] = useState<number[]>([]);
   const [sectionOpen, setSectionOpen] = useState(false);
@@ -401,10 +401,9 @@ export default function Section({
                     {/* FOOTER */}
                     <div className="flex gap-6 items-center justify-between">
                       {/* INDENT */}
-                      <div className="space-y-2 flex gap-4 items-center">
+                      {/* <div className="space-y-2 flex gap-4 items-center">
                         <label className="text-base text-slate-400">Indent</label>
 
-                        {/* <Input type="number" defaultValue={0} /> */}
                         <Input
                           type="number"
                           min={0}
@@ -412,7 +411,7 @@ export default function Section({
                           onChange={(e) => onUpdateLineField(section.id, line.id, 'indent', Number(e.target.value))}
                         />
                         <p>e.g. 4,8,12,16</p>
-                      </div>
+                      </div> */}
 
                       {/* BREAK */}
                       <div className="flex items-center gap-4">

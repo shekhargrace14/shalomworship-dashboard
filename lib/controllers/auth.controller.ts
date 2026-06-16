@@ -1,10 +1,11 @@
 import { connectDB } from "../db"
-import { loginService, signupService } from "../services/auth.service"
+import { getCurrentUser, loginService, signupService } from "../services/auth.service"
 import { NextResponse } from "next/server"
 
 export async function loginController(req: Request) {
 
   await connectDB()
+
 
   try {
     const body = await req.json()
@@ -63,4 +64,32 @@ export async function signupController(req: Request) {
 
   }
 
+}
+
+export async function meController() {
+  try {
+    const user = await getCurrentUser()
+
+    return NextResponse.json({
+      success: true,
+      user,
+      message: "User fetched Successful"
+    },
+      {
+        status: 200
+      }
+    )
+  }
+  catch (error:any) {
+    console.log("GET USER ERROR:", error)
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message,
+      },
+      {
+        status: 401,
+      }
+    )
+  }
 }
