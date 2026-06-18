@@ -72,14 +72,18 @@ export async function POST(
     return NextResponse.json(
       {
         success: true,
-        message:
-          "Submission created",
+        message: "Submission created",
         data: submission,
       },
       {
         status: 201,
+        headers: {
+          "Access-Control-Allow-Origin":
+            "*",
+        },
       }
     )
+
 
   } catch (error: any) {
 
@@ -102,4 +106,20 @@ export async function POST(
 
   }
 
+}
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin":
+        "*",
+
+      "Access-Control-Allow-Methods":
+        "GET, POST, PATCH, DELETE, OPTIONS",
+
+      "Access-Control-Allow-Headers":
+        "Content-Type, Authorization",
+    },
+  })
 }

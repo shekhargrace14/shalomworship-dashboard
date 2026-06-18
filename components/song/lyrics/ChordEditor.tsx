@@ -11,10 +11,12 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import NashvilleHelpPopup from "@/components/NashvilleHelpPopup"
+import { generateChordFamily } from "../chord/generateChordFamily"
 
 const QUALITIES = [
   "major",
   "m",
+  "6",
   "m7",
   "maj7",
   "sus4",
@@ -30,6 +32,7 @@ type Props = {
   onMoveChordRight: any,
   initialData: any,
   onDeleteChord: any,
+  onAddGeneratedChord: any;
 }
 
 export default function ChordsEditor({
@@ -40,10 +43,13 @@ export default function ChordsEditor({
   onUpdateChord,
   onMoveChordLeft,
   onMoveChordRight,
+  initialData,
+  onAddGeneratedChord,
 }: Props) {
 
-  // const key = useSongStore((state) => state.key)
-  const key = "C"
+  console.log(line, "line")
+  const key = initialData?.key
+  const chords = generateChordFamily(key || "C");
 
   return (
     <div className="space-y-6">
@@ -54,7 +60,33 @@ export default function ChordsEditor({
           <h2 className="text-foreground font-semibold">
             Chords (Key: {key ? key : "-"})
           </h2>
-          <NashvilleHelpPopup key={"C"} />
+          {/* <NashvilleHelpPopup key={"C"} /> */}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {chords.map((chord) => (
+            <Button
+              key={chord.nashville}
+              variant="outline"
+              onClick={() => {
+                onAddGeneratedChord(
+                  sectionId,
+                  line.id,
+                  {
+                    root: chord.root,
+                    quality: chord.quality,
+                    nashville: chord.nashville,
+                  }
+                )
+                // console.log(chord)
+              }
+            }
+            >
+              {chord.nashville}
+              {chord.quality !== "major" && chord.quality}
+              {" "}
+              {chord.root}
+            </Button>
+          ))}
         </div>
 
         <Button
@@ -187,26 +219,6 @@ export default function ChordsEditor({
                     }
                   />
                 </div>
-                {/* BASS NASHVILLE */}
-                {/* <div className="w-[12%] space-y-2">
-                  <label className="text-xs font-medium text-muted-foreground">
-                    Bass Nashville
-                  </label>
-                  <Input
-                    value={chord.bassNash ?? null}
-                    placeholder="e.g. 1, 6, 4, 5"
-                    onChange={(e) =>
-                      onUpdateChord(
-                        sectionId,
-                        line.id,
-                        index,
-                        "bassNash",
-                        Number(e.target.value)
-                      )
-                    }
-                  />
-                </div> */}
-
                 {/* POSITION */}
                 <div className="w-[12%] space-y-2">
                   <label className="text-xs font-medium text-muted-foreground">

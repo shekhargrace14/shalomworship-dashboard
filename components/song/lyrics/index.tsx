@@ -35,21 +35,13 @@ type Line = {
     sectionBreak: boolean
 }
 
-// type Chord = {
-//     root: string
-//     number: string
-//     quality: string
-//     space: string
-// }
-
 type Chord = {
     id: number
-
     root: string
-    number: number
+    nashville: number
     quality: string
-
     position: number
+    bass:string
 }
 
 export default function Lyrics({ initialData, isEdit }: any) {
@@ -331,7 +323,7 @@ export default function Lyrics({ initialData, isEdit }: any) {
             ),
         }))
     }
-    
+
     // Chords
 
     const addChord = (
@@ -365,9 +357,10 @@ export default function Lyrics({ initialData, isEdit }: any) {
                                         {
                                             id: Date.now(),
                                             root: "",
-                                            number: 0,
+                                            nashville:0,
                                             quality: "",
                                             position: 0,
+                                            bass:"",
                                         },
 
                                     ],
@@ -382,7 +375,54 @@ export default function Lyrics({ initialData, isEdit }: any) {
 
         }))
     }
+    const addGeneratedChord = (
+        sectionId: number,
+        lineId: number,
+        chordData: any
+    ) => {
+        setLyrics((prev) => ({
 
+            ...prev,
+
+            arrangement: prev.arrangement.map((section) =>
+
+                section.id === sectionId
+
+                    ? {
+                        ...section,
+
+                        lines: section.lines.map((line) =>
+
+                            line.id === lineId
+
+                                ? {
+                                    ...line,
+
+                                    chords: [
+
+                                        ...line.chords,
+
+                                        {
+                                            id: Date.now(),
+                                            root: chordData.root,
+                                            nashville: chordData.nashville,
+                                            quality: chordData.quality,
+                                            bass:chordData.bass,
+                                            position: 0,
+                                        }
+
+                                    ],
+                                }
+
+                                : line
+                        ),
+                    }
+
+                    : section
+            ),
+
+        }))
+    }
     const updateChord = (
         sectionId: number,
         lineId: number,
@@ -431,7 +471,6 @@ export default function Lyrics({ initialData, isEdit }: any) {
 
         }))
     }
-
     const deleteChord = (
         sectionId: number,
         lineId: number,
@@ -776,7 +815,7 @@ export default function Lyrics({ initialData, isEdit }: any) {
 
                         onRemoveArrangment={removeArrangment}
                         onUpdate={updateArrangement}
-                        onUpdateSectionField={updateArrangement} 
+                        onUpdateSectionField={updateArrangement}
                         onDuplicateSection={duplicateSection}
 
                         onUpdateLine={updateLine}
@@ -786,6 +825,7 @@ export default function Lyrics({ initialData, isEdit }: any) {
                         onDuplicateLine={duplicateLine}
 
                         onAddChord={addChord}
+                        onAddGeneratedChord={addGeneratedChord}
                         onDeleteChord={deleteChord}
                         onUpdateChord={updateChord}
 

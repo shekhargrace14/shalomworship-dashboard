@@ -41,7 +41,7 @@ export default function Page() {
 
 
   const [song, setSong] = useState()
-  console.log(song, "song at page")
+  // console.log(song, "song at page")
 
   useEffect(() => {
     async function load() {

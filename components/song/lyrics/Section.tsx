@@ -42,6 +42,7 @@ type Props = {
   onDeleteLine: (sectionId: number, lineId: number) => void;
 
   onAddChord: (sectionId: number, lineId: number) => void;
+  onAddGeneratedChord:any,
   onDeleteChord: any;
   onUpdateChord: any;
 
@@ -80,6 +81,7 @@ export default function Section({
   onAddChord,
   onDeleteChord,
   onUpdateChord,
+  onAddGeneratedChord,
 
   onMoveUp,
   onMoveDown,
@@ -91,7 +93,7 @@ export default function Section({
   onMoveChordRight,
 }: Props) {
   // const [language, setLanguage] = useState(lang);
-  // console.log(initialData?.lyrics?.arrangement, "initialData section")
+  // console.log(initialData, "initialData section")
 
 
   const nativeLanguage = getLanguageName(initialData?.language)
@@ -352,6 +354,7 @@ export default function Section({
                         onUpdateChord={onUpdateChord}
                         onMoveChordLeft={onMoveChordLeft}
                         onMoveChordRight={onMoveChordRight}
+                        onAddGeneratedChord={onAddGeneratedChord}
                       />
                     </div>
 

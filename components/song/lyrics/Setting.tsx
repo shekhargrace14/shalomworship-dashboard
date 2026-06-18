@@ -56,7 +56,7 @@ const Setting = ({
     // console.log(initialData, "initialData settings")
     const [show, setShow] = useState(true)
     const [setting, setSetting] = useState<SongLyricsSettingFormData>(getSongLyricsSettingFormData(initialData))
-    console.log(setting, "setting ")
+    // console.log(setting, "setting ")
 
     useEffect(() => {
         if (!initialData) return
@@ -119,7 +119,8 @@ const Setting = ({
     //     }
     // }
 
-  const setKey = useSongStore((state) => state.setKey);
+    const setKey = useSongStore((state) => state.setKey);
+
     return (
         <div className="my-8">
             <Card >
@@ -172,11 +173,11 @@ const Setting = ({
                                             <FieldLabel>
                                                 Key
                                             </FieldLabel>
-                                            <Select
+                                            {/* <Select
                                                 value={setting.key || ""}
                                                 onValueChange={(
                                                     value
-                                                ) =>{
+                                                ) => {
 
                                                     setSetting(
                                                         (prev) => ({
@@ -184,7 +185,7 @@ const Setting = ({
                                                             key: value,
                                                         })
                                                     ),
-                                                    setKey(value)
+                                                        setKey(value)
                                                 }
 
                                                 }
@@ -202,7 +203,15 @@ const Setting = ({
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
-                                            </Select>
+                                            </Select> */}
+                                            <Input
+                                                name="key"
+                                                placeholder="G"
+                                                value={setting.key}
+                                                onChange={
+                                                    handleChange
+                                                }
+                                            />
                                         </Field>
                                         {/* BPM */}
                                         <Field>
