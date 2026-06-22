@@ -66,12 +66,12 @@ export async function POST(
 
   try {
 
-    const body =
-      await req.json()
+    const body = await req.json()
+
+    console.log("BODY:", body)
 
     const requiredFields = [
       "subject",
-      "title",
       "name",
       "email",
       "message",
@@ -98,17 +98,19 @@ export async function POST(
 
     }
 
+    console.log("CREATING SUBMISSION")
     const submission =
       await prisma.submission.create({
         data: {
           type: body.type,
+          subject: body.subject,
           name: body.name,
           email: body.email,
           title: body.title,
           message: body.message,
         },
       })
-
+    console.log("SUBMISSION CREATED")
     return NextResponse.json(
       {
         success: true,
@@ -138,7 +140,7 @@ export async function POST(
       },
       {
         status: 500,
-        headers:corsHeaders,
+        headers: corsHeaders,
       }
     )
 

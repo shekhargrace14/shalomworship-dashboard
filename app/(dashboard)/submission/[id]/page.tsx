@@ -93,6 +93,11 @@ export default function page() {
                     />
 
                     <InfoItem
+                        label="Subject"
+                        value={submission?.subject}
+                    />
+
+                    <InfoItem
                         label="Created"
                         value={new Date(
                             //   submission?.createdAt

@@ -59,11 +59,7 @@ export async function POST(
 
       subject,
 
-      html: `
-        <div>
-          ${message}
-        </div>
-      `,
+      html:message,
     })
 
     await prisma.submission.update({
@@ -72,7 +68,7 @@ export async function POST(
       },
       data: {
         status:
-          "COMPLETED",
+          "PROGRESS",
       },
     })
 

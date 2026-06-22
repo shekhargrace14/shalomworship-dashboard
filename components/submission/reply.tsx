@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import TextEditor from "./editor";
 
 interface ReplyProps {
     id: string;
@@ -21,13 +22,15 @@ export default function Reply({
     subject,
 }: ReplyProps) {
     const [message, setMessage] = useState("");
+    const [newSubject, setNewSubject] = useState(subject);
+    console.log(newSubject)
     async function handleSubmit(
         e: React.FormEvent
     ) {
         e.preventDefault();
 
         try {
-            console.log({email,name,subject,message})
+            console.log({ email, name, subject, message })
             const res = await fetch(`/api/submission/${id}/reply`, {
                 method: "POST",
                 headers: {
@@ -63,28 +66,39 @@ export default function Reply({
             onSubmit={handleSubmit}
             className="mt-4 space-y-4 rounded-lg border p-4"
         >
+            <label htmlFor="name">Name</label>
             <Input
                 value={name}
                 disabled
             />
-
+            <label htmlFor="email">email</label>
             <Input
                 value={email}
                 disabled
             />
 
+            <label htmlFor="subject">subject</label>
             <Input
-                value={subject}
-                disabled
-            />
+                value={newSubject}
+                placeholder={newSubject}
 
-            <Textarea
+                // disabled
+                onChange={(e) =>
+                    setNewSubject(e.target.value)
+                }
+            />
+            <label htmlFor="message">message</label>
+            {/* <Textarea
                 rows={6}
                 placeholder="Write your reply..."
                 value={message}
                 onChange={(e) =>
                     setMessage(e.target.value)
                 }
+            /> */}
+            <TextEditor
+                value={message}
+                onChange={setMessage}
             />
 
             <Button type="submit">
