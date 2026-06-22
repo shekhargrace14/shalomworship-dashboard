@@ -259,6 +259,7 @@ enum SongSectionType {
   INSTRUMENTAL
   SOLO
   RAP
+  TAG
   HOOK
   REFRAIN
   BREAKDOWN
