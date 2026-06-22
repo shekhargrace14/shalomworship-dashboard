@@ -2,6 +2,15 @@ import { prisma } from "@/lib/prisma"
 import { ca } from "date-fns/locale"
 import { NextResponse } from "next/server"
 
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods":
+    "GET,POST,PATCH,DELETE,OPTIONS",
+  "Access-Control-Allow-Headers":
+    "Content-Type, Authorization",
+}
+
 export async function GET() {
 
   try {
@@ -49,6 +58,8 @@ export async function GET() {
 }
 
 
+
+
 export async function POST(
   req: Request
 ) {
@@ -81,6 +92,7 @@ export async function POST(
         },
         {
           status: 400,
+          headers: corsHeaders,
         }
       )
 
@@ -105,10 +117,7 @@ export async function POST(
       },
       {
         status: 201,
-        headers: {
-          "Access-Control-Allow-Origin":
-            "*",
-        },
+        headers: corsHeaders,
       }
     )
 
@@ -129,6 +138,7 @@ export async function POST(
       },
       {
         status: 500,
+        headers:corsHeaders,
       }
     )
 
