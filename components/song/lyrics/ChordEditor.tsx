@@ -14,14 +14,58 @@ import NashvilleHelpPopup from "@/components/NashvilleHelpPopup"
 import { generateChordFamily } from "../chord/generateChordFamily"
 
 const QUALITIES = [
+  // Major
   "major",
+
+  // Minor
   "m",
+
+  // Power
+  "5",
+
+  // Sixth
   "6",
+  "m6",
+
+  // Seventh
+  "7",
   "m7",
   "maj7",
+
+  // Ninth
+  "add9",
+  "9",
+  "m9",
+  "maj9",
+
+  // Eleventh
+  "11",
+
+  // Thirteenth
+  "13",
+
+  // Suspended
+  "sus2",
   "sus4",
-  "dim"
-]
+  "7sus4",
+
+  // Added tones
+  "add2",
+  "add4",
+
+  // Diminished
+  "dim",
+  "dim7",
+
+  // Augmented
+  "aug",
+
+  // Altered
+  "7b5",
+  "7#5",
+  "7b9",
+  "7#9",
+];
 
 type Props = {
   line: any,
@@ -81,10 +125,10 @@ export default function ChordsEditor({
               }
             }
             >
-              {chord.nashville}
-              {chord.quality !== "major" && chord.quality}
-              {" "}
               {chord.root}
+              {chord.quality !== "major" && chord.quality}
+              {" "}-
+              {chord.nashville}
             </Button>
           ))}
         </div>

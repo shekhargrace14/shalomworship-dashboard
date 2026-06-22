@@ -100,7 +100,7 @@ export default function DataTable({
               </TableHead>
             )}
 
-            {type === "user" && (
+            {type === "user" || type === "submission" && (
               <TableHead>
                 Email
               </TableHead>
@@ -215,7 +215,7 @@ export default function DataTable({
 
               {/* EMAIL */}
 
-              {type === "user" && (
+              {type === "user"  || type === "submission" && (
 
                 <TableCell>
                   {item.email}

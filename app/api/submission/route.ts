@@ -58,6 +58,34 @@ export async function POST(
     const body =
       await req.json()
 
+    const requiredFields = [
+      "subject",
+      "title",
+      "name",
+      "email",
+      "message",
+    ]
+
+    const missingField =
+      requiredFields.find(
+        (field) =>
+          !body[field]?.trim()
+      )
+
+    if (missingField) {
+
+      return NextResponse.json(
+        {
+          success: false,
+          message: `${missingField} is required`,
+        },
+        {
+          status: 400,
+        }
+      )
+
+    }
+
     const submission =
       await prisma.submission.create({
         data: {

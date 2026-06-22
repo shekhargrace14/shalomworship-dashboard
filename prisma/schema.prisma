@@ -227,9 +227,11 @@ model submission {
   email       String?
 
   title       String?
+  subject     String?
   message     String?
 
   payload     Json?
+  repliedAt DateTime?
 
   userId      String? @db.ObjectId
 
@@ -366,6 +368,7 @@ enum SubmissionType {
 
 enum SubmissionStatus {
   PENDING
+  PROGRESS
   REVIEWING
   APPROVED
   REJECTED
