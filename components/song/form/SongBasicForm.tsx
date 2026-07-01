@@ -19,6 +19,7 @@ import StatusButton from "@/components/shared/StatusButton"
 import { getLanguageOptions } from "@/utils/getLanguageName"
 import Setting from "../lyrics/Setting"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useCurrentChannelStore } from "@/store/useCurrentChannelStore"
 
 const Status = Object.values(StatusType)
 const Version = Object.values(VersionType)
@@ -69,6 +70,19 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
         ),
     }))
   }
+
+  // Channel Info 
+  const currentChannel = useCurrentChannelStore((state) => state.channel)
+
+  useEffect(() => {
+    if (!currentChannel) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      channelId: currentChannel.id,
+    }));
+  }, [currentChannel]);
+
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -139,6 +153,8 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
           ? toast.success("Basic Detials Save Sucessfully")
           : toast.success("Song Created")
       }
+      router.push(`/channel/${currentChannel?.id}/songs`)
+
     } catch (error) {
       console.error(error)
       {
@@ -165,26 +181,48 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
               {/* <FieldDescription>Description</FieldDescription> */}
               <FieldGroup>
                 {/* TITLE */}
-                <Field >
-                  <FieldLabel>
-                    Title
-                    <span className="text-destructive">
-                      *
-                    </span>
-                  </FieldLabel>
+                <div className="grid gap-4 md:grid-cols-2">
 
-                  <Input
-                    name="title"
-                    placeholder="Amazing Grace"
-                    value={formData.title}
-                    onChange={handleChange}
-                    required
-                  />
 
-                  <FieldDescription>
-                    Original song title.
-                  </FieldDescription>
-                </Field>
+                  <Field >
+                    <FieldLabel>
+                      Title
+                      <span className="text-destructive">
+                        *
+                      </span>
+                    </FieldLabel>
+
+                    <Input
+                      name="title"
+                      placeholder="Amazing Grace"
+                      value={formData.title}
+                      onChange={handleChange}
+                      required
+                    />
+
+                    <FieldDescription>
+                      Original song title.
+                    </FieldDescription>
+                  </Field>
+
+                  <Field >
+                    <FieldLabel>
+                      Channel Info
+                      {/* <span className="text-destructive">
+                        *
+                      </span> */}
+                    </FieldLabel>
+
+                    <Input
+                      value={currentChannel?.title ?? ""}
+                      disabled
+                    />
+
+                    <FieldDescription>
+                      channel id - {currentChannel?.id}
+                    </FieldDescription>
+                  </Field>
+                </div>
 
                 {/* SLUG */}
                 <Field >
@@ -194,35 +232,31 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
 
                   <Input
                     name="slug"
-                    placeholder="amazing-grace"
                     value={formData.slug}
-                    onChange={(e) => {
-                      setSlugEdited(true)
-
+                    onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        slug: slugify(
-                          e.target.value,
-                          {
-                            lower: true,
-                            strict: true,
-                          }
-                        ),
+                        slug: e.target.value,
                       }))
-                    }}
+                    }
                   />
                   <>
                     <Button
                       type="button"
                       onClick={() =>
-                        setFormData(prev => ({
+                        setFormData((prev) => ({
                           ...prev,
-                          slug: slugify(prev.title)
+                          slug: slugify(
+                            `${prev.title}-${currentChannel?.title ?? ""}`,
+                            {
+                              lower: true,
+                              strict: true,
+                            }
+                          ),
                         }))
                       }
-                    // className="w-fit"
                     >
-                      Auto Slug (Regenerate)
+                      Auto Slug
                     </Button>
                   </>
 
@@ -325,10 +359,8 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
                       checked={
                         formData.isTranslation
                       }
-                      onCheckedChange={(
-                        checked
-                      ) =>
-                        setSetting(
+                      onCheckedChange={(checked) =>
+                        setFormData(
                           (prev) => ({
                             ...prev,
                             isTranslation:

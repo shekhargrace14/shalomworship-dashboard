@@ -10,6 +10,7 @@ export async function GET() {
                 role: true,
                 isActive: true,
                 createdAt: true,
+                // team: true,
             }
         })
         return NextResponse.json(

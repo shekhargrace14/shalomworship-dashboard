@@ -15,6 +15,7 @@ export type SongBasicFormData = {
   searchVariant: string[]
   searchVariantInTitle: boolean
   isTranslation: boolean
+  channelId: string
 
   
 }
@@ -126,6 +127,7 @@ export const getSongBasicFormData = (initialData?: any) => ({
     status: initialData?.status || StatusType.DRAFT,
     searchVariant: initialData?.searchVariant || [],
     searchVariantInTitle: initialData?.searchVariantInTitle || false,
+    channelId: initialData?.channelId || "", 
 })
 export const getSongLyricsSettingFormData = (initialData?: any) => ({
     version: initialData?.version || VersionType.version_4,

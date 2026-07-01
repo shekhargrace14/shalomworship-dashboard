@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma"
 import { ca } from "date-fns/locale"
 import { NextResponse } from "next/server"
+import { requireRole } from "@/lib/auth"
+import { Role } from "@prisma/client"
+
 
 
 const corsHeaders = {
@@ -12,8 +15,12 @@ const corsHeaders = {
 }
 
 export async function GET() {
-
   try {
+
+    const user = await requireRole(
+      Role.ADMIN,
+      Role.SUPER_ADMIN
+    );
 
     const submissions =
       await prisma.submission.findMany({
@@ -33,6 +40,7 @@ export async function GET() {
         status: 200,
       }
     )
+
 
   } catch (error: any) {
 
@@ -122,7 +130,6 @@ export async function POST(
         headers: corsHeaders,
       }
     )
-
 
   } catch (error: any) {
 

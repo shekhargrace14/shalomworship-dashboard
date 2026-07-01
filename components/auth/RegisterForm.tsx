@@ -18,13 +18,16 @@ import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { Toaster } from "../ui/sonner"
 import { useRouter } from "next/navigation"
+import { Loader2 } from "lucide-react"
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
-    const router = useRouter()
+  const router = useRouter()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [loading, setLoading] = useState(false);
+
   // console.log(process.env.MONGO_URL)
 
   const handleSubmit = async (e: any) => {
@@ -33,35 +36,38 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
     if (password !== confirmPassword) {
       // alert("Passwords do not match")
-        toast("Confirm Passwords do not match")
+      toast("Confirm Passwords do not match")
 
       return
     }
-
-
-    const res = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        password
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password
+        })
       })
-    })
 
-    const data = await res.json()
-    if(!data.success){
-      toast(data.message)
+      const data = await res.json()
+      if (!data.success) {
+        toast(data.message)
+      }
+
+      console.log(data,)
+
+      router.push("/dashboard")
+    } catch (error:any) {
+
+      console.log(error.message,)
+
+    } finally {
+      setLoading(false);
     }
-
-    console.log(data,)
-
-  router.push("/dashboard")
-
-
-
   }
 
   return (
@@ -116,7 +122,19 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             </Field>
             <FieldGroup>
               <Field>
-                <Button type="submit">Create Account</Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending...
+                    </>
+                  ) :
+                    "Create Account"
+                  }
+                </Button>
                 <Button variant="outline" type="button">
                   Sign up with Google
                 </Button>

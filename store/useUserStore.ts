@@ -1,10 +1,11 @@
+import { user } from "@prisma/client";
 import { create } from "zustand";
 
 interface UserStore{
-    user: {};
-    setUser: (value: {}) => void;
+    user: user | null;
+    setUser: (value: user | null ) => void;
 }
 export const useUserStore = create<UserStore>((set)=>({
-    user:{},
+    user: null,
     setUser: (value)=> set({user:value}),
 }))

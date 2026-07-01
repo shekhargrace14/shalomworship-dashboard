@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
+
 export async function GET(
     req: Request,
     { params }: { params: Promise<{ id: string }> }
@@ -8,7 +9,11 @@ export async function GET(
     const { id } = await params
     try {
         const user = await prisma.user.findUnique({
-            where: { id }
+            where: { id },
+            include:{
+                channels:true
+            }
+
         })
         if (!user) {
             return NextResponse.json(

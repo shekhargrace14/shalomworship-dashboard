@@ -1,6 +1,7 @@
 import { connectDB } from "../db"
-import { getCurrentUser, loginService, signupService } from "../services/auth.service"
+// import { getCurrentUser, loginService, signupService } from "../services/auth.service"
 import { NextResponse } from "next/server"
+import { getCurrentUserService, loginService, signupService } from "../services/auth.service"
 
 export async function loginController(req: Request) {
 
@@ -68,7 +69,7 @@ export async function signupController(req: Request) {
 
 export async function meController() {
   try {
-    const user = await getCurrentUser()
+    const user = await getCurrentUserService()
 
     return NextResponse.json({
       success: true,

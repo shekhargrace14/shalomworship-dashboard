@@ -100,7 +100,7 @@ export async function signupService(data: {
 
 }
 
-export async function getCurrentUser() {
+export async function getCurrentUserService() {
   // verify JWT
   // return user
 
@@ -108,6 +108,7 @@ export async function getCurrentUser() {
   const token = cookieStore.get("token")?.value
   if (!token) {
     throw new Error("Unauthorized")
+
   }
 
   const decoded = jwt.verify(
@@ -120,13 +121,6 @@ export async function getCurrentUser() {
   const user = await prisma.user.findUnique({
     where: {
       id: decoded.id,
-    },
-    select :{
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      isActive: true,
     },
   })
 
