@@ -101,7 +101,7 @@ model artist {
   album        ArtistAlbum[]
 
   artistEvents EventArtist[]
-  songCredits  SongCredit[]
+  // songCredits  SongCredit[]
   eventCredits EventCredit[]
 }
 
@@ -166,6 +166,7 @@ model channel {
 
   avatar String?
   banner String?
+  color String?
 
   description String?
 
@@ -175,7 +176,6 @@ model channel {
   claimed  Boolean? @default(false)
 
   email String?
-
   website String?
 
   instagram   String?
@@ -189,7 +189,6 @@ model channel {
   tidal       String?
   pandora     String?
 
-  color String?
 
   createdById String?
   
@@ -207,6 +206,7 @@ model channel {
   followers ChannelFollower[]
   artistAlbums ArtistAlbum[]
   songArtists SongArtist[]
+  SongCredit  SongCredit[]
 
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
@@ -613,19 +613,35 @@ model ChannelTeam {
   @@unique([userId, channelId])
 }
 
+// model SongCredit {
+//   id String @id @default(auto()) @map("_id") @db.ObjectId
+
+//   songId   String @db.ObjectId
+//   artistId String @db.ObjectId
+
+//   department CreditDepartment
+//   role       CreditRole
+
+//   song   song   @relation(fields: [songId], references: [id])
+//   artist artist @relation(fields: [artistId], references: [id])
+
+//   createdAt DateTime @default(now())
+// }
+
 model SongCredit {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  songId   String @db.ObjectId
-  artistId String @db.ObjectId
+  songId String @db.ObjectId
+  channelId String @db.ObjectId
 
-  department CreditDepartment
-  role       CreditRole
+  role CreditRole
 
-  song   song   @relation(fields: [songId], references: [id])
-  artist artist @relation(fields: [artistId], references: [id])
+  song    song    @relation(fields: [songId], references: [id])
+  channel channel @relation(fields: [channelId], references: [id])
 
   createdAt DateTime @default(now())
+
+  @@unique([songId, channelId, role])
 }
 
 // Intermediate table for Event  Artist and Role many-to-many
@@ -727,6 +743,8 @@ model ArtistChannelMap {
   artistId  String @unique @db.ObjectId
   channelId String @unique @db.ObjectId
 }
+
+
 
 // channelId
 

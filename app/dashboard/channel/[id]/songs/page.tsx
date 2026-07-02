@@ -41,7 +41,7 @@ export default function Page() {
   return (
     <div className="">
       <div className="flex justify-end">
-        <Link href={`/channel/${currentChannel?.id}/songs/create`}>
+        <Link href={`/dashboard/channel/${currentChannel?.id}/songs/create`}>
           <Button variant="default"> <Plus />  Add Song</Button>
         </Link>
       </div>

@@ -1,5 +1,7 @@
 "use client"
 
+import { CardDemo } from "@/components/card/card"
+import { ChannelCards } from "@/components/channel-cards"
 import ChannelForm from "@/components/channel/ChannelForm"
 import { useChannelsStore } from "@/store/useChannelsStore"
 import { useCurrentChannelStore } from "@/store/useCurrentChannelStore"
@@ -18,11 +20,13 @@ const params = useParams()
   const id = params.id
 
   const currentChannel = useCurrentChannelStore((state)=>state.channel)
-  console.log(currentChannel, "currentChannel")
+  // console.log(currentChannel, "currentChannel")
 
   return (
     <div>
-      <ChannelForm initialData={currentChannel} isEdit/>
+      {/* <ChannelForm initialData={currentChannel} isEdit/> */}
+      <CardDemo data={currentChannel}/>
+      <ChannelCards/>
     </div>
   )
 }

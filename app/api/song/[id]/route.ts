@@ -1,62 +1,57 @@
-import { prisma } from "@/lib/prisma"
-import { NextResponse } from "next/server"
-import { success } from "zod"
+import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server';
+import { success } from 'zod';
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await params
+    const { id } = await params;
 
-    console.log("ID:", id)
+    // console.log("ID:", id)
 
     const song = await prisma.song.findUnique({
       where: {
         id,
       },
       include: {
-        genre: true,
-        category: true,
-        scripture: true,
-        album: true,
-        credits: true,
-        artist: true,
-      }
-    })
-    console.log("SONG:", song)
+        // genre: true,
+        // category: true,
+        // scripture: true,
+        // album: true,
+        // credits: true,
+        credits: {
+          include: {
+            channel: true,
+          },
+        },
+      },
+    });
+    console.log('SONG:', song);
 
     return NextResponse.json({
       song,
-      success: true
-    })
+      success: true,
+    });
   } catch (error) {
-    console.error("FULL ERROR:", error)
-    throw error
+    console.error('FULL ERROR:', error);
+    throw error;
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
 
   await prisma.song.delete({
-    where: { id }
-  })
+    where: { id },
+  });
 
-  return NextResponse.json({ success: true })
+  return NextResponse.json({ success: true });
 }
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await params
+    const { id } = await params;
 
-    const body = await req.json()
+    const body = await req.json();
 
     const {
       credits,
@@ -68,7 +63,7 @@ export async function PATCH(
       like,
 
       ...allowedData
-    } = body
+    } = body;
 
     // Update normal song fields
     const song = await prisma.song.update({
@@ -76,7 +71,7 @@ export async function PATCH(
         id,
       },
       data: allowedData,
-    })
+    });
 
     // Update credits relation
     if (credits) {
@@ -84,7 +79,7 @@ export async function PATCH(
         where: {
           songId: id,
         },
-      })
+      });
 
       if (credits.length > 0) {
         await prisma.songCredit.createMany({
@@ -94,7 +89,7 @@ export async function PATCH(
             department: credit.department,
             role: credit.role,
           })),
-        })
+        });
       }
     }
 
@@ -106,35 +101,33 @@ export async function PATCH(
       include: {
         credits: {
           include: {
-            artist: true,
+            channel: true,
           },
         },
       },
-    })
+    });
 
     return NextResponse.json(
       {
         success: true,
-        message: "Changes Saved",
+        message: 'Changes Saved',
         song: updatedSong,
       },
       {
         status: 200,
-      }
-    )
+      },
+    );
   } catch (error: any) {
-    console.error("PATCH SONG ERROR:", error)
+    console.error('PATCH SONG ERROR:', error);
 
     return NextResponse.json(
       {
         success: false,
-        message:
-          error.message ||
-          "Failed to Save Changes",
+        message: error.message || 'Failed to Save Changes',
       },
       {
         status: 500,
-      }
-    )
+      },
+    );
   }
 }

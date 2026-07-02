@@ -28,7 +28,7 @@ const Language = Object.values(LanguageType)
 const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }: any) => {
   if (isEdit) {
     var id = initialData?.id
-    console.log(initialData, "initialData")
+    // console.log(initialData, "initialData")
   }
   const router = useRouter()
   const [slugEdited, setSlugEdited] = useState(false)
@@ -43,7 +43,7 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
 
   // SETTING
   const [setting, setSetting] = useState<SongLyricsSettingFormData>(getSongLyricsSettingFormData(initialData))
-  console.log(setting, "setting on SongBasicForm")
+  // console.log(setting, "setting on SongBasicForm")
 
   // VARIENT 
   const addVariant = () => {
@@ -153,7 +153,7 @@ const SongBasicForm = ({ initialData, isEdit, onHandleNext, onHandleSaveDraft }:
           ? toast.success("Basic Detials Save Sucessfully")
           : toast.success("Song Created")
       }
-      router.push(`/channel/${currentChannel?.id}/songs`)
+      router.push(`/dashboard/channel/${currentChannel?.id}/songs`)
 
     } catch (error) {
       console.error(error)
