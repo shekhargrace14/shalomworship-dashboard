@@ -27,7 +27,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
-import { artist, user } from "@prisma/client"
+import { user } from "@prisma/client"
 import { SectionCards } from "@/components/section-cards"
 
 export default function ProfilePage() {
