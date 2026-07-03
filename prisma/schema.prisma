@@ -9,148 +9,152 @@ datasource db {
 }
 
 model song {
-  id      String  @id @default(auto()) @map("_id") @db.ObjectId
-  title   String
-  content String?
-  lyrics  Json?
-  lines   Json?
+  id                   String        @id @default(auto()) @map("_id") @db.ObjectId
+  title                String
+  content              String?
+  lyrics               Json?
+  lines                Json?
 
-  isChords      Boolean?      @default(false)
-  isTranslation Boolean?      @default(false)
-  language      LanguageType? @default(en)
-  version       VersionType?  @default(version_4)
+  isChords             Boolean?      @default(false)
+  isTranslation        Boolean?      @default(false)
+  language             LanguageType? @default(en)
+  version              VersionType?  @default(version_4)
 
-  key   String?
-  bpm   String?
-  time  String?
-  tempo TempoType?
+  key                  String?
+  bpm                  String?
+  time                 String?
+  tempo                TempoType?
 
-  image   String?
-  video   String?
-  videoId String?
-  audio   String?
-  color   String?
+  image                String?
+  video                String?
+  videoId              String?
+  audio                String?
+  color                String?
 
   // SEO
   slug                 String?
-  status               StatusType? @default(PUBLISH)
+  status               StatusType?   @default(PUBLISH)
   about                String?
   searchVariant        String[]
-  searchVariantInTitle Boolean?    @default(false)
+  searchVariantInTitle Boolean?      @default(false)
   keyword              String[]
   metaDescription      String?
   excerpt              String?
 
-  view Int?
-  like Int?
+  view                 Int?
+  like                 Int?
 
   // Original creator / owner of the song
-  channelId String?  @db.ObjectId
-  channel   channel? @relation(fields: [channelId], references: [id])
+  channelId            String?       @db.ObjectId
+  channel              channel?      @relation(fields: [channelId], references: [id])
 
   // Artist, writer, composer, translator, musician credits
-  credits SongCredit[]
+  credits              SongCredit[]
 
   // Classification
-  genre     SongGenre[]
-  category  SongCategory[]
-  scripture SongScripture[]
-  albums    SongAlbum[]
+  genre                SongGenre[]
+  category             SongCategory[]
+  scripture            SongScripture[]
+
+  albums               SongAlbum[]
+  seasons               SeasonSong[]
 
   // Audit fields: dashboard users, not song ownership
-  createdById String? @db.ObjectId
-  createdBy   user?   @relation("SongCreatedBy", fields: [createdById], references: [id])
+  createdById          String?       @db.ObjectId
+  createdBy            user?         @relation("SongCreatedBy", fields: [createdById], references: [id])
 
-  updatedById String? @db.ObjectId
-  updatedBy   user?   @relation("SongUpdatedBy", fields: [updatedById], references: [id])
+  updatedById          String?       @db.ObjectId
+  updatedBy            user?         @relation("SongUpdatedBy", fields: [updatedById], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
 }
 
 model channel {
-  id             String  @id @default(auto()) @map("_id") @db.ObjectId
-  legacyArtistId String? @db.ObjectId
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  legacyArtistId String?     @db.ObjectId
 
-  title String
-  slug  String @unique
+  title          String
+  slug           String      @unique
 
-  avatar      String?
-  banner      String?
-  color       String?
-  description String?
-  type        ChannelType?
+  avatar         String?
+  banner         String?
+  color          String?
+  description    String?
+  type           ChannelType?
 
-  verified Boolean? @default(false)
-  claimed  Boolean? @default(false)
+  verified       Boolean?    @default(false)
+  claimed        Boolean?    @default(false)
 
-  email   String?
-  website String?
+  email          String?
+  website        String?
 
-  instagram    String?
-  youtube      String?
-  spotify      String?
-  appleMusic   String?
-  amazonMusic  String?
-  youtubeMusic String?
-  soundCloud   String?
-  deezer       String?
-  tidal        String?
-  pandora      String?
+  instagram      String?
+  youtube        String?
+  spotify        String?
+  appleMusic     String?
+  amazonMusic    String?
+  youtubeMusic   String?
+  soundCloud     String?
+  deezer         String?
+  tidal          String?
+  pandora        String?
 
-  createdById String? @db.ObjectId
+  createdById    String?     @db.ObjectId
 
   // Channel management team
-  team ChannelTeam[]
+  team           ChannelTeam[]
 
   // Content owned by this channel
-  songs     song[]
-  albums    album[]
-  playlists playlist[]
-  events    event[]
-  seasons   season[]
+  songs          song[]
+  events         event[]
+  
+  albums         album[]
+  seasons        season[]
+
+  playlists      playlist[]
 
   // Credits received by this channel
-  songCredits  SongCredit[]
-  eventCredits EventCredit[]
+  songCredits    SongCredit[]
+  eventCredits   EventCredit[]
 
-  followers ChannelFollower[]
+  followers      ChannelFollower[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 }
 
 model album {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String?
   about       String?
 
-  image String?
-  video String?
-  slug  String  @unique
-  color String?
+  image       String?
+  video       String?
+  slug        String      @unique
+  color       String?
 
-  // Owner / publisher of this album
-  channelId String  @db.ObjectId
-  channel   channel @relation(fields: [channelId], references: [id])
+  // Album owner / publisher
+  channelId   String?      @db.ObjectId
+  channel     channel?     @relation(fields: [channelId], references: [id])
 
-  songs SongAlbum[]
+  songs       SongAlbum[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model event {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  slug  String @unique
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  slug         String      @unique
 
-  image String?
-  video String?
+  image        String?
+  video        String?
 
-  startDate DateTime?
-  endDate   DateTime?
+  startDate    DateTime?
+  endDate      DateTime?
 
   venue        String?
   location     String?
@@ -160,157 +164,162 @@ model event {
   color        String?
   about        String?
 
-  status StatusType @default(DRAFT)
+  status       StatusType  @default(DRAFT)
 
   // Channel that owns / hosts the event
-  channelId String  @db.ObjectId
-  channel   channel @relation(fields: [channelId], references: [id])
+  channelId    String      @db.ObjectId
+  channel      channel     @relation(fields: [channelId], references: [id])
 
   // Organizer, host, worship leader, performer, band, choir
-  credits EventCredit[]
+  credits      EventCredit[]
 
-  createdById String @db.ObjectId
-  createdBy   user   @relation("UserCreatedEvents", fields: [createdById], references: [id])
+  createdById  String      @db.ObjectId
+  createdBy    user        @relation("UserCreatedEvents", fields: [createdById], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }
 
 model playlist {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  slug        String  @unique
-  cover       String
-  description String?
+  id           String             @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  slug         String             @unique
+  cover        String
+  description  String?
 
-  visibility PlaylistVisibility
+  visibility   PlaylistVisibility
 
-  channelId String  @db.ObjectId
-  channel   channel @relation(fields: [channelId], references: [id])
+  channelId    String             @db.ObjectId
+  channel      channel            @relation(fields: [channelId], references: [id])
 
-  createdById String @db.ObjectId
-  createdBy   user   @relation("UserCreatedPlaylists", fields: [createdById], references: [id])
+  createdById  String             @db.ObjectId
+  createdBy    user               @relation("UserCreatedPlaylists", fields: [createdById], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
 }
 
 model season {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  image String
-  slug  String  @unique
-  color String?
-  about String?
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  image       String
+  slug        String      @unique
+  color       String?
+  about       String?
 
-  channelId String  @db.ObjectId
-  channel   channel @relation(fields: [channelId], references: [id])
+// Season owner / publisher
+  channelId   String      @db.ObjectId
+  channel     channel     @relation(fields: [channelId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+songs     SeasonSong[]
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model category {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  title   String
-  image   String?
-  about   String?
-  color   String?
-  slug    String?  @unique
-  catType catType? @default(theme)
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  image     String?
+  about     String?
+  color     String?
+  slug      String?        @unique
+  catType   catType?       @default(theme)
 
-  song SongCategory[]
+  song      SongCategory[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
 model genre {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  image String
-  color String?
-  about String?
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  image     String
+  color     String?
+  about     String?
 
-  song SongGenre[]
+  song      SongGenre[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
 model scripture {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  image String
-  slug  String?
-  color String?
-  about String?
+  id        String          @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  image     String
+  slug      String?
+  color     String?
+  about     String?
 
-  song SongScripture[]
+  song      SongScripture[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 }
 
 model user {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  id       String     @id @default(auto()) @map("_id") @db.ObjectId
   name     String
   username String?
-  email    String  @unique
+  email    String     @unique
   password String
 
-  verified      Boolean @default(false)
-  emailVerified Boolean @default(false)
-  role          Role    @default(USER)
+  verified      Boolean    @default(false)
+  emailVerified Boolean    @default(false)
+  role          Role       @default(USER)
 
-  image   String?
-  bio     String?
-  phone   String?
-  website String?
+  image         String?
+  bio           String?
+  phone         String?
+  website       String?
 
-  isActive Boolean    @default(true)
-  status   UserStatus @default(ACTIVE)
+  isActive      Boolean    @default(true)
+  status        UserStatus @default(ACTIVE)
 
-  channels         ChannelTeam[]
-  invitedMembers   ChannelTeam[]     @relation("InvitedBy")
-  followedChannels ChannelFollower[]
+  channels          ChannelTeam[]
+  invitedMembers    ChannelTeam[]     @relation("InvitedBy")
+  followedChannels  ChannelFollower[]
 
-  createdSongs     song[]     @relation("SongCreatedBy")
-  updatedSongs     song[]     @relation("SongUpdatedBy")
-  createdEvents    event[]    @relation("UserCreatedEvents")
-  createdPlaylists playlist[] @relation("UserCreatedPlaylists")
+  createdSongs      song[]     @relation("SongCreatedBy")
+  updatedSongs      song[]     @relation("SongUpdatedBy")
+  createdEvents     event[]    @relation("UserCreatedEvents")
+  createdPlaylists  playlist[] @relation("UserCreatedPlaylists")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+// join model
+
 model ChannelTeam {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
 
-  userId    String @db.ObjectId
-  channelId String @db.ObjectId
+  userId      String        @db.ObjectId
+  channelId   String        @db.ObjectId
 
-  role   ChannelRole
-  status MemberStatus @default(ACTIVE)
+  role        ChannelRole
+  status      MemberStatus @default(ACTIVE)
 
-  invitedById String?  @db.ObjectId
-  joinedAt    DateTime @default(now())
+  invitedById String?       @db.ObjectId
+  joinedAt    DateTime      @default(now())
 
-  user      user    @relation(fields: [userId], references: [id])
-  channel   channel @relation(fields: [channelId], references: [id])
-  invitedBy user?   @relation("InvitedBy", fields: [invitedById], references: [id])
+  user        user          @relation(fields: [userId], references: [id])
+  channel     channel       @relation(fields: [channelId], references: [id])
+  invitedBy   user?         @relation("InvitedBy", fields: [invitedById], references: [id])
 
   @@unique([userId, channelId])
 }
 
 model ChannelFollower {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
 
-  userId    String @db.ObjectId
-  channelId String @db.ObjectId
+  userId    String   @db.ObjectId
+  channelId String   @db.ObjectId
 
-  user    user    @relation(fields: [userId], references: [id])
-  channel channel @relation(fields: [channelId], references: [id])
+  user      user     @relation(fields: [userId], references: [id])
+  channel   channel  @relation(fields: [channelId], references: [id])
 
   createdAt DateTime @default(now())
 
@@ -318,61 +327,46 @@ model ChannelFollower {
 }
 
 model ChannelInvitation {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
 
-  channelId String      @db.ObjectId
-  email     String
-  role      ChannelRole
+  channelId   String      @db.ObjectId
+  email       String
+  role        ChannelRole
 
-  token      String    @unique
-  expiresAt  DateTime
-  acceptedAt DateTime?
+  token       String      @unique
+  expiresAt   DateTime
+  acceptedAt  DateTime?
 
-  invitedById String @db.ObjectId
+  invitedById String      @db.ObjectId
 
-  createdAt DateTime @default(now())
+  createdAt   DateTime    @default(now())
 }
 
 model ChannelClaim {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
 
-  channelId     String  @db.ObjectId
-  requestedById String  @db.ObjectId
+  channelId     String      @db.ObjectId
+  requestedById String      @db.ObjectId
   message       String?
 
-  status       ClaimStatus @default(PENDING)
-  reviewedById String?     @db.ObjectId
+  status        ClaimStatus @default(PENDING)
+  reviewedById  String?     @db.ObjectId
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model SongCredit {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  songId    String         @db.ObjectId
-  channelId String         @db.ObjectId
-  role      CreditRole
-
-  song    song    @relation(fields: [songId], references: [id])
-  channel channel @relation(fields: [channelId], references: [id])
-
-  createdAt DateTime @default(now())
-
-  @@unique([songId, channelId, role])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 model EventCredit {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id         String          @id @default(auto()) @map("_id") @db.ObjectId
 
-  eventId   String          @db.ObjectId
-  channelId String          @db.ObjectId
-  role      EventCreditRole
+  eventId    String          @db.ObjectId
+  channelId  String          @db.ObjectId
+  role       EventCreditRole
 
-  event   event   @relation(fields: [eventId], references: [id])
-  channel channel @relation(fields: [channelId], references: [id])
+  event      event           @relation(fields: [eventId], references: [id])
+  channel    channel         @relation(fields: [channelId], references: [id])
 
-  createdAt DateTime @default(now())
+  createdAt  DateTime        @default(now())
 
   @@unique([eventId, channelId, role])
 }
@@ -382,65 +376,103 @@ model SongGenre {
   songId  String @db.ObjectId
   genreId String @db.ObjectId
 
-  song  song  @relation(fields: [songId], references: [id])
-  genre genre @relation(fields: [genreId], references: [id])
+  song    song   @relation(fields: [songId], references: [id])
+  genre   genre  @relation(fields: [genreId], references: [id])
 
   @@unique([songId, genreId])
 }
 
 model SongCategory {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
-  songId     String @db.ObjectId
-  categoryId String @db.ObjectId
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  songId     String   @db.ObjectId
+  categoryId String   @db.ObjectId
 
-  song     song     @relation(fields: [songId], references: [id])
-  category category @relation(fields: [categoryId], references: [id])
+  song       song     @relation(fields: [songId], references: [id])
+  category   category @relation(fields: [categoryId], references: [id])
 
   @@unique([songId, categoryId])
 }
 
 model SongScripture {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  songId      String @db.ObjectId
-  scriptureId String @db.ObjectId
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  songId      String    @db.ObjectId
+  scriptureId String    @db.ObjectId
 
-  song      song      @relation(fields: [songId], references: [id])
-  scripture scripture @relation(fields: [scriptureId], references: [id])
+  song        song      @relation(fields: [songId], references: [id])
+  scripture   scripture @relation(fields: [scriptureId], references: [id])
 
   @@unique([songId, scriptureId])
 }
 
 model SongAlbum {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  songId  String @db.ObjectId
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
   albumId String @db.ObjectId
+  songId  String @db.ObjectId
 
-  song  song  @relation(fields: [songId], references: [id])
+  // Useful for album track order
+  trackNo Int?
+
   album album @relation(fields: [albumId], references: [id])
+  song  song  @relation(fields: [songId], references: [id])
 
-  @@unique([songId, albumId])
+  @@unique([albumId, songId])
+  @@index([albumId, trackNo])
+  @@index([songId])
+}
+model SongCredit {
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+
+  songId    String         @db.ObjectId
+  channelId String         @db.ObjectId
+  role      CreditRole
+
+  song      song           @relation(fields: [songId], references: [id])
+  channel   channel        @relation(fields: [channelId], references: [id])
+
+  createdAt DateTime       @default(now())
+
+  @@unique([songId, channelId, role])
 }
 
 model submission {
-  id     String           @id @default(auto()) @map("_id") @db.ObjectId
-  type   SubmissionType
-  status SubmissionStatus @default(PENDING)
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  type      SubmissionType
+  status    SubmissionStatus @default(PENDING)
 
-  name  String?
-  email String?
+  name      String?
+  email     String?
 
-  title   String?
-  subject String?
-  message String?
+  title     String?
+  subject   String?
+  message   String?
 
   payload   Json?
   repliedAt DateTime?
 
-  userId String? @db.ObjectId
+  userId    String?          @db.ObjectId
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 }
+model SeasonSong {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  seasonId String @db.ObjectId
+  songId   String @db.ObjectId
+
+  // Useful for episode/song ordering
+  position Int?
+
+  season season @relation(fields: [seasonId], references: [id])
+  song   song   @relation(fields: [songId], references: [id])
+
+  @@unique([seasonId, songId])
+  @@index([seasonId, position])
+  @@index([songId])
+}
+
+// ENUMs
 
 enum StatusType {
   DRAFT

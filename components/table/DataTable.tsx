@@ -7,7 +7,12 @@ import { Badge } from '../ui/badge';
 
 import { Archive, Ellipsis, Trash2, X } from 'lucide-react';
 
-import { IconCircleCheckFilled, IconLoader } from '@tabler/icons-react';
+import { IconCircleCheckFilled, IconDotsVertical, IconLoader } from '@tabler/icons-react';
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Button } from '../ui/button';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { useCurrentChannelStore } from '@/store/useCurrentChannelStore';
 
 type Props = {
   data: any[];
@@ -37,6 +42,28 @@ const statusIcons = {
 };
 
 export default function DataTable({ data = [], type }: Props) {
+
+  const currentChannel = useCurrentChannelStore((state) => state.channel)
+  const router = useRouter();
+
+const handleDelete = async (id: string) => {
+  try {
+    const res = await fetch(`/api/song/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to delete song");
+    }
+
+    toast.success("Song deleted successfully");
+    router.push(`/dashboard/channel/${currentChannel?.id}`);
+    router.refresh();
+  } catch (error) {
+    console.error("Failed to delete song", error);
+    toast.error("Failed to delete song");
+  }
+};
   return (
     <div className="mx-4 my-6">
       <Table className="overflow-hidden rounded-lg border border-amber-400 mx-4 m-auto">
@@ -59,6 +86,7 @@ export default function DataTable({ data = [], type }: Props) {
             <TableHead>Created</TableHead>
 
             <TableHead>Updated</TableHead>
+            <TableHead></TableHead>
           </TableRow>
         </TableHeader>
 
@@ -122,6 +150,25 @@ export default function DataTable({ data = [], type }: Props) {
               {/* UPDATED */}
 
               <TableCell>{item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : '-'}</TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="flex size-8 text-muted-foreground data-[state=open]:bg-muted" size="icon">
+                      <IconDotsVertical />
+                      <span className="sr-only">Open menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-32">
+                    <DropdownMenuItem disabled>Edit</DropdownMenuItem>
+                    <DropdownMenuItem disabled>Make a copy</DropdownMenuItem>
+                    <DropdownMenuItem disabled>Favorite</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem variant="destructive" className="cursor-pointer" onClick={() => handleDelete(item.id)}>
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

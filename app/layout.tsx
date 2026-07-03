@@ -4,13 +4,6 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
-// import { getCurrentUser } from "@/lib/services/auth.service";
-import UserHydrator from "@/components/hydrator/hydrator-user";
-import { user } from "@prisma/client";
-import { getCurrentUserService } from "@/lib/services/auth.service";
-import getSingleChannelService from "./api/channel/[id]/service";
-import { getChannelsService } from "./api/channel/service";
-import ChannelsHydrator from "@/components/hydrator/hydrator-channels";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,13 +30,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-  const user = await getCurrentUserService()
-  console.log(user.role, "layout")
-
-  const mine = !(user?.role === "SUPER_ADMIN" || user?.role === "ADMIN");
-  const channels = await getChannelsService(mine);
-
   return (
     <html lang="en">
       <body
@@ -56,13 +42,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <TooltipProvider>
-            <UserHydrator user={user}>
-              <ChannelsHydrator channels={channels}>
-
                 {children}
-
-              </ChannelsHydrator>
-            </UserHydrator>
             <Toaster />
           </TooltipProvider>
         </ThemeProvider>

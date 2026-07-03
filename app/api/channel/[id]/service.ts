@@ -13,7 +13,8 @@ export default async function getSingleChannelService(channelId:any) {
                     include: {
                         user: true,
                     }
-                }
+                },
+                songs:true,
             }
         })
 

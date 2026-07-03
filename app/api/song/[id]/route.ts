@@ -36,15 +36,47 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     throw error;
   }
 }
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+    await prisma.$transaction([
+      prisma.songCredit.deleteMany({
+        where: { songId: id },
+      }),
+      prisma.songGenre.deleteMany({
+        where: { songId: id },
+      }),
+      prisma.songCategory.deleteMany({
+        where: { songId: id },
+      }),
+      prisma.songScripture.deleteMany({
+        where: { songId: id },
+      }),
+      prisma.songAlbum.deleteMany({
+        where: { songId: id },
+      }),
+      prisma.seasonSong.deleteMany({
+        where: { songId: id },
+      }),
 
-  await prisma.song.delete({
-    where: { id },
-  });
+      prisma.song.delete({
+        where: { id },
+      }),
+    ]);
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Hard delete song failed:", error);
+
+    return NextResponse.json(
+      { success: false, message: "Failed to delete song" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {

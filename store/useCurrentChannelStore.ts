@@ -1,10 +1,11 @@
-import { channel } from "@prisma/client";
-import { number } from "zod";
+import { ChannelWithSongs } from "@/types";
 import { create } from "zustand";
 
+
+
 interface ChannelStore {
-    channel: channel | null;
-    setCurrentChannel: (vale: channel | null) => void
+    channel: ChannelWithSongs | null;
+    setCurrentChannel: (vale: ChannelWithSongs | null) => void
 }
 
 export const useCurrentChannelStore = create<ChannelStore>((set)=>({

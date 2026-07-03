@@ -92,21 +92,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/dashboard",
         icon: IconDashboard,
         isActive: false,
-        id:"01"
-        // items: [
-        //   {
-        //     title: "History",
-        //     url: "#",
-        //   },
-        //   {
-        //     title: "Starred",
-        //     url: "#",
-        //   },
-        //   {
-        //     title: "Settings",
-        //     url: "#",
-        //   },
-        // ],
+        id:"01",
       },
       {
         title: "Channel",
