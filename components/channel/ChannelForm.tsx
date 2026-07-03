@@ -128,6 +128,8 @@ export default function ChannelForm({ initialData, isEdit }: FormProps) {
 
       // console.log("Channel saved")
       router.push('/dashboard/channel');
+      router.refresh();
+
     } catch (error: any) {
       toast.error(isEdit ? `${error} Channel updated failed` : `${error} Channel created failed`);
       console.error(error.message);

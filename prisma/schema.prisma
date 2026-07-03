@@ -207,11 +207,11 @@ model season {
   color       String?
   about       String?
 
-// Season owner / publisher
+  // Season owner / publisher
   channelId   String      @db.ObjectId
   channel     channel     @relation(fields: [channelId], references: [id])
 
-songs     SeasonSong[]
+  songs     SeasonSong[]
   
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt

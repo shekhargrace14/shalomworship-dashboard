@@ -33,6 +33,7 @@ export function NavMain({
     }[]
   }[]
 }) {
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>

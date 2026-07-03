@@ -21,49 +21,48 @@ type Props = {
 
 const statusIcons = {
   PUBLISH: <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />,
-
   DRAFT: <IconLoader />,
-
   TRASH: <Trash2 className="text-red-500" />,
-
   ARCHIVE: <Archive className="text-yellow-500" />,
-
   CANCELLED: <X className="text-red-500" />,
-
   PENDING: <Ellipsis />,
-
   REVIEWING: <IconLoader />,
-
   APPROVED: <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />,
-
   REJECTED: <X className="text-red-500" />,
-
   COMPLETED: <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />,
 };
 
 export default function DataTable({ data = [], type }: Props) {
-
-  const currentChannel = useCurrentChannelStore((state) => state.channel)
+  const currentChannel = useCurrentChannelStore((state) => state.channel);
   const router = useRouter();
+  console.log(type, 'DataTable');
 
-const handleDelete = async (id: string) => {
-  try {
-    const res = await fetch(`/api/song/${id}`, {
-      method: "DELETE",
-    });
+  const handleDelete = async (id: string) => {
+    try {
+      const res = await fetch(`/api/${type}/${id}`, {
+        method: 'DELETE',
+      });
 
-    if (!res.ok) {
-      throw new Error("Failed to delete song");
+      if (!res.ok) {
+        throw new Error(`Failed to delete ${type}`);
+      }
+
+      toast.success(` ${type} deleted successfully`);
+      if (type === 'channel') {
+        router.push(`/dashboard/channel`);
+        router.refresh();
+      }
+      if (type === 'song') {
+        router.push(`/dashboard/channel/${currentChannel?.id}`);
+        router.refresh();
+      }
+      router.refresh();
+      
+    } catch (error) {
+      console.error(`Failed to delete ${type}`, error);
+      toast.error(`Failed to delete ${type}`);
     }
-
-    toast.success("Song deleted successfully");
-    router.push(`/dashboard/channel/${currentChannel?.id}`);
-    router.refresh();
-  } catch (error) {
-    console.error("Failed to delete song", error);
-    toast.error("Failed to delete song");
-  }
-};
+  };
   return (
     <div className="mx-4 my-6">
       <Table className="overflow-hidden rounded-lg border border-amber-400 mx-4 m-auto">
@@ -84,7 +83,6 @@ const handleDelete = async (id: string) => {
             {type === 'song' && <TableHead>Key</TableHead>}
 
             <TableHead>Created</TableHead>
-
             <TableHead>Updated</TableHead>
             <TableHead></TableHead>
           </TableRow>

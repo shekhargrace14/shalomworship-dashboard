@@ -6,7 +6,6 @@ export default function page() {
 
     return (
         <>
-        <p>sdfsfs</p>
         <ChannelForm />
         </>
     )
