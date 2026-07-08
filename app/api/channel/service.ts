@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
-import { getCurrentUserService } from "@/lib/services/auth.service";
+import { prisma } from '@/lib/prisma';
+import { getCurrentUserService } from '@/lib/services/auth.service';
 
 // export async function getChannelsService(
 //   mine: boolean
@@ -8,7 +8,6 @@ import { getCurrentUserService } from "@/lib/services/auth.service";
 //   if (mine) {
 
 //     const user = await getCurrentUserService();
-//     console.log(user, "user")
 
 //     const memberships =
 //       await prisma.channelMember.findMany({
@@ -37,23 +36,19 @@ import { getCurrentUserService } from "@/lib/services/auth.service";
 
 // }
 
-export async function getChannelsService(
-  mine: boolean
-) {
-  
+export async function getChannelsService(mine: boolean) {
   if (mine) {
     const user = await getCurrentUserService();
 
-    const teams =
-      await prisma.channelTeam.findMany({
-        where: {
-          userId: user.id,
-          status: "ACTIVE",
-        },
-        include: {
-          channel: true,
-        },
-      });
+    const teams = await prisma.channelTeam.findMany({
+      where: {
+        userId: user.id,
+        status: 'ACTIVE',
+      },
+      include: {
+        channel: true,
+      },
+    });
 
     return teams.map((team) => ({
       ...team.channel,
@@ -62,10 +57,9 @@ export async function getChannelsService(
   }
   const channel = prisma.channel.findMany({
     orderBy: {
-      createdAt: "desc",
+      createdAt: 'desc',
     },
-  })
+  });
 
-  return channel
-
+  return channel;
 }

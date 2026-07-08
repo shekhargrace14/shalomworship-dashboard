@@ -9,29 +9,28 @@ import { Balloon, Mail, ShieldCheck, UserPlus } from 'lucide-react';
 import { channel } from '@prisma/client';
 
 export function CardDemo({ data }: any) {
-    // console.log(data, 'CardDemo');
-    return (
-        <Card className="w-full">
-            <CardHeader>
-                {/* <CardAction>
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        {/* <CardAction>
                     <Badge>{data?.verified ? 'Verified' : 'Not Verified '}</Badge>
                 </CardAction> */}
 
-                <div className="flex items-end gap-4">
-                    <Avatar className="h-24 w-24">
-                        <AvatarImage src={data?.avatar} />
-                        <AvatarFallback>CS</AvatarFallback>
-                    </Avatar>
+        <div className="flex items-end gap-4">
+          <Avatar className="h-24 w-24">
+            <AvatarImage src={data?.avatar} />
+            <AvatarFallback>CS</AvatarFallback>
+          </Avatar>
 
-                    <div>
-                        <CardTitle className="text-2xl line-clamp-1">{data?.title}</CardTitle>
+          <div>
+            <CardTitle className="text-2xl line-clamp-1">{data?.title}</CardTitle>
 
-                        <CardDescription>Singer Songwriter & Producer</CardDescription>
-                    </div>
-                </div>
-            </CardHeader>
+            <CardDescription>Singer Songwriter & Producer</CardDescription>
+          </div>
+        </div>
+      </CardHeader>
 
-            {/* <CardContent className="space-y-5">
+      {/* <CardContent className="space-y-5">
                 <div className="space-y-2 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                         <Mail className="h-4 w-4" />
@@ -53,7 +52,7 @@ export function CardDemo({ data }: any) {
                 </div>
             </CardContent> */}
 
-            {/* <CardFooter className="grid grid-cols-2 gap-2">
+      {/* <CardFooter className="grid grid-cols-2 gap-2">
                 <Button variant="outline">View Profile</Button>
 
                 <Button>
@@ -61,6 +60,6 @@ export function CardDemo({ data }: any) {
                     Invite
                 </Button>
             </CardFooter> */}
-        </Card>
-    );
+    </Card>
+  );
 }

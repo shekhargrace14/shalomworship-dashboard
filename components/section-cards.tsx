@@ -1,24 +1,15 @@
-"use client"
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
+'use client';
+import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
 
-import { Badge } from "@/components/ui/badge"
-import {
-  Card,
-  CardAction,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useUserStore } from "@/store/useUserStore";
-import { Role } from "@prisma/client";
-
+import { Badge } from '@/components/ui/badge';
+import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useUserStore } from '@/store/useUserStore';
+import { Role } from '@prisma/client';
 
 export function SectionCards() {
-
-  const user = useUserStore<any>((state) => state.user)
+  const user = useUserStore<any>((state) => state.user);
 
   // const channels = user?.channels?.length
 
@@ -27,8 +18,6 @@ export function SectionCards() {
   const [totalCategories, setTotalCategories] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalEvent, setTotalEvents] = useState(0);
-
-  console.log(totalChannels, "ksjfkdsjkfj")
 
   useEffect(() => {
     fetchChannels();
@@ -39,9 +28,9 @@ export function SectionCards() {
   }, [totalSongs, totalCategories, totalUsers, totalEvent, totalChannels]);
 
   async function fetchChannels() {
-    const res = await fetch(`/api/channel?mine=true`)
+    const res = await fetch(`/api/channel?mine=true`);
     const data = await res.json();
-    setTotalChannels(data.length); 
+    setTotalChannels(data.length);
   }
   // async function fetchSongs() {
   //   const res = await fetch(`/api/song`);
@@ -64,48 +53,45 @@ export function SectionCards() {
   //   setTotalEvents(data.total);
   // }
 
-
   const data = [
     {
-      title: "Channels",
-      link: "/channel",
+      title: 'Channels',
+      link: '/channel',
       count: totalChannels,
-      description: "it gonna be fine",
-      text: "do it as much as you can, she will be back soon",
+      description: 'it gonna be fine',
+      text: 'do it as much as you can, she will be back soon',
     },
     {
-      title: "Songs",
-      link: "/song",
+      title: 'Songs',
+      link: '/song',
       count: totalSongs,
-      description: "it gonna be fine",
-      text: "do it as much as you can, she will be back soon"
+      description: 'it gonna be fine',
+      text: 'do it as much as you can, she will be back soon',
     },
     {
-      title: "Categories",
-      link: "/category",
+      title: 'Categories',
+      link: '/category',
       count: totalCategories,
-      description: "it gonna be fine",
-      text: "do it as much as you can, she will be back soon",
+      description: 'it gonna be fine',
+      text: 'do it as much as you can, she will be back soon',
       roles: [Role.ADMIN, Role.SUPER_ADMIN],
-
     },
     {
-      title: "Users",
-      link: "/user",
+      title: 'Users',
+      link: '/user',
       count: totalUsers,
-      description: "it gonna be fine",
-      text: "do it as much as you can, she will be back soon",
+      description: 'it gonna be fine',
+      text: 'do it as much as you can, she will be back soon',
       roles: [Role.ADMIN, Role.SUPER_ADMIN],
-
     },
     {
-      title: "Events",
-      link: "/event",
+      title: 'Events',
+      link: '/event',
       count: totalEvent,
-      description: "it gonna be fine",
-      text: "do it as much as you can, she will be back soon",
+      description: 'it gonna be fine',
+      text: 'do it as much as you can, she will be back soon',
     },
-  ]
+  ];
 
   const items = data.filter((item) => {
     if (!item.roles) return true;
@@ -119,9 +105,7 @@ export function SectionCards() {
             <Card className="@container/card">
               <CardHeader>
                 <CardDescription>{d.title}</CardDescription>
-                <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                  {d.count}
-                </CardTitle>
+                <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">{d.count}</CardTitle>
                 <CardAction>
                   <Badge variant="outline">
                     <IconTrendingUp />
@@ -133,14 +117,12 @@ export function SectionCards() {
                 <div className="line-clamp-1 flex gap-2 font-medium">
                   Trending up this month <IconTrendingUp className="size-4" />
                 </div>
-                <div className="text-muted-foreground">
-                  Visitors for the last 6 months
-                </div>
+                <div className="text-muted-foreground">Visitors for the last 6 months</div>
               </CardFooter>
             </Card>
           </Link>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

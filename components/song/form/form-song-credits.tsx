@@ -27,8 +27,7 @@ type SongCreditsFormProps = {
 
 const roles = Object.values(CreditRole);
 
-export default function SongCreditsForm({ initialData }: SongCreditsFormProps) {
-  console.log(initialData);
+export default function FormSongCredits({ initialData }: SongCreditsFormProps) {
   const [search, setSearch] = useState('');
   const [role, setRole] = useState<CreditRole | ''>('');
 
@@ -138,7 +137,6 @@ export default function SongCreditsForm({ initialData }: SongCreditsFormProps) {
           role: credit.role,
         })),
       };
-      console.log(payload, 'payload');
 
       const response = await fetch(`/api/song/${initialData.id}/credits`, {
         method: 'PUT',

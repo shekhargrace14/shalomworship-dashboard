@@ -92,7 +92,6 @@ export default function Section({
   onMoveChordRight,
 }: Props) {
   // const [language, setLanguage] = useState(lang);
-  // console.log(initialData, "initialData section")
 
   const nativeLanguage = getLanguageName(initialData?.language);
   const [lable, setLable] = useState('New Section');
@@ -112,7 +111,7 @@ export default function Section({
 
   return (
     <>
-      <Card className="overflow-hidden border border-accent-foreground border-l-4 rounded-xl mb-4 p-0 hover:bg-background">
+      <Card className=" gap-0 overflow-hidden border border-accent-foreground border-l-4 rounded-xl mb-4 p-0 hover:bg-background">
         {/* HEADER */}
         <div className="flex items-center justify-between border-b border-border  px-4 py-4  cursor-pointer" onClick={() => handleOpen()}>
           {/* LEFT */}
@@ -243,7 +242,6 @@ export default function Section({
                   />
                 </div>
               )}
-              {/* {console.log(section)} */}
             </div>
 
             {/* LINE CARD */}
@@ -264,7 +262,6 @@ export default function Section({
                       {/* <Render line={line} /> */}
                       <RenderLineWithChords line={line} />
                       {/* <div className="" style={{ marginLeft: `${line.indent}px` }}>
-                        {console.log(line.indent, "indent")}
                         {line.lyrics.english}
                       </div> */}
                     </div>
@@ -384,6 +381,7 @@ export default function Section({
             </Button>
           </CardContent>
         )}
+        <div className="w-full cursor-pointer h-4" onClick={() => handleOpen()}></div>
       </Card>
     </>
   );

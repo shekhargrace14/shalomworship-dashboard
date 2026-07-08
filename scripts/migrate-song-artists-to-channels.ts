@@ -74,8 +74,5 @@
 //     await prisma.$disconnect();
 //   });
 
-
-
 //   // npx tsx scripts/migrate-song-channel.ts
 //   // npx tsx scripts/migrate-song-artists-to-channels.ts
-

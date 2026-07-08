@@ -35,7 +35,6 @@ const statusIcons = {
 export default function DataTable({ data = [], type }: Props) {
   const currentChannel = useCurrentChannelStore((state) => state.channel);
   const router = useRouter();
-  console.log(type, 'DataTable');
 
   const handleDelete = async (id: string) => {
     try {
@@ -57,7 +56,6 @@ export default function DataTable({ data = [], type }: Props) {
         router.refresh();
       }
       router.refresh();
-      
     } catch (error) {
       console.error(`Failed to delete ${type}`, error);
       toast.error(`Failed to delete ${type}`);

@@ -1,4 +1,3 @@
-
 // import {
 //   PrismaClient,
 //   ArtistType,
@@ -64,7 +63,7 @@
 //         spotify: artist.spotify,
 //         appleMusic: artist.appleMusic,
 //         amazonMusic: artist.amazonMusic,
-        
+
 //         tidal: artist.tidal,
 //         deezer: artist.deezer,
 //         soundCloud: artist.soundCloud,
@@ -87,4 +86,3 @@
 //   .finally(async () => {
 //     await prisma.$disconnect();
 //   });
-

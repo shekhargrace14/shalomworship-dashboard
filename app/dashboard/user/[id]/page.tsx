@@ -1,55 +1,40 @@
+'use client';
 
-"use client"
+import { User, Shield, Bell, Activity, Camera, Mail, Phone, Globe, MapPin, Calendar, KeyRound } from 'lucide-react';
 
-import {
-  User,
-  Shield,
-  Bell,
-  Activity,
-  Camera,
-  Mail,
-  Phone,
-  Globe,
-  MapPin,
-  Calendar,
-  KeyRound,
-} from "lucide-react"
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
-import { Switch } from "@/components/ui/switch"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Textarea } from "@/components/ui/textarea"
-import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
-import { user } from "@prisma/client"
-import { SectionCards } from "@/components/section-cards"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { user } from '@prisma/client';
+import { SectionCards } from '@/components/section-cards';
 
 export default function ProfilePage() {
-
-  const params = useParams()
-  const id = params.id as string
-  const [user, setUser] = useState<user>()
+  const params = useParams();
+  const id = params.id as string;
+  const [user, setUser] = useState<user>();
 
   useEffect(() => {
     async function fetchUser() {
       try {
-        const res = await fetch(`/api/user/${id}`)
-        const data = await res.json()
-        setUser(data.data)
+        const res = await fetch(`/api/user/${id}`);
+        const data = await res.json();
+        setUser(data.data);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }
-    fetchUser()
-  }, [])
+    fetchUser();
+  }, []);
 
-  console.log(user, "ksjfksajfk")
   return (
     <div className="container mx-auto max-w-7xl p-6 space-y-6">
       {/* HEADER */}
@@ -63,46 +48,30 @@ export default function ProfilePage() {
                   <AvatarFallback>CS</AvatarFallback>
                 </Avatar>
 
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  className="absolute -bottom-1 -right-1 rounded-full"
-                >
+                <Button size="icon" variant="secondary" className="absolute -bottom-1 -right-1 rounded-full">
                   <Camera className="h-4 w-4" />
                 </Button>
               </div>
 
               <div>
-                <h1 className="text-3xl font-bold">
-                  {user?.name}
-                </h1>
+                <h1 className="text-3xl font-bold">{user?.name}</h1>
 
-                <p className="text-muted-foreground">
-                  {user?.email}
-                </p>
+                <p className="text-muted-foreground">{user?.email}</p>
 
                 <div className="mt-2 flex gap-2">
                   <Badge>{user?.role}</Badge>
-                  <Badge variant={`${user?.verified ? "default" : "destructive"}`} >
-                    {user?.verified
-                      ? "Verified"
-                      : "Not Verified"
-                    }
-                  </Badge>
+                  <Badge variant={`${user?.verified ? 'default' : 'destructive'}`}>{user?.verified ? 'Verified' : 'Not Verified'}</Badge>
                 </div>
               </div>
             </div>
 
-            <Button>
-              Edit Profile
-            </Button>
+            <Button>Edit Profile</Button>
           </div>
         </CardContent>
       </Card>
 
       {/* STATS */}
       <SectionCards />
-                  
 
       {/* TABS */}
       <Tabs defaultValue="profile">
@@ -132,9 +101,7 @@ export default function ProfilePage() {
         <TabsContent value="profile">
           <Card>
             <CardHeader>
-              <CardTitle>
-                Profile Information
-              </CardTitle>
+              <CardTitle>Profile Information</CardTitle>
             </CardHeader>
 
             <CardContent className="space-y-6">
@@ -172,15 +139,10 @@ export default function ProfilePage() {
 
               <div className="space-y-2">
                 <Label>Bio</Label>
-                <Textarea
-                  rows={5}
-                  placeholder="Tell something about yourself..."
-                />
+                <Textarea rows={5} placeholder="Tell something about yourself..." />
               </div>
 
-              <Button>
-                Save Changes
-              </Button>
+              <Button>Save Changes</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -189,9 +151,7 @@ export default function ProfilePage() {
         <TabsContent value="security">
           <Card>
             <CardHeader>
-              <CardTitle>
-                Security Settings
-              </CardTitle>
+              <CardTitle>Security Settings</CardTitle>
             </CardHeader>
 
             <CardContent className="space-y-6">
@@ -221,13 +181,9 @@ export default function ProfilePage() {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-medium">
-                    Two Factor Authentication
-                  </h4>
+                  <h4 className="font-medium">Two Factor Authentication</h4>
 
-                  <p className="text-sm text-muted-foreground">
-                    Secure your account with 2FA
-                  </p>
+                  <p className="text-sm text-muted-foreground">Secure your account with 2FA</p>
                 </div>
 
                 <Switch />
@@ -240,21 +196,15 @@ export default function ProfilePage() {
         <TabsContent value="preferences">
           <Card>
             <CardHeader>
-              <CardTitle>
-                Preferences
-              </CardTitle>
+              <CardTitle>Preferences</CardTitle>
             </CardHeader>
 
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-medium">
-                    Email Notifications
-                  </h4>
+                  <h4 className="font-medium">Email Notifications</h4>
 
-                  <p className="text-sm text-muted-foreground">
-                    Receive updates via email
-                  </p>
+                  <p className="text-sm text-muted-foreground">Receive updates via email</p>
                 </div>
 
                 <Switch defaultChecked />
@@ -264,13 +214,9 @@ export default function ProfilePage() {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-medium">
-                    Marketing Emails
-                  </h4>
+                  <h4 className="font-medium">Marketing Emails</h4>
 
-                  <p className="text-sm text-muted-foreground">
-                    Receive product announcements
-                  </p>
+                  <p className="text-sm text-muted-foreground">Receive product announcements</p>
                 </div>
 
                 <Switch />
@@ -280,13 +226,9 @@ export default function ProfilePage() {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-medium">
-                    Dark Mode
-                  </h4>
+                  <h4 className="font-medium">Dark Mode</h4>
 
-                  <p className="text-sm text-muted-foreground">
-                    Use dark appearance
-                  </p>
+                  <p className="text-sm text-muted-foreground">Use dark appearance</p>
                 </div>
 
                 <Switch />
@@ -299,9 +241,7 @@ export default function ProfilePage() {
         <TabsContent value="activity">
           <Card>
             <CardHeader>
-              <CardTitle>
-                Recent Activity
-              </CardTitle>
+              <CardTitle>Recent Activity</CardTitle>
             </CardHeader>
 
             <CardContent>
@@ -309,48 +249,32 @@ export default function ProfilePage() {
                 <div className="flex gap-4">
                   <div className="h-2 w-2 rounded-full bg-primary mt-2" />
                   <div>
-                    <p className="font-medium">
-                      Created Song
-                    </p>
-                    <p className="text-muted-foreground">
-                      Peedhi Se Peedhi Tak
-                    </p>
+                    <p className="font-medium">Created Song</p>
+                    <p className="text-muted-foreground">Peedhi Se Peedhi Tak</p>
                   </div>
                 </div>
 
                 <div className="flex gap-4">
                   <div className="h-2 w-2 rounded-full bg-primary mt-2" />
                   <div>
-                    <p className="font-medium">
-                      Updated Artist
-                    </p>
-                    <p className="text-muted-foreground">
-                      Shalom Worship
-                    </p>
+                    <p className="font-medium">Updated Artist</p>
+                    <p className="text-muted-foreground">Shalom Worship</p>
                   </div>
                 </div>
 
                 <div className="flex gap-4">
                   <div className="h-2 w-2 rounded-full bg-primary mt-2" />
                   <div>
-                    <p className="font-medium">
-                      Created Event
-                    </p>
-                    <p className="text-muted-foreground">
-                      Worship Night 2026
-                    </p>
+                    <p className="font-medium">Created Event</p>
+                    <p className="text-muted-foreground">Worship Night 2026</p>
                   </div>
                 </div>
 
                 <div className="flex gap-4">
                   <div className="h-2 w-2 rounded-full bg-primary mt-2" />
                   <div>
-                    <p className="font-medium">
-                      Last Login
-                    </p>
-                    <p className="text-muted-foreground">
-                      Today at 09:32 AM
-                    </p>
+                    <p className="font-medium">Last Login</p>
+                    <p className="text-muted-foreground">Today at 09:32 AM</p>
                   </div>
                 </div>
               </div>
@@ -359,5 +283,5 @@ export default function ProfilePage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

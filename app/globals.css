@@ -1,6 +1,6 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -46,7 +46,7 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
 
-    /* fonts */
+  /* fonts */
   --font-mono: var(--font-jetbrains-mono);
 }
 
@@ -131,9 +131,6 @@
     @apply bg-background text-foreground;
   }
 }
-
-
-
 
 .tiptap ul {
   list-style-type: disc;

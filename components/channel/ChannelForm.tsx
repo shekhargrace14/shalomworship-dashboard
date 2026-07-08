@@ -38,8 +38,6 @@ export default function ChannelForm({ initialData, isEdit }: FormProps) {
   const [slugEdited, setSlugEdited] = useState(false);
   const user = useUserStore((state) => state.user);
 
-  // console.log(user)
-
   function getInitialFormData(channel: FormProps['initialData'], user?: user | null) {
     return {
       createdById: channel?.createdById || user?.id,
@@ -67,7 +65,6 @@ export default function ChannelForm({ initialData, isEdit }: FormProps) {
   }
 
   const [formData, setFormData] = useState(getInitialFormData(initialData, user));
-  // console.log(formData)
 
   useEffect(() => {
     // if (initialData) {
@@ -105,7 +102,6 @@ export default function ChannelForm({ initialData, isEdit }: FormProps) {
     const method = isEdit ? 'PATCH' : 'POST';
 
     const payload = { ...formData };
-    // console.log("payload", payload)
 
     try {
       const res = await fetch(endpoint, {
@@ -126,10 +122,8 @@ export default function ChannelForm({ initialData, isEdit }: FormProps) {
 
       toast.success(isEdit ? 'Channel updated successfully' : 'Channel created successfully');
 
-      // console.log("Channel saved")
       router.push('/dashboard/channel');
       router.refresh();
-
     } catch (error: any) {
       toast.error(isEdit ? `${error} Channel updated failed` : `${error} Channel created failed`);
       console.error(error.message);
@@ -232,7 +226,7 @@ export default function ChannelForm({ initialData, isEdit }: FormProps) {
 
                 {/* VERIFIED */}
                 <div className="flex items-center gap-3">
-                  <input id="verified" type="checkbox" name="isVerified" checked={formData.verified} onChange={handleChange} className="h-4 w-4" />
+                  <input id="verified" type="checkbox" name="verified" checked={formData.verified} onChange={handleChange} className="h-4 w-4" />
                   <label htmlFor="verified" className="text-sm font-medium">
                     Verified Channel
                   </label>
@@ -244,19 +238,19 @@ export default function ChannelForm({ initialData, isEdit }: FormProps) {
                 {/* IMAGE */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Channel Image</label>
-                  <Input name="image" placeholder="https://..." value={formData.avatar} onChange={handleChange} />
+                  <Input name="avatar" placeholder="https://..." value={formData.avatar} onChange={handleChange} />
                 </div>
 
                 {/* BANNER */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Channel Banner</label>
-                  <Input name="image" placeholder="https://..." value={formData.banner} onChange={handleChange} />
+                  <Input name="banner" placeholder="https://..." value={formData.banner} onChange={handleChange} />
                 </div>
 
                 {/* ABOUT */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">About Channel</label>
-                  <Textarea name="about" placeholder="Write Channel biography..." rows={6} value={formData.description} onChange={handleChange} />
+                  <Textarea name="description" placeholder="Write Channel biography..." rows={6} value={formData.description} onChange={handleChange} />
                 </div>
 
                 {/* COLOR */}
@@ -295,7 +289,7 @@ export default function ChannelForm({ initialData, isEdit }: FormProps) {
             <div className="space-y-2">
               <label className="text-sm font-medium">Website</label>
 
-              <Input name="link" placeholder="https://..." value={formData.website} onChange={handleChange} />
+              <Input name="website" placeholder="https://..." value={formData.website} onChange={handleChange} />
             </div>
             {/* EMAIL */}
             <div className="space-y-2">

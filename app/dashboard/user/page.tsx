@@ -1,48 +1,33 @@
-"use client"
+'use client';
 
-import DataTable from "@/components/table/DataTable"
-import { use, useEffect, useState } from "react"
+import DataTable from '@/components/table/DataTable';
+import { use, useEffect, useState } from 'react';
 
 export default function Page() {
-
-  const [users, setUsers] = useState<any[]>([])
+  const [users, setUsers] = useState<any[]>([]);
 
   useEffect(() => {
-
     async function fetchUsers() {
-
       try {
+        const res = await fetch('/api/user');
 
-        const res = await fetch("/api/user")
+        const data = await res.json();
 
-        const data = await res.json()
-
-        setUsers(data.data)
-
+        setUsers(data.data);
       } catch (error) {
-
-        console.error(error)
-
+        console.error(error);
       }
-
     }
 
-    fetchUsers()
-
-  }, [])
-  console.log(users, "ksjfksajfk")
+    fetchUsers();
+  }, []);
 
   return (
     <div>
       {users.map((user) => (
-        <p key={user.id}>
-          {user.name}
-        </p>
-        
+        <p key={user.id}>{user.name}</p>
       ))}
-            <DataTable data={users} type="user"/>
+      <DataTable data={users} type="user" />
     </div>
-    
-  )
-
+  );
 }

@@ -1,6 +1,6 @@
 // types/sidebar.ts
 
-import { LucideIcon } from "lucide-react";
+import { LucideIcon } from 'lucide-react';
 
 export interface SidebarItem {
   title: string;

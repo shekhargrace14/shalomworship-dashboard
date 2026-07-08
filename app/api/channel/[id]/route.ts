@@ -7,30 +7,25 @@ export async function GET(req: Request, context: { params: Promise<{ id: string 
   return getSingleChannelController(req, context);
 }
 
-export async function DELETE(
-  _req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 
-    const [songCount, albumCount, eventCount, playlistCount, seasonCount] =
-      await Promise.all([
-        prisma.song.count({ where: { channelId: id } }),
-        prisma.album.count({ where: { channelId: id } }),
-        prisma.event.count({ where: { channelId: id } }),
-        prisma.playlist.count({ where: { channelId: id } }),
-        prisma.season.count({ where: { channelId: id } }),
-      ]);
+    const [songCount, albumCount, eventCount, playlistCount, seasonCount] = await Promise.all([
+      prisma.song.count({ where: { channelId: id } }),
+      prisma.album.count({ where: { channelId: id } }),
+      prisma.event.count({ where: { channelId: id } }),
+      prisma.playlist.count({ where: { channelId: id } }),
+      prisma.season.count({ where: { channelId: id } }),
+    ]);
 
     if (songCount || albumCount || eventCount || playlistCount || seasonCount) {
       return NextResponse.json(
         {
           success: false,
-          message:
-            "This channel has songs, albums, events, playlists, or seasons. Remove or transfer them before deleting the channel.",
+          message: 'This channel has songs, albums, events, playlists, or seasons. Remove or transfer them before deleting the channel.',
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -47,17 +42,17 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: "Channel deleted successfully",
+      message: 'Channel deleted successfully',
     });
   } catch (error) {
-    console.error("Hard delete channel failed:", error);
+    console.error('Hard delete channel failed:', error);
 
     return NextResponse.json(
       {
         success: false,
-        message: "Failed to delete channel",
+        message: 'Failed to delete channel',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

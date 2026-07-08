@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "format": "prettier --write .",
+    "build": "prisma generate && npm run format && next build",
     "start": "next start",
     "lint": "eslint",
     "migrate:artists": "tsx scripts/migrate-artists-to-channels.ts"
@@ -48,6 +49,7 @@
     "react-day-picker": "^10.0.1",
     "react-dom": "19.2.3",
     "react-email": "^6.6.3",
+    "react-lite-youtube-embed": "^3.6.0",
     "react-redux": "^9.3.0",
     "recharts": "^2.15.4",
     "resend": "^6.14.0",
@@ -68,7 +70,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
-    "prettier": "^3.8.3",
+    "prettier": "^3.9.4",
     "prisma": "6.19",
     "shadcn": "^3.8.5",
     "tailwindcss": "^4",

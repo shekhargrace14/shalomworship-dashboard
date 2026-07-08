@@ -1,25 +1,21 @@
 // config/dashboard-sidebar.ts
 
-import {
-  LayoutDashboard,
-  User,
-  FolderKanban,
-} from "lucide-react";
+import { LayoutDashboard, User, FolderKanban } from 'lucide-react';
 
 export const dashboardSidebar = [
   {
-    title: "Dashboard",
-    href: "/dashboard",
+    title: 'Dashboard',
+    href: '/dashboard',
     icon: LayoutDashboard,
   },
   {
-    title: "Channels",
-    href: "/dashboard/channels",
+    title: 'Channels',
+    href: '/dashboard/channels',
     icon: FolderKanban,
   },
   {
-    title: "Profile",
-    href: "/dashboard/profile",
+    title: 'Profile',
+    href: '/dashboard/profile',
     icon: User,
   },
 ];

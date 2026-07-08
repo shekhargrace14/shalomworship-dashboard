@@ -23,10 +23,7 @@ export default function ChannelHeader({ channelId }: ChannelHeaderProps) {
 
   const channels = useChannelsStore((state) => state.channels);
   const router = useRouter();
-  // console.log(channels, "channel,,,,")
-  useEffect(() => {
-    // console.log("Store channels:", channels);
-  }, [channels]);
+  useEffect(() => {}, [channels]);
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-background px-6">
@@ -41,7 +38,6 @@ export default function ChannelHeader({ channelId }: ChannelHeaderProps) {
             currentChannel={currentChannel}
           />
         </SidebarHeader> */}
-        kkjkj
         <div className="">
           <h1 className="text-lg font-semibold">
             {currentChannel?.title}

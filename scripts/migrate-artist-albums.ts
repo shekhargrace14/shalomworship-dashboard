@@ -5,8 +5,6 @@
 // async function main() {
 //   const artistAlbums = await prisma.artistAlbum.findMany();
 
-//   console.log(`Found ${artistAlbums.length} ArtistAlbum records`);
-
 //   let migrated = 0;
 //   let skipped = 0;
 

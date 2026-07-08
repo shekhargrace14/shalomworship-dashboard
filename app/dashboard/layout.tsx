@@ -8,7 +8,6 @@ import { getChannelsService } from '../api/channel/service';
 
 export default async function DashboardLayout({ children }: any) {
   const user = await getCurrentUserService();
-  console.log(user.role, 'layout');
 
   const mine = !(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN');
   const channels = await getChannelsService(mine);

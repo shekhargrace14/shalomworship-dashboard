@@ -13,8 +13,6 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id: songId } = await params;
 
-    console.log(songId, 'route songID');
-
     if (!songId) {
       return NextResponse.json(
         {
@@ -27,8 +25,6 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
     const body = await request.json();
     const credits = body.credits as CreditInput[];
-
-    console.log(credits, 'route-Credits');
 
     if (!Array.isArray(credits)) {
       return NextResponse.json(

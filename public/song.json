@@ -10,9 +10,7 @@
     [
       { "label": { "hi": "अंतरा 1", "en": "Verse 1" } },
       {
-        "chords": [
-          { "root": "", "number": null, "quality": "", "space": null }
-        ],
+        "chords": [{ "root": "", "number": null, "quality": "", "space": null }],
         "lyrics": {
           "hi": "निर्जल देश में नदियाँ बहाएगा",
           "en": "Nirjal Desh Mein Nadiyaan Bahaayega"
@@ -22,9 +20,7 @@
         }
       },
       {
-        "chords": [
-          { "root": "", "number": null, "quality": "", "space": null }
-        ],
+        "chords": [{ "root": "", "number": null, "quality": "", "space": null }],
         "lyrics": {
           "hi": "जंगल के बीच में नया मार्ग बनाएगा (X2)",
           "en": "Jangal Ke Beech Mein Naya Maarg Banaayega (X2)"

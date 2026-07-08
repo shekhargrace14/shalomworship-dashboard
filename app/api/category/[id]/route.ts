@@ -1,95 +1,74 @@
-import { prisma } from "@/lib/prisma"
-import { NextResponse } from "next/server"
-import { success } from "zod"
+import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server';
+import { success } from 'zod';
 
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  console.log("CATEGORY API HIT")
-
-  const { id } = await params
-
-  console.log(id, "api category")
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
 
   const category = await prisma.category.findUnique({
-    where: { id }
-  })
+    where: { id },
+  });
 
   if (!category) {
-    return NextResponse.json(
-      { error: "Category not found" },
-      { status: 404 }
-    )
+    return NextResponse.json({ error: 'Category not found' }, { status: 404 });
   }
 
   return NextResponse.json({
     success: true,
-    category
-  })
+    category,
+  });
 }
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-
-    const { id } = await params
+    const { id } = await params;
 
     // optional existence check
     const existingCategory = await prisma.category.findUnique({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
 
     if (!existingCategory) {
-
       return NextResponse.json(
         {
           success: false,
-          message: "Category not found"
+          message: 'Category not found',
         },
         {
-          status: 404
-        }
-      )
-
+          status: 404,
+        },
+      );
     }
 
     // delete category
     await prisma.category.delete({
       where: {
-        id
+        id,
       },
-    })
+    });
 
     return NextResponse.json(
       {
         success: true,
-        message: "Category deleted successfully",
+        message: 'Category deleted successfully',
       },
       {
-        status: 200
-      }
-    )
-
+        status: 200,
+      },
+    );
   } catch (error: any) {
-
-    console.log(error)
+    console.error(error);
 
     return NextResponse.json(
       {
         success: false,
-        message: error.message || "Failed to delete category"
+        message: error.message || 'Failed to delete category',
       },
       {
-        status: 500
-      }
-    )
-
+        status: 500,
+      },
+    );
   }
-
 }

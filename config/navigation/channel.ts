@@ -66,59 +66,49 @@
 //   },
 // ];
 
-
 // config/channel-sidebar.ts
 
-import {
-  LayoutDashboard,
-  Music4,
-  Mic2,
-  Disc3,
-  Calendar,
-  Users,
-  BarChart3,
-  Settings,
-} from "lucide-react";
+import { LayoutDashboard, Music4, Mic2, Disc3, Calendar, Users, BarChart3, Settings } from 'lucide-react';
 
 export const getChannelSidebar = (channelId: string) => [
   {
-    title: "Overview",
+    title: 'Overview',
     href: `/channel/${channelId}`,
     icon: LayoutDashboard,
   },
   {
-    title: "Songs",
+    title: 'Songs',
     href: `/channel/${channelId}/songs`,
     icon: Music4,
   },
   {
-    title: "Artists",
+    title: 'Artists',
     href: `/channel/${channelId}/artists`,
     icon: Mic2,
   },
   {
-    title: "Albums",
+    title: 'Albums',
     href: `/channel/${channelId}/albums`,
     icon: Disc3,
   },
   {
-    title: "Events",
+    title: 'Events',
     href: `/channel/${channelId}/events`,
     icon: Calendar,
   },
   {
-    title: "Members",
+    title: 'Members',
     href: `/channel/${channelId}/members`,
     icon: Users,
   },
   {
-    title: "Analytics",
+    title: 'Analytics',
     href: `/channel/${channelId}/analytics`,
     icon: BarChart3,
   },
   {
-    title: "Settings",
+    title: 'Settings',
     href: `/channel/${channelId}/settings`,
     icon: Settings,
   },
-];  
+];

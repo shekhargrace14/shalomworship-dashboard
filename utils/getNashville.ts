@@ -1,20 +1,21 @@
-const MAJOR_SCALE = [
-  'C', 'C#', 'D', 'D#', 'E', 'F',
-  'F#', 'G', 'G#', 'A', 'A#', 'B'
-];
+const MAJOR_SCALE = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
 const DEGREES = ['1', '2', '3', '4', '5', '6', '7'];
 
 // Map flats to sharps to keep index matching uniform
 const flatToSharpMap: Record<string, string> = {
-  'DB': 'C#', 'EB': 'D#', 'GB': 'F#', 'AB': 'G#', 'BB': 'A#'
+  DB: 'C#',
+  EB: 'D#',
+  GB: 'F#',
+  AB: 'G#',
+  BB: 'A#',
 };
 
 // Helper to normalize any user input (e.g., 'bb' -> 'BB' -> 'A#', 'c#' -> 'C#')
 function normalizeNote(note: string): string {
   if (!note) return '';
   let upper = note.trim().toUpperCase();
-  
+
   // Standardize styling: if it's 'C#', keep it; if it's 'db', match 'DB'
   if (upper.length > 1 && (upper.endsWith('B') || upper.endsWith('𝄬'))) {
     // Ensure it's treated as a flat note
@@ -35,8 +36,8 @@ function getScale(key: string): string[] {
   // A major scale has 7 distinct notes: Root, W, W, H, W, W, W
   // The steps relative to the root index are:
   const majorIntervals = [0, 2, 4, 5, 7, 9, 11];
-  
-  const scale = majorIntervals.map(interval => {
+
+  const scale = majorIntervals.map((interval) => {
     const index = (startIndex + interval) % 12;
     return MAJOR_SCALE[index];
   });
@@ -44,11 +45,7 @@ function getScale(key: string): string[] {
   return scale; // Returns exactly 7 scale degrees
 }
 
-export function getNashville(
-  key: string,
-  root: string,
-  bass?: string
-): string | null {
+export function getNashville(key: string, root: string, bass?: string): string | null {
   if (!key || !root) {
     return null;
   }

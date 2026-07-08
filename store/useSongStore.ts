@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 interface SongStore {
   key: string;
@@ -6,6 +6,6 @@ interface SongStore {
 }
 
 export const useSongStore = create<SongStore>((set) => ({
-  key: "",
+  key: '',
   setKey: (value) => set({ key: value }),
-}));    
+}));

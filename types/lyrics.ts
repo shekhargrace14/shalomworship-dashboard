@@ -1,48 +1,43 @@
 export type Chord = {
-  root: string
-  number: number | string
-  quality: string
-  space: number | null
-}
+  root: string;
+  number: number | string;
+  quality: string;
+  space: number | null;
+};
 
 export type SongLine = {
-  chords: Chord[]
+  chords: Chord[];
 
   lyrics: {
-    en: string
-    hi: string
-  }
+    en: string;
+    hi: string;
+  };
 
   translation: {
-    en: string
-  }
+    en: string;
+  };
 
-  indent?: number
+  indent?: number;
 
-  break?: boolean
-}
+  break?: boolean;
+};
 
 export type SongSection = {
-  id: string
+  id: string;
 
-  type:
-    | "intro"
-    | "verse"
-    | "chorus"
-    | "bridge"
-    | "outro"
+  type: 'intro' | 'verse' | 'chorus' | 'bridge' | 'outro';
 
-  repeat?: number
+  repeat?: number;
 
   label: {
-    hi: string
-    en: string
-  }
+    hi: string;
+    en: string;
+  };
 
-  lines: SongLine[]
-}
+  lines: SongLine[];
+};
 
 export type LyricsData = {
-  arrangement: string[]
-  sections: SongSection[]
-}
+  arrangement: string[];
+  sections: SongSection[];
+};

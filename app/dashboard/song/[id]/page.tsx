@@ -1,182 +1,225 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 
 import Lyrics from '@/components/song/lyrics';
-import SongBasicForm from '@/components/song/form/SongBasicForm';
+import { SongWithDetails } from '@/types';
 import { useParams } from 'next/navigation';
 
-import SongCreditsForm from '@/components/song/form/SongCreditsForm';
-import { channel, CreditRole, song } from '@prisma/client';
+// Use your real component paths
+import FormSongMedia from '@/components/song/form/form-song-media';
+import FormSongCategory from '@/components/song/form/form-song-category';
+import FormSongBasic from '@/components/song/form/form-song-basic';
+import FromSongSeo from '@/components/song/form/from-song-seo';
+import FormSongCredits from '@/components/song/form/form-song-credits';
+import Link from 'next/link';
 
-// Define the form state interface
-interface FormState {
-  title: string;
-  genre: string;
-  producer: string;
-  songwriter: string;
-  lyrics: string;
-  metaTitle: string;
-  metaDescription: string;
-}
-
-const initialFormState: FormState = {
-  title: '',
-  genre: '',
-  producer: '',
-  songwriter: '',
-  lyrics: '',
-  metaTitle: '',
-  metaDescription: '',
+type Props = {
+  song: any;
 };
 
-type SongCreditWithChannel = {
-  id: string;
-  songId: string;
-  channelId: string;
-  role: CreditRole;
-  createdAt: Date;
-  channel: channel;
-};
+const steps = [
+  {
+    title: 'Basic Information',
+    description: 'Add the main song details.',
+  },
+  {
+    title: 'Credits',
+    description: 'Add singers, writers, composers, and channels.',
+  },
+  {
+    title: 'Lyrics & Chords',
+    description: 'Add lyrics, chords, and translations.',
+  },
+  {
+    title: 'Media',
+    description: 'Add video, audio, image, and color.',
+  },
+  {
+    title: 'Categories & Genres',
+    description: 'Organize the song for discovery.',
+  },
+  {
+    title: 'Manage SEO',
+    description: 'Optimize the song page for search engines.',
+  },
+];
 
-type SongWithCredits = song & {
-  credits: SongCreditWithChannel[];
-};
-
-export default function Page() {
+export default function page() {
   const isEdit = true;
   const params = useParams();
-
+  console.log(params);
   const id = params.id as string;
-
-  const [song, setSong] = useState<SongWithCredits | null>(null);
-  // console.log(song, "song at page")
+  const [song, setSong] = useState<SongWithDetails | null>(null);
+  console.log(song, 'song');
+  const [step, setStep] = useState(1);
 
   useEffect(() => {
-    async function load() {
-      const res = await fetch(`/api/song/${id}`);
+    async function fetchSong() {
+      try {
+        const res = await fetch(`/api/song/${id}`);
 
-      if (!res.ok) {
-        console.error('API Error', res.status);
-        const text = await res.text();
-        console.error(text);
-        return;
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || 'Failed to fetch song');
+        }
+
+        setSong(data.data);
+      } catch (error: any) {
+        console.error(error);
       }
-
-      const data = await res.json();
-
-      setSong(data.song);
     }
 
     if (id) {
-      load();
+      fetchSong();
     }
-  }, [id, setSong]);
+  }, [id]);
 
-  // console.log(song)
+  const currentStep = steps[step - 1];
 
-  const [step, setStep] = useState<number>(1);
-  const [formData, setFormData] = useState<FormState>(initialFormState);
+  function handleNext() {
+    setStep((current) => Math.min(current + 1, 6));
+  }
 
-  const updateField = (key: keyof FormState, value: string) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
-  };
+  function handleBack() {
+    setStep((current) => Math.max(current - 1, 1));
+  }
 
-  const handleNext = () => {
-    if (step < 4) setStep((prev) => prev + 1);
-  };
+  // It only changes the status to DRAFT
+  // async function handleSaveDraft() {
+  //   try {
+  //     const res = await fetch(`/api/song/${id}`, {
+  //       method: 'PATCH',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         status: 'DRAFT',
+  //       }),
+  //     });
 
-  const handleBack = () => {
-    if (step > 1) setStep((prev) => prev - 1);
-  };
-  const handleSaveDraft = () => {
-    alert('Draft saved successfully!');
-  };
+  //     const data = await res.json();
 
-  const handlePublish = () => {
-    // console.log("Publishing final data...", formData)
-    alert('Song published successfully!');
-  };
+  //     if (!res.ok) {
+  //       throw new Error(data.message || 'Failed to save draft');
+  //     }
+
+  //     toast.success('Draft saved successfully');
+  //   } catch (error: any) {
+  //     toast.error(error.message || 'Failed to save draft');
+  //   }
+  // }
+
+  // It only changes the status from DRAFT -> PUBLISH
+  async function handlePublish() {
+    try {
+      const res = await fetch(`/api/song/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: 'PUBLISH',
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to publish song');
+      }
+
+      toast.success('Song published successfully');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to publish song');
+    }
+  }
+
+  function renderCurrentStep() {
+    if (!song) {
+      return <div>Loading song...</div>;
+    }
+    switch (step) {
+      case 1:
+        return <FormSongBasic initialData={song} isEdit />;
+
+      case 2:
+        return <FormSongCredits initialData={song} />;
+
+      case 3:
+        return <Lyrics initialData={song} isEdit />;
+
+      case 4:
+        return <FormSongMedia initialData={song} isEdit />;
+
+      case 5:
+        return <FormSongCategory initialData={song} isEdit />;
+
+      case 6:
+        return <FromSongSeo initialData={song} isEdit />;
+
+      default:
+        return null;
+    }
+  }
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4">
-      {/* Step Progress Bar */}
-      <div className="flex items-center justify-between mb-8 px-2">
-        {[1, 2, 3, 4].map((num) => (
-          <div key={num} className="flex items-center flex-1 last:flex-none">
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border transition-colors ${
-                step === num ? 'bg-primary text-primary-foreground border-primary' : step > num ? 'bg-muted text-muted-foreground border-muted' : 'bg-background text-muted-foreground border-input'
-              }`}
-            >
-              {num}
-            </div>
-            {num < 4 && <div className={`h-[2px] flex-1 mx-2 transition-colors ${step > num ? 'bg-muted' : 'bg-input'}`} />}
-          </div>
-        ))}
-      </div>
-      {/* Form Wizard Card */}
-      {step === 1 && (
-        <>
-          <SongBasicForm onHandleNext={handleNext} onHandleSaveDraft={handleSaveDraft} initialData={song} isEdit />
-        </>
-      )}
-
-      {step === 2 && (
-        <>
-          {song && <SongCreditsForm initialData={song} />}
-          <div className="flex justify-between mt-8">
-            <Button variant="outline" onClick={handleBack}>
-              Back
-            </Button>
-            <Button onClick={handleNext}>Next: Manage Lyrics</Button>
-          </div>
-        </>
-      )}
-
-      {step === 3 && (
-        <>
-          <Lyrics initialData={song} />
+    <div className="flex min-h-[calc(100vh-120px)] flex-col">
+      <div className="sticky top-0 z-20 border-b bg-background px-4 py-4 md:px-6">
+        <div className="mx-auto max-w-5xl">
           <div className="flex justify-between">
-            <Button variant="outline" onClick={handleBack}>
-              Back
-            </Button>
-            <Button onClick={handleNext}>Next: Manage SEO</Button>
-          </div>
-        </>
-      )}
+            <div className="flex flex-col">
+              <p className="text-sm text-muted-foreground">
+                Step {step} of {steps.length}
+              </p>
 
-      {step === 4 && (
-        <>
-          <CardHeader>
-            <CardTitle>Manage SEO</CardTitle>
-            <CardDescription>Optimize your song page visibility for search engines.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Input placeholder="Meta Title" value={formData.metaTitle} onChange={(e) => updateField('metaTitle', e.target.value)} />
+              <h1 className="text-xl font-semibold">{currentStep.title}</h1>
+
+              <p className="mt-1 text-sm text-muted-foreground">{currentStep.description}</p>
             </div>
-            <div className="space-y-2">
-              <Textarea placeholder="Meta Description" className="min-h-[100px]" value={formData.metaDescription} onChange={(e) => updateField('metaDescription', e.target.value)} />
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between gap-2">
-            <Button variant="outline" onClick={handleBack}>
-              Back
-            </Button>
-            <div className="flex gap-2">
-              <Button variant="secondary" onClick={handleSaveDraft}>
-                Save Draft
+            <Link href={`/dashboard/song/${id}/preview`}>
+              <Button>Preview Song</Button>
+            </Link>
+          </div>
+
+          <div className="mt-4 flex gap-2">
+            {steps.map((item, index) => (
+              <div key={item.title} className={`h-1 flex-1 rounded-full ${index + 1 <= step ? 'bg-primary' : 'bg-muted'}`} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <main className="flex-1 px-4 py-6 pb-6 md:px-6">
+        <div className="mx-auto max-w-5xl">{renderCurrentStep()}</div>
+      </main>
+
+      <div className="sticky bottom-0 z-20 border-t bg-background px-4 py-4 md:px-6">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
+          <Button type="button" variant="outline" onClick={handleBack} disabled={step === 1}>
+            Back
+          </Button>
+
+          <div className="flex gap-2">
+            {/* <Button type="button" variant="secondary" onClick={handleSaveDraft}>
+              Save Draft
+            </Button> */}
+
+            {step < 6 ? (
+              <Button type="button" onClick={handleNext}>
+                Next
               </Button>
-              <Button onClick={handlePublish}>Publish Song</Button>
-            </div>
-          </CardFooter>
-        </>
-      )}
+            ) : (
+              <Button type="button" onClick={handlePublish}>
+                Publish Song
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

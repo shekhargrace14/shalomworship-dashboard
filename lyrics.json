@@ -1,17 +1,6 @@
 {
   "lyrics": {
-    "arrangement": [
-      "intro",
-      "verse1",
-      "verse2",
-      "chorus",
-      "verse3",
-      "chorus",
-      "bridge1",
-      "chorus",
-      "bridge2",
-      "chorus"
-    ],
+    "arrangement": ["intro", "verse1", "verse2", "chorus", "verse3", "chorus", "bridge1", "chorus", "bridge2", "chorus"],
     "sections": [
       {
         "id": "intro",
@@ -284,9 +273,7 @@
         "label": { "hi": "Bridge", "en": "Bridge" },
         "lines": [
           {
-            "chords": [
-              { "root": "Eb", "number": 1, "quality": "", "space": 20 }
-            ],
+            "chords": [{ "root": "Eb", "number": 1, "quality": "", "space": 20 }],
             "lyrics": { "en": "Sab Stuti Kare", "hi": "सब स्तुति करे" },
             "translation": { "en": "Let Everyone Worship" }
           },
@@ -302,9 +289,7 @@
             "translation": { "en": "Dry Bones Come To Life" }
           },
           {
-            "chords": [
-              { "root": "Eb", "number": 1, "quality": "", "space": 30 }
-            ],
+            "chords": [{ "root": "Eb", "number": 1, "quality": "", "space": 30 }],
             "lyrics": { "en": "Ye Geet Badhta Rahe", "hi": "ये गीत बढ़ता रहे" },
             "translation": { "en": "This Song Keeps Rising" }
           },
@@ -326,9 +311,7 @@
         "label": { "hi": "Bridge 2", "en": "Bridge 2" },
         "lines": [
           {
-            "chords": [
-              { "root": "Eb", "number": 1, "quality": "", "space": 20 }
-            ],
+            "chords": [{ "root": "Eb", "number": 1, "quality": "", "space": 20 }],
             "lyrics": { "en": "Sab Stuti Kare", "hi": "सब स्तुति करे" },
             "translation": { "en": "Let Everyone Worship" }
           },
