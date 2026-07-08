@@ -117,7 +117,9 @@ const FormSongBasic = ({ initialData, isEdit }: Props) => {
       {
         isEdit ? toast.success('Basic Detials Save Sucessfully') : toast.success('Song Created');
       }
-      router.push(`/dashboard/song/${initialData?.id}/`);
+      {initialData?.id &&
+        router.push(`/dashboard/song/${initialData?.id}/`);
+      }
     } catch (error) {
       console.error(error);
       {
