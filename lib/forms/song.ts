@@ -43,8 +43,7 @@ export type SongMediaFormData = {
 
 export type SongCategoryFormData = {
   category: string[];
-
-}
+};
 
 export type SongDefaultData = {
   title: string;
@@ -155,8 +154,6 @@ export const getSongMediaFormData = (initialData?: any) => ({
   color: initialData?.color || '#000000',
 });
 
-export const getSongCategoryFormData = (initialData?:any) => ({
-
+export const getSongCategoryFormData = (initialData?: any) => ({
   category: initialData?.category || [],
-
-})
+});
