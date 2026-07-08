@@ -80,10 +80,13 @@ export default function ChordsEditor({ line, sectionId, onAddChord, onDeleteChor
   return (
     <div className="space-y-6">
       {/* HEADER */}
-      <div className="flex items-center justify-between">
-        <div className="flex gap-2 justify-center items-center">
+      <div className="flex flex-col items-center justify-between gap-4">
+        <div className="w-full flex gap-2 justify-between items-center">
           <h2 className="text-foreground font-semibold">Chords (Key: {key ? key : '-'})</h2>
           {/* <NashvilleHelpPopup key={"C"} /> */}
+                <Button type="button" variant="outline" onClick={() => onAddChord(sectionId, line.id)}>
+          + Add chord
+        </Button>
         </div>
         <div className="flex flex-wrap gap-2">
           {chords.map((chord) => (
@@ -104,9 +107,7 @@ export default function ChordsEditor({ line, sectionId, onAddChord, onDeleteChor
           ))}
         </div>
 
-        <Button type="button" variant="outline" onClick={() => onAddChord(sectionId, line.id)}>
-          + Add chord
-        </Button>
+
       </div>
 
       {line.chords.length > 0 ? (

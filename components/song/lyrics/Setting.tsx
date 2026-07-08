@@ -46,30 +46,6 @@ const Setting = ({ initialData, onSetSetting }: any) => {
     }));
   };
 
-  // SAVE DATA
-  // const handleSubmit = async () => {
-  //     if (!initialData?.id) return
-  //     try {
-  //         const payload = { ...setting }
-  //         const res = await fetch(`/api/song/${initialData.id}`,
-  //             {
-  //                 method: "PATCH",
-  //                 headers: { "Content-Type": "application/json", },
-  //                 body: JSON.stringify(payload)
-  //             }
-  //         )
-  //         const result = await res.json()
-  //         if (!res.ok) {
-  //             throw new Error(result.message || "Failed to Create Song")
-  //         }
-  //         toast.success("Lyrics Updated Sucessfully")
-  //     }
-  //     catch (error) {
-  //         console.error(error)
-  //         toast.error("Fail To Update Lyrics")
-  //     }
-  // }
-
   const setKey = useSongStore((state) => state.setKey);
 
   return (
@@ -101,41 +77,10 @@ const Setting = ({ initialData, onSetSetting }: any) => {
               </div>
               {setting.isChords && (
                 <div className="w-full">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                     {/* KEY */}
                     <Field>
                       <FieldLabel>Key</FieldLabel>
-                      {/* <Select
-                                                value={setting.key || ""}
-                                                onValueChange={(
-                                                    value
-                                                ) => {
-
-                                                    setSetting(
-                                                        (prev) => ({
-                                                            ...prev,
-                                                            key: value,
-                                                        })
-                                                    ),
-                                                        setKey(value)
-                                                }
-
-                                                }
-                                            >
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select scale" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {key.map((item) => (
-                                                        <SelectItem
-                                                            key={item}
-                                                            value={item}
-                                                        >
-                                                            {item}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select> */}
                       <Input name="key" placeholder="G" value={setting.key} onChange={handleChange} />
                     </Field>
                     {/* BPM */}

@@ -6,6 +6,7 @@ import { getSongMediaFormData, SongMediaFormData } from '@/lib/forms/song';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 const FormSongMedia = ({ initialData, isEdit }: any) => {
   const [formData, setFormData] = useState<SongMediaFormData>(getSongMediaFormData(initialData));
@@ -45,26 +46,48 @@ const FormSongMedia = ({ initialData, isEdit }: any) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <FieldSet>
-        <FieldLegend>Media</FieldLegend>
+    <div className="w-full max-w-4xl mx-auto p-4">
+      <Card>
+        <CardHeader>
+          <FieldLegend>Media</FieldLegend>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit}>
+            <FieldSet>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-base font-semibold text-foreground">Video Id</label>
+                  <Input name="videoId" placeholder="YouTube Video ID" value={formData.videoId} onChange={handleChange} />
+                </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Input name="videoId" placeholder="YouTube Video ID" value={formData.videoId} onChange={handleChange} />
+                <div className="space-y-2">
+                  <label className="text-base font-semibold text-foreground">Video</label>
+                  <Input name="video" placeholder="Video URL" value={formData.video} onChange={handleChange} />
+                </div>
 
-          <Input name="video" placeholder="Video URL" value={formData.video} onChange={handleChange} />
+                <div className="space-y-2">
+                  <label className="text-base font-semibold text-foreground">Audio</label>
+                  <Input name="audio" placeholder="Audio URL" value={formData.audio} onChange={handleChange} />
+                </div>
 
-          <Input name="audio" placeholder="Audio URL" value={formData.audio} onChange={handleChange} />
+                <div className="space-y-2">
+                  <label className="text-base font-semibold text-foreground">Image</label>
+                  <Input name="image" placeholder="Image URL" value={formData.image} onChange={handleChange} />
+                </div>
 
-          <Input name="image" placeholder="Image URL" value={formData.image} onChange={handleChange} />
-
-          <Input type="color" name="color" value={formData.color} onChange={handleChange} />
-        </div>
-        <Button type="submit" className="mt-4">
-          Save Media
-        </Button>
-      </FieldSet>
-    </form>
+                <div className="space-y-2">
+                  <label className="text-base font-semibold text-foreground">Color</label>
+                  <Input type="color" name="color" value={formData.color} onChange={handleChange} />
+                </div>
+              </div>
+              <Button type="submit" className="mt-4">
+                Save Media
+              </Button>
+            </FieldSet>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

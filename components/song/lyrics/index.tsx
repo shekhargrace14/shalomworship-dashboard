@@ -544,7 +544,7 @@ export default function Lyrics({ initialData, isEdit }: any) {
 
   return (
     <div className="p-4 rounded-3xl">
-      <div className="flex gap-4 mb-4">
+      <div className="flex flex-wrap gap-4 mb-4">
         {lyrics.arrangement.map((a) => (
           <Badge key={a.id}>
             {/* {a.type} */}

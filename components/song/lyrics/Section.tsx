@@ -113,9 +113,9 @@ export default function Section({
     <>
       <Card className=" gap-0 overflow-hidden border border-accent-foreground border-l-4 rounded-xl mb-4 p-0 hover:bg-background">
         {/* HEADER */}
-        <div className="flex items-center justify-between border-b border-border  px-4 py-4  cursor-pointer" onClick={() => handleOpen()}>
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-border  px-4 py-4  cursor-pointer" onClick={() => handleOpen()}>
           {/* LEFT */}
-          <div className="flex items-end gap-4">
+          <div className="w-full flex items-end justify-start gap-4">
             {sectionOpen ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
             <Badge>{section.type}</Badge>
             <h2 className="text-base font-semibold text-foreground">{section.label}</h2>
@@ -124,7 +124,7 @@ export default function Section({
           </div>
 
           {/* RIGHT */}
-          <div className="flex items-center gap-3">
+          <div className="w-full flex items-center justify-end gap-3">
             <Button
               type="button"
               size="icon"
@@ -224,6 +224,7 @@ export default function Section({
                 <Checkbox id="terms-checkbox" name="terms-checkbox" checked={section.sectionTranspose} onCheckedChange={(checked) => onUpdate(section.id, 'sectionTranspose', !!checked)} />
                 <Label htmlFor="terms-checkbox">Transpose</Label>
               </Field>
+
               {/* TRANSPOSE STEP */}
               {section.sectionTranspose && (
                 <div className="space-y-2">
@@ -249,26 +250,23 @@ export default function Section({
               <div key={line.id} className="overflow-hidden rounded-xl border">
                 {/* LINE HEADER */}
                 <div
-                  className="flex items-center justify-between border-b bg-muted/30 px-4 py-2"
+                  className="flex flex-col md:flex-row gap-4 items-center justify-start md:justify-start border-b bg-muted/30 px-4 py-2"
                   onClick={(e) => {
                     (e.stopPropagation(), toggleLine(line.id));
                   }}
                 >
-                  <div className="flex items-center gap-3">
-                    {openLines[0] === line.id ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
-
-                    <span className="text-base font-semibold text-foreground">Line {index + 1}</span>
-                    <div className="flex flex-col border-l-2 pl-1">
-                      {/* <Render line={line} /> */}
+                  <div className="w-full flex flex-col md:flex-row items-center justify-start gap-3">
+                    <div className="w-full md:w-fit flex md:flex  gap-2 items-center justify-start">
+                      {openLines[0] === line.id ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+                      <span className="w-12 text-base font-semibold text-foreground">Line {index + 1}</span>
+                    </div>
+                    <div className="w-full flex flex-col border-l-2 pl-1">
                       <RenderLineWithChords line={line} />
-                      {/* <div className="" style={{ marginLeft: `${line.indent}px` }}>
-                        {line.lyrics.english}
-                      </div> */}
                     </div>
                   </div>
 
                   {/* RIGHT */}
-                  <div className="flex items-center gap-3">
+                  <div className="w-full justify-end flex items-center  gap-3">
                     <Button
                       type="button"
                       size="icon"
@@ -321,24 +319,24 @@ export default function Section({
                       <h3 className="text-base font-bold uppercase tracking-widest text-foreground">Lyrics</h3>
                       <div className="flex flex-col gap-4 ">
                         {/* ENGLISH */}
-                        <div className="space-y-3 flex justify-between">
+                        <div className="space-y-3 flex flex-col md:flex-row justify-between">
                           <label className="text-base text-slate-400">English (Roman)</label>
 
                           {/* <Input /> */}
-                          <Input className="w-[80%]" value={line.lyrics.english} onChange={(e) => onUpdateLine(section.id, line.id, 'english', e.target.value)} />
+                          <Input className="w-full md:w-[80%]" value={line.lyrics.english} onChange={(e) => onUpdateLine(section.id, line.id, 'english', e.target.value)} />
                         </div>
 
                         {/* NATIVE */}
-                        <div className="space-y-3 flex gap-4 justify-between">
+                        <div className="space-y-3 flex flex-col md:flex-row justify-between">
                           <label className="text-base text-slate-400">{nativeLanguage}</label>
-                          <Input className="w-[80%]" value={line.lyrics.native} onChange={(e) => onUpdateLine(section.id, line.id, 'native', e.target.value)} />
+                          <Input className="w-full md:w-[80%]" value={line.lyrics.native} onChange={(e) => onUpdateLine(section.id, line.id, 'native', e.target.value)} />
                         </div>
 
                         {/* TRANSLATION */}
-                        <div className="space-y-3 flex gap-4 justify-between">
+                        <div className="space-y-3 flex flex-col md:flex-row justify-between">
                           <label className="w-fit text-base text-slate-400">Translation</label>
 
-                          <Input className="w-[80%]" value={line.lyrics.translation} onChange={(e) => onUpdateLine(section.id, line.id, 'translation', e.target.value)} />
+                          <Input className="w-full md:w-[80%]" value={line.lyrics.translation} onChange={(e) => onUpdateLine(section.id, line.id, 'translation', e.target.value)} />
                         </div>
                       </div>
                     </div>

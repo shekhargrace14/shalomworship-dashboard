@@ -39,8 +39,12 @@ export type SongMediaFormData = {
   videoId: string;
   audio: string;
   color: string;
-  category: string[];
 };
+
+export type SongCategoryFormData = {
+  category: string[];
+
+}
 
 export type SongDefaultData = {
   title: string;
@@ -149,5 +153,10 @@ export const getSongMediaFormData = (initialData?: any) => ({
   videoId: initialData?.videoId || '',
   audio: initialData?.audio || '',
   color: initialData?.color || '#000000',
-  category: initialData?.category || [],
 });
+
+export const getSongCategoryFormData = (initialData?:any) => ({
+
+  category: initialData?.category || [],
+
+})

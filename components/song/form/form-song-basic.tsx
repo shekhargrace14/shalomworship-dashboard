@@ -141,8 +141,10 @@ const FormSongBasic = ({ initialData, isEdit }: Props) => {
               {/* <FieldLegend>Basic Information</FieldLegend> */}
               {/* <FieldDescription>Description</FieldDescription> */}
               <FieldGroup>
-                {/* TITLE */}
-                <div className="grid gap-4 md:grid-cols-2">
+
+                {/* TITLE + SLUG */}
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                {/* TITLE */} 
                   <Field>
                     <FieldLabel>
                       Title
@@ -168,7 +170,7 @@ const FormSongBasic = ({ initialData, isEdit }: Props) => {
                   </Field>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-2 gap-4">
                   {/* SLUG */}
                   <Field>
                     <FieldLabel>Slug</FieldLabel>
