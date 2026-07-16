@@ -2,6 +2,7 @@ import { connectDB } from '../db';
 // import { getCurrentUser, loginService, signupService } from "../services/auth.service"
 import { NextResponse } from 'next/server';
 import { getCurrentUserService, loginService, signupService } from '../services/auth.service';
+import { getCorsHeaders } from '../cors';
 
 export async function loginController(req: Request) {
   await connectDB();
@@ -10,12 +11,18 @@ export async function loginController(req: Request) {
     const body = await req.json();
 
     const result = await loginService(body);
+    const origin = req.headers.get('origin');
 
-    const response = NextResponse.json({
-      success: true,
-      message: result.message,
-      user: result.user,
-    });
+    const response = NextResponse.json(
+      {
+        success: true,
+        message: result.message,
+        user: result.user,
+      },
+      {
+        headers: getCorsHeaders(origin),
+      },
+    );
 
     response.cookies.set('token', result.token, {
       httpOnly: true,
@@ -46,11 +53,17 @@ export async function signupController(req: Request) {
     const body = await req.json();
 
     const user = await signupService(body);
+    const origin = req.headers.get('origin');
 
-    return NextResponse.json({
-      success: true,
-      user,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        user,
+      },
+      {
+        headers: getCorsHeaders(origin),
+      },
+    );
   } catch (error: any) {
     return NextResponse.json(
       {
@@ -62,8 +75,9 @@ export async function signupController(req: Request) {
   }
 }
 
-export async function meController() {
+export async function meController(req: Request) {
   try {
+    const origin = req.headers.get('origin');
     const user = await getCurrentUserService();
 
     return NextResponse.json(
@@ -73,6 +87,7 @@ export async function meController() {
         message: 'User fetched Successful',
       },
       {
+        headers: getCorsHeaders(origin),
         status: 200,
       },
     );
