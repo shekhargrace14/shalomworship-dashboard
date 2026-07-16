@@ -42,7 +42,7 @@ export async function loginService(data: { email: string; password: string }) {
       email: user.email,
       role: user.role,
     },
-    message: 'User fetched successful',
+    message: "Login successful",
   };
 }
 
@@ -68,23 +68,35 @@ export async function signupService(data: { name: string; email: string; passwor
       password: hashedPassword,
     },
   });
-
+  const token = jwt.sign(
+    {
+      id: user.id,
+      role: user.role,
+    },
+    process.env.JWT_SECRET!,
+    {
+      expiresIn: '1d',
+    },
+  );
   return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
+    token,
+
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+    message: "Account created successfully"
   };
 }
 
 export async function getCurrentUserService() {
-  // verify JWT
-  // return user
-
   const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
+  const token = cookieStore.get("token")?.value;
+
   if (!token) {
-    throw new Error('Unauthorized');
+    throw new Error("Unauthorized");
   }
 
   const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
@@ -98,8 +110,14 @@ export async function getCurrentUserService() {
   });
 
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
-  return user;
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    image: user.image,
+    role: user.role,
+  };
 }
