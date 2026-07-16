@@ -27,7 +27,7 @@ export async function loginController(req: Request) {
     response.cookies.set('token', result.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'none',
       path: '/',
       maxAge: 60 * 60 * 24,
     });
@@ -72,7 +72,7 @@ export async function signupController(req: Request) {
     response.cookies.set('token', result.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'none',
       path: '/',
       maxAge: 60 * 60 * 24,
     });
