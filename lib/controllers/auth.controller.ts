@@ -69,11 +69,11 @@ export async function signupController(req: Request) {
       },
     );
 
-    response.cookies.set("token", result.token, {
+    response.cookies.set('token', result.token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
       maxAge: 60 * 60 * 24,
     });
 
@@ -102,7 +102,7 @@ export async function meController(req: Request) {
       {
         success: true,
         user,
-        message: "User retrieved successfully"
+        message: 'User retrieved successfully',
       },
       {
         headers: getCorsHeaders(origin),

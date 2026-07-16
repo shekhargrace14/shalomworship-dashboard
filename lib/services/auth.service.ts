@@ -42,7 +42,7 @@ export async function loginService(data: { email: string; password: string }) {
       email: user.email,
       role: user.role,
     },
-    message: "Login successful",
+    message: 'Login successful',
   };
 }
 
@@ -87,16 +87,16 @@ export async function signupService(data: { name: string; email: string; passwor
       email: user.email,
       role: user.role,
     },
-    message: "Account created successfully"
+    message: 'Account created successfully',
   };
 }
 
 export async function getCurrentUserService() {
   const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
+  const token = cookieStore.get('token')?.value;
 
   if (!token) {
-    throw new Error("Unauthorized");
+    throw new Error('Unauthorized');
   }
 
   const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
@@ -110,7 +110,7 @@ export async function getCurrentUserService() {
   });
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error('User not found');
   }
 
   return {

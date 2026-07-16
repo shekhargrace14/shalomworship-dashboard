@@ -14,13 +14,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { user } from '@prisma/client';
 import { SectionCards } from '@/components/section-cards';
+import { User as U } from '@/types/user';
 
 export default function ProfilePage() {
   const params = useParams();
   const id = params.id as string;
-  const [user, setUser] = useState<user>();
+  const [user, setUser] = useState<U>();
 
   useEffect(() => {
     async function fetchUser() {

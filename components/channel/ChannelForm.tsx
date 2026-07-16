@@ -2,7 +2,7 @@
 
 import slugify from 'slugify';
 
-import { channel, ChannelType, user } from '@prisma/client';
+import { channel, ChannelType } from '@prisma/client';
 
 import { useEffect, useState } from 'react';
 
@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import { DeleteItemButton } from '../shared/DeleteItemButton';
 import { useUserStore } from '@/store/useUserStore';
 import { Separator } from '../ui/separator';
+import { User } from '@/types/user';
 
 type FormProps = {
   initialData?: channel | null;
@@ -38,7 +39,7 @@ export default function ChannelForm({ initialData, isEdit }: FormProps) {
   const [slugEdited, setSlugEdited] = useState(false);
   const user = useUserStore((state) => state.user);
 
-  function getInitialFormData(channel: FormProps['initialData'], user?: user | null) {
+  function getInitialFormData(channel: FormProps['initialData'], user?: User | null) {
     return {
       createdById: channel?.createdById || user?.id,
       title: channel?.title || '',
