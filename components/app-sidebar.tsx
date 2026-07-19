@@ -17,6 +17,7 @@ import {
   IconHelp,
   IconInnerShadowTop,
   IconLayoutDashboard,
+  IconList,
   IconListDetails,
   IconMicrophone,
   IconMusic,
@@ -251,6 +252,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         name: 'Songs',
         url: `/dashboard/channel/${channelId}/songs`,
         icon: IconMusic,
+      },
+      {
+        name: 'Setlists',
+        url: `/dashboard/channel/${channelId}/setlists`,
+        icon: IconList,
       },
       // {
       //   name: "Artists",

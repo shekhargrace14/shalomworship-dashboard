@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 import ChannelHeader from '@/components/channel/ChannelHeader';
-import getSingleChannelService from '@/app/api/channel/[id]/service';
+import getSingleChannelService from '@/app/api/channel/[channelId]/service';
 import CurrentChannelHydrator from '@/components/hydrator/hydrator-currentChannel';
 
 interface Props {

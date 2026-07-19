@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import { createChannelSongService, getChannelSongsService } from './service';
 import { success } from 'zod';
 
-export async function getChannelSongsController({ params }: { params: Promise<{ id: string }> }) {
+export async function getChannelSongsController({ params }: { params: Promise<{ channelId: string }> }) {
   try {
-    const { id } = await params;
-    const channelSong = await getChannelSongsService(id);
+    const { channelId } = await params;
+    const channelSong = await getChannelSongsService(channelId);
 
     return NextResponse.json(
       {

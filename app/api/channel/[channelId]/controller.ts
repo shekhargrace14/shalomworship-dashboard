@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import getSingleChannelService from './service';
 
-export default async function getSingleChannelController(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export default async function getSingleChannelController(req: Request, { params }: { params: Promise<{ channelId: string }> }) {
   try {
-    const { id } = await params;
+    const { channelId } = await params;
 
-    const result = await getSingleChannelService(id);
+    const result = await getSingleChannelService(channelId);
 
     if (!result) {
       return NextResponse.json(

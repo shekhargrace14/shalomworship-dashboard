@@ -1,7 +1,17 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
+import { Prisma, ChannelRole, ChannelType } from '@prisma/client';
+
+import { prisma } from '@/lib/prisma';
+import { generateUniqueChannelSlug } from '@/utils/generateUniqueChannelSlug';
+// import { generateUniqueChannelSlug } from '@/lib/utils/generateUniqueChannelSlug';
+
+type SignupInput = {
+  name: string;
+  email: string;
+  password: string;
+};
 
 export async function loginService(data: { email: string; password: string }) {
   const { email, password } = data;
@@ -46,9 +56,8 @@ export async function loginService(data: { email: string; password: string }) {
   };
 }
 
-export async function signupService(data: { name: string; email: string; password: string }) {
-  const { name, email, password } = data;
-
+export async function signupService({ name, email, password }: SignupInput) {
+  // Check if email already exists
   const existingUser = await prisma.user.findUnique({
     where: {
       email,
@@ -59,36 +68,91 @@ export async function signupService(data: { name: string; email: string; passwor
     throw new Error('User already exists');
   }
 
+  // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: hashedPassword,
-    },
-  });
-  const token = jwt.sign(
-    {
-      id: user.id,
-      role: user.role,
-    },
-    process.env.JWT_SECRET!,
-    {
-      expiresIn: '1d',
-    },
-  );
-  return {
-    token,
+  try {
+    // Create User + Personal Channel + Owner Membership
+    const { user, channel } = await prisma.$transaction(async (tx) => {
+      // Create User
+      const user = await tx.user.create({
+        data: {
+          name,
+          email,
+          password: hashedPassword,
+        },
+      });
 
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    },
-    message: 'Account created successfully',
-  };
+      // Generate unique slug
+      const slug = await generateUniqueChannelSlug(tx, user.name);
+
+      // Create Personal Channel
+      const channel = await tx.channel.create({
+        data: {
+          title: user.name,
+          slug,
+          type: ChannelType.USER,
+
+          createdById: user.id,
+          ownerId: user.id,
+        },
+      });
+
+      // Add Owner Membership
+      await tx.channelTeam.create({
+        data: {
+          userId: user.id,
+          channelId: channel.id,
+          role: ChannelRole.OWNER,
+        },
+      });
+
+      return {
+        user,
+        channel,
+      };
+    });
+
+    // Generate JWT AFTER transaction
+    const token = jwt.sign(
+      {
+        id: user.id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET!,
+      {
+        expiresIn: '1d',
+      },
+    );
+
+    return {
+      token,
+
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        role: user.role,
+      },
+
+      channel: {
+        id: channel.id,
+        title: channel.title,
+        slug: channel.slug,
+        type: channel.type,
+      },
+
+      message: 'Account created successfully',
+    };
+  } catch (error) {
+    // Prisma unique constraint
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      throw new Error('User already exists');
+    }
+
+    throw error;
+  }
 }
 
 export async function getCurrentUserService() {

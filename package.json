@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "format": "prettier --write .",
     "build": "prisma generate && npm run format && next build",
-    "start": "next start",
+    "start": "next start -p 3001",
     "lint": "eslint",
     "migrate:artists": "tsx scripts/migrate-artists-to-channels.ts"
   },

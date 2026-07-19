@@ -99,10 +99,14 @@ model channel {
   youtubeMusic String?
   soundCloud   String?
   deezer       String?
-  tidal        String?
+  tidal        String?  
   pandora      String?
 
   createdById String? @db.ObjectId
+  createdBy   user?    @relation("ChannelCreatedBy", fields: [createdById], references: [id])
+
+  ownerId String? @db.ObjectId
+  owner   user?   @relation("ChannelOwner", fields: [ownerId], references: [id])
 
   // Channel management team
   team ChannelTeam[]
@@ -203,24 +207,6 @@ model playlist {
   updatedAt DateTime @updatedAt
 }
 
-model season {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  image String
-  slug  String  @unique
-  color String?
-  about String?
-
-  // Season owner / publisher
-  channelId String  @db.ObjectId
-  channel   channel @relation(fields: [channelId], references: [id])
-
-  songs SeasonSong[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model category {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   title   String
@@ -282,6 +268,9 @@ model user {
   isActive Boolean    @default(true)
   status   UserStatus @default(ACTIVE)
 
+  createdChannels channel[] @relation("ChannelCreatedBy")
+  ownedChannels   channel[] @relation("ChannelOwner")
+
   channels         ChannelTeam[]
   invitedMembers   ChannelTeam[]     @relation("InvitedBy")
   followedChannels ChannelFollower[]
@@ -291,6 +280,24 @@ model user {
   createdEvents    event[]    @relation("UserCreatedEvents")
   createdPlaylists playlist[] @relation("UserCreatedPlaylists")
 
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model season {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  image String
+  slug  String  @unique
+  color String?
+  about String?
+
+  // Season owner / publisher
+  channelId String  @db.ObjectId
+  channel   channel @relation(fields: [channelId], references: [id])
+
+  songs SeasonSong[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -298,18 +305,22 @@ model user {
 model setlist {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
+  // Metadata
   title       String
+  theme       String?
   description String?
-  eventAt DateTime?
-  order Int
+  scripture   String?
 
-  channelId String  @db.ObjectId
-  channel   channel @relation(fields: [channelId], references: [id])
-  
-  items SetlistItem[]
+  eventAt     DateTime?
 
   visibility VisibilityType @default(PRIVATE)
-  isArchived Boolean @default(false)
+
+  channelId String @db.ObjectId
+  channel   channel @relation(fields: [channelId], references: [id])
+
+  sections SetlistSection[]
+
+  notes String?   // footer notes
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -416,6 +427,7 @@ model SongCategory {
 
   @@unique([songId, categoryId])
 }
+
 model SongScripture {
   id          String @id @default(auto()) @map("_id") @db.ObjectId
   songId      String @db.ObjectId
@@ -500,11 +512,11 @@ model SeasonSong {
 model SetlistItem {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  setlistId String @db.ObjectId
-  setlist setlist @relation(fields: [setlistId], references: [id])
+  sectionId String @db.ObjectId
+  section SetlistSection @relation(fields: [sectionId], references: [id])
 
   type SetlistItemType @default(SONG)
-  
+
   songId String? @db.ObjectId
   song song? @relation(fields: [songId], references: [id])
 
@@ -514,7 +526,24 @@ model SetlistItem {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
 
+model SetlistSection {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  setlistId String @db.ObjectId
+  setlist setlist @relation(fields: [setlistId], references: [id])
+
+  title String
+
+  order Int
+
+  notes String?
+
+  items SetlistItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // ENUMs
@@ -565,7 +594,7 @@ enum ChannelType {
   CHOIR
   LABEL
   ORGANIZATION
-  PERSONAL
+  USER
 }
 
 enum ChannelRole {
@@ -644,6 +673,9 @@ enum SubmissionStatus {
 
 enum SetlistItemType {
   SONG
+  NOTE
+  SCRIPTURE
+
 }
 
 enum StatusType {
@@ -683,4 +715,3 @@ enum VisibilityType {
   UNLISTED
   PUBLIC
 }
-

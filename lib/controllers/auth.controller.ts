@@ -16,7 +16,7 @@ export async function loginController(req: Request) {
       {
         success: true,
         message: result.message,
-        user: result.user,
+        data: result.user,
       },
       {
         status: 200,
@@ -24,13 +24,25 @@ export async function loginController(req: Request) {
       },
     );
 
+    // response.cookies.set('token', result.token, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === 'production',
+    //   sameSite: 'none',
+    //   path: '/',
+    //   maxAge: 60 * 60 * 24,
+    // });
+
+    const isProd = process.env.NODE_ENV === 'production';
+
     response.cookies.set('token', result.token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      domain: isProd ? '.shalomworship.com' : undefined,
       path: '/',
       maxAge: 60 * 60 * 24,
     });
+
     return response;
   } catch (error: any) {
     return NextResponse.json(
@@ -49,6 +61,7 @@ export async function loginController(req: Request) {
 
 export async function signupController(req: Request) {
   const origin = req.headers.get('origin');
+
   try {
     await connectDB();
 

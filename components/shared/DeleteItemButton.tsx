@@ -3,8 +3,12 @@ import React from 'react';
 import { Button } from '../ui/button';
 import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+type Props = {
+  id: string;
+  type: string;
+};
 
-export const DeleteItemButton = ({ id, type }: any) => {
+export const DeleteItemButton = ({ id, type }: Props) => {
   const router = useRouter();
   const handleDelete = async () => {
     const confirmDelete = confirm(`Are you sure you want to delete this ${type}?`);

@@ -3,6 +3,7 @@
 import { CardDemo } from '@/components/card/card';
 import { CardProfile } from '@/components/card/card-profile';
 import { ChannelCards } from '@/components/channel-cards';
+import { ChannelDelete } from '@/components/channel/channel-delete';
 import ChannelFeatured from '@/components/channel/channel-featured';
 import ChannelForm from '@/components/channel/ChannelForm';
 import DataTable from '@/components/table/DataTable';
@@ -29,11 +30,14 @@ export default function Page() {
   const songs = currentChannel?.songs;
   const songCredits = currentChannel?.songCredits;
   const data = songCredits?.map((credit: any) => credit.song);
-
+  if (!currentChannel) {
+    return;
+  }
   return (
     <div className="flex gap-4 flex-col">
       {/* <ChannelForm initialData={currentChannel} isEdit/> */}
       <CardProfile data={currentChannel} />
+      <ChannelDelete channelId={currentChannel?.id} channelTitle={currentChannel?.title} />
       <div className="flex justify-end">
         <Link href={`/dashboard/channel/${currentChannel?.id}/songs/create`}>
           <Button variant="default">

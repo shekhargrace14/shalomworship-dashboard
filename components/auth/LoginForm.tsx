@@ -40,7 +40,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       } else {
         toast.success(data.message || 'Login Successful');
       }
-      router.refresh(); // or // window.location.href = "/dashboard"
+      // router.refresh(); // or // window.location.href = "/dashboard"
       router.push('/dashboard');
     } catch (error) {
       toast.error('something went wrong');

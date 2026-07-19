@@ -3,20 +3,20 @@ import { NextResponse } from 'next/server';
 import { success } from 'zod';
 import getSingleChannelController from './controller';
 
-export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
+export async function GET(req: Request, context: { params: Promise<{ channelId: string }> }) {
   return getSingleChannelController(req, context);
 }
 
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(_req: Request, { params }: { params: Promise<{ channelId: string }> }) {
   try {
-    const { id } = await params;
+    const { channelId } = await params;
 
     const [songCount, albumCount, eventCount, playlistCount, seasonCount] = await Promise.all([
-      prisma.song.count({ where: { channelId: id } }),
-      prisma.album.count({ where: { channelId: id } }),
-      prisma.event.count({ where: { channelId: id } }),
-      prisma.playlist.count({ where: { channelId: id } }),
-      prisma.season.count({ where: { channelId: id } }),
+      prisma.song.count({ where: { channelId } }),
+      prisma.album.count({ where: { channelId } }),
+      prisma.event.count({ where: { channelId } }),
+      prisma.playlist.count({ where: { channelId } }),
+      prisma.season.count({ where: { channelId } }),
     ]);
 
     if (songCount || albumCount || eventCount || playlistCount || seasonCount) {
@@ -30,13 +30,13 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     }
 
     await prisma.$transaction([
-      prisma.songCredit.deleteMany({ where: { channelId: id } }),
-      prisma.eventCredit.deleteMany({ where: { channelId: id } }),
-      prisma.channelFollower.deleteMany({ where: { channelId: id } }),
-      prisma.channelTeam.deleteMany({ where: { channelId: id } }),
+      prisma.songCredit.deleteMany({ where: { channelId } }),
+      prisma.eventCredit.deleteMany({ where: { channelId } }),
+      prisma.channelFollower.deleteMany({ where: { channelId } }),
+      prisma.channelTeam.deleteMany({ where: { channelId } }),
 
       prisma.channel.delete({
-        where: { id },
+        where: { id: channelId },
       }),
     ]);
 
@@ -57,15 +57,15 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ channelId: string }> }) {
   try {
-    const { id } = await params;
+    const { channelId } = await params;
 
     const body = await req.json();
 
     const updatedChannel = await prisma.channel.update({
       where: {
-        id,
+        id: channelId,
       },
       data: {
         ...body,

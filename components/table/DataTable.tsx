@@ -55,6 +55,10 @@ export default function DataTable({ data = [], type }: Props) {
         router.push(`/dashboard/channel/${currentChannel?.id}`);
         router.refresh();
       }
+      if (type === 'setlists') {
+        router.push(`/dashboard/channel/${currentChannel?.id}/setlists`);
+        router.refresh();
+      }
       router.refresh();
     } catch (error) {
       console.error(`Failed to delete ${type}`, error);
@@ -90,10 +94,15 @@ export default function DataTable({ data = [], type }: Props) {
           {data?.map((item: any) => (
             <TableRow key={item.id}>
               {/* TITLE */}
-
-              <TableCell>
-                <Link href={`/dashboard/${type}/${item.id}`}>{item.title || item.name || '-'}</Link>
-              </TableCell>
+              {type === 'setlists' ? (
+                <TableCell>
+                  <Link href={`/dashboard/channel/${currentChannel?.id}/${type}/${item.id}`}>{item.title || item.name || '-'}</Link>
+                </TableCell>
+              ) : (
+                <TableCell>
+                  <Link href={`/dashboard/${type}/${item.id}`}>{item.title || item.name || '-'}</Link>
+                </TableCell>
+              )}
 
               {/* STATUS */}
 

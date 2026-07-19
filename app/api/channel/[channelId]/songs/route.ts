@@ -1,6 +1,6 @@
 import { createChannelSongController, getChannelSongsController } from './controller';
 
-export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
+export async function GET(req: Request, context: { params: Promise<{ channelId: string }> }) {
   return getChannelSongsController(context);
 }
 
