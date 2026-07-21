@@ -23,23 +23,18 @@ type Props = {
 };
 
 export default function FormSongCategory({ initialData, isEdit }: Props) {
-  console.log(initialData);
   const [search, setSearch] = useState('');
 
   const [categories, setCategories] = useState<category[]>([]);
-  //   console.log(categories, "categories")
 
   const [results, setResults] = useState<category[]>([]);
 
   const [selectedCategory, setSelectedCategory] = useState<category | null>(null);
-  //   console.log(selectedCategory, "selectedCategory")
 
   const [songCategories, setSongCategories] = useState<SongCategoryItem[]>(initialData?.category ?? []);
-  console.log(songCategories, 'songCategories');
 
   const [showResults, setShowResults] = useState(false);
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
-
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {

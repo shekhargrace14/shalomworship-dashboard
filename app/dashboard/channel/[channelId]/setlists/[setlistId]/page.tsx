@@ -1,20 +1,18 @@
 'use client';
-import { SetlistDelete } from '@/components/setlist/setlist-delete';
-import ViewSetlistComponent from '@/components/setlist/setlist-view';
-import { setlist } from '@prisma/client';
+import SetlistEditor from '@/components/setlist/setlist-editor';
+import { Metadata } from '@/types/setlist';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 const page = () => {
   const params = useParams<{
-    id: string;
+    channelId: string;
     setlistId: string;
   }>();
-  console.log(params, 'params');
 
-  const channelId = params.id;
+  const channelId = params.channelId;
   const setlistId = params.setlistId;
-  const [currentSetlist, setCurrentSetlist] = useState<setlist>();
+  const [currentSetlist, setCurrentSetlist] = useState<Metadata>();
 
   useEffect(() => {
     async function loadCurrentSetlist() {
@@ -36,8 +34,7 @@ const page = () => {
 
   return (
     <div>
-      <ViewSetlistComponent channelId={channelId} setlistId={setlistId} data={currentSetlist} />
-      <SetlistDelete channelId={channelId} setlistId={currentSetlist.id} setlistTitle={currentSetlist.title} />
+      <SetlistEditor data={currentSetlist} />
     </div>
   );
 };

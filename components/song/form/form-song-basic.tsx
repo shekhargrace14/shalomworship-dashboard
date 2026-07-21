@@ -31,7 +31,6 @@ type Props = {
 };
 
 const FormSongBasic = ({ initialData, isEdit }: Props) => {
-  console.log(initialData);
   if (isEdit) {
     var id = initialData?.id;
   }

@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    console.log(id, 'ididididididi');
 
     const song = await prisma.song.findUnique({
       where: {

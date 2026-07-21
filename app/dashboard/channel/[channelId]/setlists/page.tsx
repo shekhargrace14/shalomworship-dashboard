@@ -23,7 +23,6 @@ const page = () => {
     loadChannelSetlists();
   }, [currentChannel]);
 
-  // console.log(channelSetlists, "setlist of channel")
   if (!currentChannel) {
     return <LoaderCircleIcon />;
   }

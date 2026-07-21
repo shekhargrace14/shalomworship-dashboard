@@ -1,8 +1,14 @@
-// To map the fetched `initialData` into your component's individual form fields, you need to populate the respective state hooks inside your existing `useEffect`.
+// import React from 'react'
 
-// Because your `sections` state has a deeply structured schema containing inner `items`, you can map through the nested arrays coming from your API data to update your form sections accurately.
+// const SectionEdit = () => {
+//   return (
+//     <div>
+//         jaksjfkasjfk
+//     </div>
+//   )
+// }
 
-// Here is your exact code updated with the initialization logic inside the `useEffect`. The UI structure and styles remain completely untouched:
+// export default SectionEdit
 
 'use client';
 
@@ -22,8 +28,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { setlist } from '@prisma/client';
-import { useCurrentChannelStore } from '@/store/useCurrentChannelStore';
-import { toast } from 'sonner';
 
 type ItemType = 'SONG' | 'NOTE' | 'SCRIPTURE';
 type Visibility = 'PRIVATE' | 'PUBLIC' | 'UNLISTED';
@@ -60,25 +64,13 @@ function createSection(): FormSection {
   };
 }
 
-export default function page({}: {}) {
+export default function SectionEdit({ channelId, data }: { channelId: string; data: setlist }) {
   const router = useRouter();
   const params = useParams();
 
-  const channel = useCurrentChannelStore((state) => state.channel);
-  const channelId = channel?.id;
-  // console.log(params, "setlist params")
+  const [initialData, setInitialData] = useState<setlist>(data);
 
-  // const [initialData, setInitialData] = useState<setlist>(data)
-  // console.log(initialData, "setlist initialData")
-
-  const [id, setId] = useState('');
   const [title, setTitle] = useState('');
-  const [theme, setTheme] = useState('');
-  const [description, setDescription] = useState('');
-  const [scripture, setScripture] = useState('');
-  const [notes, setNotes] = useState('');
-  const [eventAt, setEventAt] = useState<Date | undefined>(undefined);
-  const [visibility, setVisibility] = useState<Visibility>('PRIVATE');
   const [loading, setLoading] = useState(false);
 
   const [sections, setSections] = useState<FormSection[]>([createSection()]);
@@ -91,17 +83,9 @@ export default function page({}: {}) {
         const currentSetlist = json.data;
 
         if (currentSetlist) {
-          // setInitialData(currentSetlist)
+          setInitialData(currentSetlist);
 
           // Populate master details fields
-          setId(currentSetlist.id || '');
-          setTitle(currentSetlist.title || '');
-          setTheme(currentSetlist.theme || '');
-          setDescription(currentSetlist.description || '');
-          setScripture(currentSetlist.scripture || '');
-          setNotes(currentSetlist.notes || '');
-          setEventAt(currentSetlist.eventAt ? new Date(currentSetlist.eventAt) : undefined);
-          setVisibility((currentSetlist.visibility as Visibility) || 'PRIVATE');
 
           // Populate nested sections and items if they exist in the incoming database record
           if (currentSetlist.sections && currentSetlist.sections.length > 0) {
@@ -189,14 +173,6 @@ export default function page({}: {}) {
 
     try {
       const payload = {
-        title: title.trim(),
-        theme: theme.trim() || null,
-        description: description.trim() || null,
-        scripture: scripture.trim() || null,
-        eventAt: eventAt ? eventAt.toISOString() : null,
-        visibility,
-        channelId,
-        notes: notes.trim() || null,
         sections: sections.map((section, sectionIndex) => ({
           title: section.title.trim(),
           order: sectionIndex + 1,
@@ -210,8 +186,8 @@ export default function page({}: {}) {
         })),
       };
 
-      const res = await fetch(`/api/channel/${channelId}/setlists/${id}`, {
-        method: 'PATCH',
+      const res = await fetch('/api/setlists', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -223,8 +199,8 @@ export default function page({}: {}) {
       if (!res.ok) {
         throw new Error(data?.message || 'Failed to create setlist');
       }
-      toast.success(data.message);
-      router.push(`/dashboard/channel/${channelId}/setlists/${data.data.id}`);
+
+      router.push(`/channel/${channelId}/setlists`);
     } catch (error) {
       console.error(error);
       alert(error instanceof Error ? error.message : 'Something went wrong');
@@ -235,116 +211,6 @@ export default function page({}: {}) {
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6 p-4 md:p-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>Channel</span>
-            <span className="font-mono text-xs">{channel?.title}</span>
-          </div>
-
-          <h1 className="text-3xl font-bold tracking-tight">Edit Setlist</h1>
-
-          <p className="text-muted-foreground">Build a worship setlist with sections, songs, notes, and scripture references.</p>
-        </div>
-
-        <div className="flex gap-2">
-          <Button type="button" variant="outline" onClick={() => router.back()}>
-            Cancel
-          </Button>
-
-          <Button type="button" onClick={handleSubmit} disabled={!canSave || loading}>
-            <Save className="mr-2 h-4 w-4" />
-            {loading ? 'Saving...' : 'Save Setlist'}
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Setlist Details</CardTitle>
-          </CardHeader>
-
-          <CardContent className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
-                <Input id="title" placeholder="Sunday Service" value={title} onChange={(e) => setTitle(e.target.value)} />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="theme">Theme</Label>
-                <Input id="theme" placeholder="Holy Spirit / Thanksgiving" value={theme} onChange={(e) => setTheme(e.target.value)} />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea id="description" placeholder="Optional description for the service..." value={description} onChange={(e) => setDescription(e.target.value)} />
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="scripture">Scripture</Label>
-                <Input id="scripture" placeholder="Psalm 23 / John 3:16" value={scripture} onChange={(e) => setScripture(e.target.value)} />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Event Date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-between font-normal">
-                      {eventAt ? format(eventAt, 'EEEE, PPP') : <span className="text-muted-foreground">Pick a date</span>}
-                      <CalendarIcon className="h-4 w-4 opacity-60" />
-                    </Button>
-                  </PopoverTrigger>
-
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={eventAt} onSelect={setEventAt} />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="notes">Footer Notes</Label>
-              <Textarea id="notes" placeholder="Any notes to show at the bottom..." value={notes} onChange={(e) => setNotes(e.target.value)} />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Visibility</CardTitle>
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Status</Label>
-              <Select value={visibility} onValueChange={(value) => setVisibility(value as Visibility)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select visibility" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  <SelectItem value="PRIVATE">Private</SelectItem>
-                  <SelectItem value="PUBLIC">Public</SelectItem>
-                  <SelectItem value="UNLISTED">Unlisted</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <Separator />
-
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <p>Private: only you and your team can see it.</p>
-              <p>Public: shareable by link and visible if published.</p>
-              <p>Unlisted: accessible with the direct link only.</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>

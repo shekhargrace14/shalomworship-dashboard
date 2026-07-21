@@ -24,7 +24,7 @@ type PageProps = {
 
 export default function Page() {
   const params = useParams();
-  const id = params.id;
+  const channelId = params.channelId;
 
   const currentChannel = useCurrentChannelStore((state) => state.channel);
   const songs = currentChannel?.songs;

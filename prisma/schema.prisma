@@ -59,7 +59,7 @@ model song {
   albums  SongAlbum[]
   seasons SeasonSong[]
 
-  setlist SetlistItem[]
+  // setlist setlist
 
   // Audit fields: dashboard users, not song ownership
   createdById String? @db.ObjectId
@@ -318,7 +318,8 @@ model setlist {
   channelId String @db.ObjectId
   channel   channel @relation(fields: [channelId], references: [id])
 
-  sections SetlistSection[]
+  // sections SetlistSection[]
+  sections Json @default("[]")
 
   notes String?   // footer notes
 
@@ -509,42 +510,42 @@ model SeasonSong {
   @@index([songId])
 }
 
-model SetlistItem {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+// model SetlistItem {
+//   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  sectionId String @db.ObjectId
-  section SetlistSection @relation(fields: [sectionId], references: [id])
+//   sectionId String @db.ObjectId
+//   section SetlistSection @relation(fields: [sectionId], references: [id])
 
-  type SetlistItemType @default(SONG)
+//   type SetlistItemType @default(SONG)
 
-  songId String? @db.ObjectId
-  song song? @relation(fields: [songId], references: [id])
+//   songId String? @db.ObjectId
+//   song song? @relation(fields: [songId], references: [id])
 
-  order Int
+//   order Int
 
-  notes String?
+//   notes String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
 
-model SetlistSection {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+// model SetlistSection {
+//   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  setlistId String @db.ObjectId
-  setlist setlist @relation(fields: [setlistId], references: [id])
+//   setlistId String @db.ObjectId
+//   setlist setlist @relation(fields: [setlistId], references: [id])
 
-  title String
+//   title String
 
-  order Int
+//   order Int
 
-  notes String?
+//   notes String?
 
-  items SetlistItem[]
+//   items SetlistItem[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
 
 // ENUMs
 

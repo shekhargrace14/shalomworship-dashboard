@@ -13,7 +13,6 @@ type LinesProps = {
 
 const LinesVersion2 = ({ id, song, isChords }: LinesProps) => {
   const [activeTab, setActiveTab] = useState<'chords' | 'lyrics'>('chords');
-  // console.log("song", song)
   return (
     <>
       <div className="inline-flex gap-4 mb-4">

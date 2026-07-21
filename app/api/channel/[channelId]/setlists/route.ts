@@ -29,7 +29,7 @@ export async function GET(req: Request, { params }: Props) {
       },
     );
   } catch (error: any) {
-    console.log(error, 'Error to fetch setlist');
+    console.error(error, 'Error to fetch setlist');
     return NextResponse.json(
       {
         success: false,
@@ -78,7 +78,7 @@ export async function POST(req: Request) {
       },
     );
   } catch (error: any) {
-    console.log(error, 'Error to fetch setlist');
+    console.error(error, 'Error to fetch setlist');
     return NextResponse.json(
       {
         success: false,

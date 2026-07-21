@@ -1,10 +1,4 @@
-const allowedOrigins = [
-  'https://www.shalomworship.com', 
-  'https://dashboard.shalomworship.com', 
-  'https://staging.shalomworship.pages.dev', 
-  'http://localhost:3000', 
-  'http://localhost:3001'
-];
+const allowedOrigins = ['https://www.shalomworship.com', 'https://dashboard.shalomworship.com', 'https://staging.shalomworship.pages.dev', 'http://localhost:3000', 'http://localhost:3001'];
 
 export function getCorsHeaders(origin?: string | null) {
   const isAllowed = origin && allowedOrigins.includes(origin);

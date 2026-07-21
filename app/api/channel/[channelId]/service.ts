@@ -1,10 +1,10 @@
 import { prisma } from '@/lib/prisma';
 import { channelWithDetails } from '@/types';
 
-export default async function getSingleChannelService(channelId: any) {
+export default async function getSingleChannelService(id: any) {
   const channel = await prisma.channel.findUnique({
     where: {
-      id: channelId,
+      id: id,
     },
     ...channelWithDetails,
     include: {

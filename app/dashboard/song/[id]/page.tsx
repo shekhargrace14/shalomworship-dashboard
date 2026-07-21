@@ -50,10 +50,8 @@ const steps = [
 export default function page() {
   const isEdit = true;
   const params = useParams();
-  console.log(params);
   const id = params.id as string;
   const [song, setSong] = useState<SongWithDetails | null>(null);
-  console.log(song, 'song');
   const [step, setStep] = useState(1);
 
   useEffect(() => {
