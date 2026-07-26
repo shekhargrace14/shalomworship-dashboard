@@ -3,6 +3,7 @@ import { connectDB } from '../db';
 import { NextResponse } from 'next/server';
 import { getCurrentUserService, loginService, signupService } from '../services/auth.service';
 import { getCorsHeaders } from '../cors';
+import { setAuthCookie } from '../auth/setAuthCookie';
 
 export async function loginController(req: Request) {
   const origin = req.headers.get('origin');
@@ -24,24 +25,7 @@ export async function loginController(req: Request) {
       },
     );
 
-    // response.cookies.set('token', result.token, {
-    //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === 'production',
-    //   sameSite: 'none',
-    //   path: '/',
-    //   maxAge: 60 * 60 * 24,
-    // });
-
-    const isProd = process.env.NODE_ENV === 'production';
-
-    response.cookies.set('token', result.token, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? 'none' : 'lax',
-      domain: isProd ? '.shalomworship.com' : undefined,
-      path: '/',
-      maxAge: 60 * 60 * 24,
-    });
+    setAuthCookie(response, result.token); // one cookie setup for login signup.
 
     return response;
   } catch (error: any) {
@@ -82,13 +66,7 @@ export async function signupController(req: Request) {
       },
     );
 
-    response.cookies.set('token', result.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
-      path: '/',
-      maxAge: 60 * 60 * 24,
-    });
+    setAuthCookie(response, result.token); // one cookie setup for login signup.
 
     return response;
   } catch (error: any) {
@@ -114,7 +92,7 @@ export async function meController(req: Request) {
     return NextResponse.json(
       {
         success: true,
-        user,
+        data: user,
         message: 'User retrieved successfully',
       },
       {
