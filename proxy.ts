@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const allowedOrigins = ['https://staging.shalomworship.pages.dev','https://staging.shalomworship.com/', 'https://www.shalomworship.com', 'https://dashboard.shalomworship.com', 'http://localhost:3000', 'http://localhost:3001'];
+const allowedOrigins = ['https://staging.shalomworship.pages.dev','https://staging.shalomworship.com', 'https://www.shalomworship.com', 'https://dashboard.shalomworship.com', 'http://localhost:3000', 'http://localhost:3001'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
