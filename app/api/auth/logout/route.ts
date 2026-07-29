@@ -29,6 +29,5 @@ export async function POST(req: Request) {
     path: '/',
     expires: new Date(0),
   });
-
   return response;
 }

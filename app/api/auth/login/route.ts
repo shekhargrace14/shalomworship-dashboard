@@ -1,5 +1,6 @@
 // router.post("/login", loginController)
 import { loginController } from '@/lib/controllers/auth.controller';
+
 import { getCorsHeaders } from '@/lib/cors';
 import { NextResponse } from 'next/server';
 

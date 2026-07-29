@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { ca } from 'date-fns/locale';
 import { NextResponse } from 'next/server';
-import { requireRole } from '@/lib/auth';
+import { requireRole } from '@/lib/authorization';
 import { Role } from '@prisma/client';
 
 const corsHeaders = {

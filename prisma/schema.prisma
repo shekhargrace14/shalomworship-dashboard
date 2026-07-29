@@ -254,7 +254,7 @@ model user {
   name     String
   username String?
   email    String  @unique
-  password String
+  password String?
 
   verified      Boolean @default(false)
   emailVerified Boolean @default(false)
@@ -282,7 +282,7 @@ model user {
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-}
+} 
 
 model season {
   id    String  @id @default(auto()) @map("_id") @db.ObjectId
@@ -548,6 +548,10 @@ model SeasonSong {
 // }
 
 // ENUMs
+enum AuthProvider {
+  CREDENTIALS
+  GOOGLE
+}
 
 enum CreditRole {
   SINGER

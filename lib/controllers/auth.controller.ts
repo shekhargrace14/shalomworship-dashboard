@@ -12,7 +12,6 @@ export async function loginController(req: Request) {
     const body = await req.json();
 
     const result = await loginService(body);
-
     const response = NextResponse.json(
       {
         success: true,

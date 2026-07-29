@@ -9,6 +9,8 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { GoogleLogin } from '@react-oauth/google';
+import AuthGoogle from './auth-google';
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
   const router = useRouter();
@@ -21,7 +23,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch('/api/auth/google', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,7 +42,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       } else {
         toast.success(data.message || 'Login Successful');
       }
-      // router.refresh(); // or // window.location.href = "/dashboard"
+      router.refresh();
       router.push('/dashboard');
     } catch (error) {
       toast.error('something went wrong');
@@ -53,12 +55,22 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>Enter your email below to login</CardDescription>
+          <CardTitle>Login</CardTitle>
+          {/* <CardDescription>Enter your email below to login</CardDescription> */}
         </CardHeader>
 
         <CardContent>
           <form onSubmit={handleSubmit}>
+            <FieldGroup>
+              <AuthGoogle />
+              <div className="flex items-center gap-4">
+                <div className="h-px flex-1 bg-border" />
+
+                <span className="text-sm text-muted-foreground">or</span>
+
+                <div className="h-px flex-1 bg-border" />
+              </div>
+            </FieldGroup>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -73,14 +85,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 
                 <Input id="password" type="password" required onChange={(e) => setPassword(e.target.value)} />
               </Field>
-
               <Field>
                 <Button type="submit" disabled={loading}>
                   {loading ? 'Logging in...' : 'Login'}
-                </Button>
-
-                <Button variant="outline" type="button">
-                  Login with Google
                 </Button>
 
                 <FieldDescription className="text-center">

@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Toaster } from '../ui/sonner';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import AuthGoogle from './auth-google';
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const router = useRouter();
@@ -26,7 +27,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       return;
     }
     try {
-      const res = await fetch('/api/auth/signup', {
+      const res = await fetch('/api/auth/google', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,13 +54,23 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
   return (
     <Card {...props}>
-      <CardHeader>
+      <CardHeader className="flex flex-col items-center">
         <CardTitle>Create an account</CardTitle>
         <CardDescription>Enter your information below to create your account</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit}>
           <FieldGroup>
+            <AuthGoogle />
+            <div className="flex items-center gap-4">
+              <div className="h-px flex-1 bg-border" />
+
+              <span className="text-sm text-muted-foreground">or</span>
+
+              <div className="h-px flex-1 bg-border" />
+            </div>
+          </FieldGroup>
+          <FieldGroup className="mt-8">
             <Field>
               <FieldLabel htmlFor="name">Full Name</FieldLabel>
               <Input id="name" type="text" placeholder="John Doe" required onChange={(e) => setName(e.target.value)} />
@@ -69,17 +80,20 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               <Input id="email" type="email" placeholder="m@example.com" required onChange={(e) => setEmail(e.target.value)} />
               <FieldDescription>We&apos;ll use this to contact you. We will not share your email with anyone else.</FieldDescription>
             </Field>
-            <Field>
-              <FieldLabel htmlFor="password">Password</FieldLabel>
-              <Input id="password" type="password" required onChange={(e) => setPassword(e.target.value)} />
-              <FieldDescription>Must be at least 8 characters long.</FieldDescription>
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Field>
+                <FieldLabel htmlFor="password">Password</FieldLabel>
+                <Input id="password" type="password" required onChange={(e) => setPassword(e.target.value)} />
+                <FieldDescription>Must be at least 8 characters long.</FieldDescription>
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
 
-              <Input id="confirm-password" type="password" required onChange={(e) => setConfirmPassword(e.target.value)} />
-              <FieldDescription>Please confirm your password.</FieldDescription>
-            </Field>
+                <Input id="confirm-password" type="password" required onChange={(e) => setConfirmPassword(e.target.value)} />
+                <FieldDescription>Please confirm your password.</FieldDescription>
+              </Field>
+            </div>
+
             <FieldGroup>
               <Field>
                 <Button type="submit" disabled={loading}>
@@ -92,11 +106,12 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                     'Create Account'
                   )}
                 </Button>
-                <Button variant="outline" type="button">
+                {/* <Button variant="outline" type="button">
                   Sign up with Google
-                </Button>
+                </Button> */}
+
                 <FieldDescription className="px-6 text-center">
-                  Already have an account? <a href="/auth/login">Sign in</a>
+                  Already have an account? <a href="/auth/login">Login in</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>
