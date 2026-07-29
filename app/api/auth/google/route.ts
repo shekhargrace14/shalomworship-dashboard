@@ -30,6 +30,7 @@ export async function POST(req: Request) {
     }
 
     const result = await googleLoginService({
+      sub: payload.sub!,
       email: payload.email,
       name: payload.name,
       picture: payload.picture,

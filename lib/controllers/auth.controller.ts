@@ -2,7 +2,6 @@ import { connectDB } from '../db';
 // import { getCurrentUser, loginService, signupService } from "../services/auth.service"
 import { NextResponse } from 'next/server';
 import { getCurrentUserService, loginService, signupService } from '../services/auth.service';
-import { getCorsHeaders } from '../cors';
 import { setAuthCookie } from '../auth/setAuthCookie';
 
 export async function loginController(req: Request) {
@@ -20,7 +19,6 @@ export async function loginController(req: Request) {
       },
       {
         status: 200,
-        headers: getCorsHeaders(origin),
       },
     );
 
@@ -36,7 +34,6 @@ export async function loginController(req: Request) {
       },
       {
         status: 401,
-        headers: getCorsHeaders(origin), // ✅ add this
       },
     );
   }
@@ -61,7 +58,6 @@ export async function signupController(req: Request) {
       },
       {
         status: 200,
-        headers: getCorsHeaders(origin),
       },
     );
 
@@ -76,7 +72,6 @@ export async function signupController(req: Request) {
       },
       {
         status: 400,
-        headers: getCorsHeaders(origin), // ✅ add this
       },
     );
   }
@@ -95,7 +90,6 @@ export async function meController(req: Request) {
         message: 'User retrieved successfully',
       },
       {
-        headers: getCorsHeaders(origin),
         status: 200,
       },
     );
@@ -107,7 +101,6 @@ export async function meController(req: Request) {
       },
       {
         status: 401,
-        headers: getCorsHeaders(origin), // ✅ add this
       },
     );
   }

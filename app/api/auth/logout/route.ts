@@ -1,4 +1,3 @@
-import { getCorsHeaders } from '@/lib/cors';
 import { NextResponse } from 'next/server';
 
 export async function OPTIONS(request: Request) {
@@ -6,7 +5,6 @@ export async function OPTIONS(request: Request) {
 
   return new NextResponse(null, {
     status: 204,
-    headers: getCorsHeaders(origin),
   });
 }
 export async function POST(req: Request) {
@@ -17,9 +15,7 @@ export async function POST(req: Request) {
       success: true,
       message: 'Logged out',
     },
-    {
-      headers: getCorsHeaders(origin),
-    },
+    {},
   );
 
   response.cookies.set('token', '', {

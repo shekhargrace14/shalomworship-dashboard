@@ -1,9 +1,10 @@
 import { prisma } from '@/lib/prisma';
-import { ChannelRole, ChannelType, Prisma } from '@prisma/client';
+import { AuthProvider, ChannelRole, ChannelType, Prisma } from '@prisma/client';
 import jwt from 'jsonwebtoken';
 import { generateUniqueChannelSlug } from '@/utils/generateUniqueChannelSlug';
 
 type GooglePayload = {
+  sub: string;
   email: string;
   name?: string;
   picture?: string;
@@ -11,42 +12,54 @@ type GooglePayload = {
 };
 
 export async function googleLoginService(payload: GooglePayload) {
-  let user = await prisma.user.findUnique({
-    where: {
-      email: payload.email,
-    },
-  });
-
-  // Existing user
-  if (user) {
-    const token = jwt.sign(
-      {
-        id: user.id,
-        role: user.role,
-      },
-      process.env.JWT_SECRET!,
-      {
-        expiresIn: '1d',
-      },
-    );
-
-    return {
-      token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        image: user.image,
-        role: user.role,
-      },
-      message: 'Login successful',
-    };
-  }
-
-  // New user
   try {
-    const { user: newUser } = await prisma.$transaction(async (tx) => {
-      const user = await tx.user.create({
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Find Google provider by Google's unique ID
+      const existingGoogleProvider = await tx.authProviderAccount.findUnique({
+        where: {
+          provider_providerAccountId: {
+            provider: AuthProvider.GOOGLE,
+            providerAccountId: payload.sub,
+          },
+        },
+        include: {
+          user: true,
+        },
+      });
+
+      // 2. Already linked → Login
+      if (existingGoogleProvider) {
+        return {
+          user: existingGoogleProvider.user,
+          message: 'Login successful',
+        };
+      }
+
+      // 3. Not linked yet → Find user by email
+      let user = await tx.user.findUnique({
+        where: {
+          email: payload.email,
+        },
+      });
+
+      // 4. Existing credentials user → Link Google
+      if (user) {
+        await tx.authProviderAccount.create({
+          data: {
+            userId: user.id,
+            provider: AuthProvider.GOOGLE,
+            providerAccountId: payload.sub,
+          },
+        });
+
+        return {
+          user,
+          message: 'Login successful',
+        };
+      }
+
+      // 5. Brand new user
+      user = await tx.user.create({
         data: {
           name: payload.name ?? '',
           email: payload.email,
@@ -58,6 +71,14 @@ export async function googleLoginService(payload: GooglePayload) {
       });
 
       const slug = await generateUniqueChannelSlug(tx, user.name);
+
+      await tx.authProviderAccount.create({
+        data: {
+          userId: user.id,
+          provider: AuthProvider.GOOGLE,
+          providerAccountId: payload.sub,
+        },
+      });
 
       const channel = await tx.channel.create({
         data: {
@@ -77,13 +98,16 @@ export async function googleLoginService(payload: GooglePayload) {
         },
       });
 
-      return { user, channel };
+      return {
+        user,
+        message: 'Account created successfully',
+      };
     });
 
     const token = jwt.sign(
       {
-        id: newUser.id,
-        role: newUser.role,
+        id: result.user.id,
+        role: result.user.role,
       },
       process.env.JWT_SECRET!,
       {
@@ -94,13 +118,13 @@ export async function googleLoginService(payload: GooglePayload) {
     return {
       token,
       user: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        image: newUser.image,
-        role: newUser.role,
+        id: result.user.id,
+        name: result.user.name,
+        email: result.user.email,
+        image: result.user.image,
+        role: result.user.role,
       },
-      message: 'Account created successfully',
+      message: result.message,
     };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {

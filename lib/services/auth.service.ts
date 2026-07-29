@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
-import { Prisma, ChannelRole, ChannelType } from '@prisma/client';
+import { Prisma, ChannelRole, ChannelType, AuthProvider } from '@prisma/client';
 
 import { prisma } from '@/lib/prisma';
 import { generateUniqueChannelSlug } from '@/utils/generateUniqueChannelSlug';
@@ -26,9 +26,21 @@ export async function loginService(data: { email: string; password: string }) {
     throw new Error('Invalid credentials');
   }
 
-  if (!user.password) {
-    throw new Error('This account uses Google Sign-In. Please continue with Google.');
+  const credentialsProvider = await prisma.authProviderAccount.findFirst({
+    where: {
+      userId: user.id,
+      provider: AuthProvider.CREDENTIALS,
+    },
+  });
+
+  if (!credentialsProvider) {
+    throw new Error("This account doesn't support password login. Please sign in with Google.");
   }
+
+  if (!user.password) {
+    throw new Error('Password is missing.');
+  }
+
   const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {
@@ -88,6 +100,15 @@ export async function signupService({ name, email, password }: SignupInput) {
 
       // Generate unique slug
       const slug = await generateUniqueChannelSlug(tx, user.name);
+
+      // Create AuthProviderAccount (CREDENTIALS)
+      await tx.authProviderAccount.create({
+        data: {
+          userId: user.id,
+          provider: AuthProvider.CREDENTIALS,
+          providerAccountId: user.email,
+        },
+      });
 
       // Create Personal Channel
       const channel = await tx.channel.create({

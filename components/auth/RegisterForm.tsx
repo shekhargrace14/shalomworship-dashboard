@@ -27,7 +27,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       return;
     }
     try {
-      const res = await fetch('/api/auth/google', {
+      const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,17 +59,17 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         <CardDescription>Enter your information below to create your account</CardDescription>
       </CardHeader>
       <CardContent>
+        <FieldGroup>
+          <AuthGoogle />
+          <div className="flex items-center gap-4">
+            <div className="h-px flex-1 bg-border" />
+
+            <span className="text-sm text-muted-foreground">or</span>
+
+            <div className="h-px flex-1 bg-border" />
+          </div>
+        </FieldGroup>
         <form onSubmit={handleSubmit}>
-          <FieldGroup>
-            <AuthGoogle />
-            <div className="flex items-center gap-4">
-              <div className="h-px flex-1 bg-border" />
-
-              <span className="text-sm text-muted-foreground">or</span>
-
-              <div className="h-px flex-1 bg-border" />
-            </div>
-          </FieldGroup>
           <FieldGroup className="mt-8">
             <Field>
               <FieldLabel htmlFor="name">Full Name</FieldLabel>

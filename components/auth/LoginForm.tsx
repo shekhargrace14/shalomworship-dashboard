@@ -23,7 +23,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/google', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,8 +44,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       }
       router.refresh();
       router.push('/dashboard');
-    } catch (error) {
-      toast.error('something went wrong');
+    } catch (error: any) {
+      toast.error(error || 'something went wrong');
     } finally {
       setLoading(false);
     }
@@ -60,17 +60,17 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         </CardHeader>
 
         <CardContent>
+          <FieldGroup>
+            <AuthGoogle />
+            <div className="flex items-center gap-4">
+              <div className="h-px flex-1 bg-border" />
+
+              <span className="text-sm text-muted-foreground">or</span>
+
+              <div className="h-px flex-1 bg-border" />
+            </div>
+          </FieldGroup>
           <form onSubmit={handleSubmit}>
-            <FieldGroup>
-              <AuthGoogle />
-              <div className="flex items-center gap-4">
-                <div className="h-px flex-1 bg-border" />
-
-                <span className="text-sm text-muted-foreground">or</span>
-
-                <div className="h-px flex-1 bg-border" />
-              </div>
-            </FieldGroup>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
