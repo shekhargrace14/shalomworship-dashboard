@@ -39,7 +39,6 @@ export async function loginController(req: Request) {
 }
 
 export async function signupController(req: Request) {
-
   try {
     await connectDB();
 

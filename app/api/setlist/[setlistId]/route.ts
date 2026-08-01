@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server';
 
 interface Props {
   params: Promise<{
@@ -9,7 +9,7 @@ interface Props {
 
 export async function GET(req: Request, { params }: Props) {
   try {
-    const {setlistId } = await params;
+    const { setlistId } = await params;
 
     const setlist = await prisma.setlist.findUnique({
       where: {

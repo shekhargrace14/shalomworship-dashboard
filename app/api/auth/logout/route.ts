@@ -8,7 +8,6 @@ export async function OPTIONS(request: Request) {
   });
 }
 export async function POST(req: Request) {
-
   const response = NextResponse.json(
     {
       success: true,
