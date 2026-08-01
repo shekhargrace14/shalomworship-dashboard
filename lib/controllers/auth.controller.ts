@@ -5,7 +5,6 @@ import { getCurrentUserService, loginService, signupService } from '../services/
 import { setAuthCookie } from '../auth/setAuthCookie';
 
 export async function loginController(req: Request) {
-  const origin = req.headers.get('origin');
   await connectDB();
   try {
     const body = await req.json();
@@ -40,7 +39,6 @@ export async function loginController(req: Request) {
 }
 
 export async function signupController(req: Request) {
-  const origin = req.headers.get('origin');
 
   try {
     await connectDB();
@@ -78,8 +76,6 @@ export async function signupController(req: Request) {
 }
 
 export async function meController(req: Request) {
-  const origin = req.headers.get('origin');
-
   try {
     const user = await getCurrentUserService();
 
