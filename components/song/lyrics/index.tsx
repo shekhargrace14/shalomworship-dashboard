@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import Setting from './Setting';
 import { getSongLyricsSettingFormData, SongLyricsSettingFormData } from '@/lib/forms/song';
+import { LyricsUploadForm } from './lyrics-uploadForm';
 
 // import Section from './Section'
 
@@ -544,6 +545,9 @@ export default function Lyrics({ initialData, isEdit }: any) {
 
   return (
     <div className="p-4 rounded-3xl">
+      <LyricsUploadForm initialData={initialData} />
+      <div className="flex justify-center w-full">Or</div>
+
       <div className="flex flex-wrap gap-4 mb-4">
         {lyrics.arrangement.map((a) => (
           <Badge key={a.id}>
