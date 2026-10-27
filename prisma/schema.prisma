@@ -15,10 +15,9 @@ model song {
   lyrics  Json?
   lines   Json?
 
-  isChords      Boolean?      @default(false)
-  isTranslation Boolean?      @default(false)
-  language      LanguageType? @default(en)
-  version       VersionType?  @default(version_4)
+  isChords      Boolean?     @default(false)
+  isTranslation Boolean?     @default(false)
+  version       VersionType? @default(version_4)
 
   key   String?
   bpm   String?
@@ -30,6 +29,9 @@ model song {
   videoId String?
   audio   String?
   color   String?
+
+  language  LanguageType?  @default(en)
+  languages SongLanguage[]
 
   // SEO
   slug                 String?
@@ -99,11 +101,11 @@ model channel {
   youtubeMusic String?
   soundCloud   String?
   deezer       String?
-  tidal        String?  
+  tidal        String?
   pandora      String?
 
   createdById String? @db.ObjectId
-  createdBy   user?    @relation("ChannelCreatedBy", fields: [createdById], references: [id])
+  createdBy   user?   @relation("ChannelCreatedBy", fields: [createdById], references: [id])
 
   ownerId String? @db.ObjectId
   owner   user?   @relation("ChannelOwner", fields: [ownerId], references: [id])
@@ -235,6 +237,20 @@ model genre {
   updatedAt DateTime @updatedAt
 }
 
+model language {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  native      String
+  symbol      String
+  slug       String  @unique
+  code       String  @unique
+
+  songs SongLanguage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model scripture {
   id    String  @id @default(auto()) @map("_id") @db.ObjectId
   title String
@@ -282,9 +298,9 @@ model user {
   createdEvents    event[]    @relation("UserCreatedEvents")
   createdPlaylists playlist[] @relation("UserCreatedPlaylists")
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-} 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
 model season {
   id    String  @id @default(auto()) @map("_id") @db.ObjectId
@@ -313,17 +329,17 @@ model setlist {
   description String?
   scripture   String?
 
-  eventAt     DateTime?
+  eventAt DateTime?
 
   visibility VisibilityType @default(PRIVATE)
 
-  channelId String @db.ObjectId
+  channelId String  @db.ObjectId
   channel   channel @relation(fields: [channelId], references: [id])
 
   // sections SetlistSection[]
   sections Json @default("[]")
 
-  notes String?   // footer notes
+  notes String? // footer notes
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -338,7 +354,7 @@ model AuthProviderAccount {
   providerAccountId String
 
   userId String @db.ObjectId
-  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   user   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
@@ -486,6 +502,18 @@ model SongCredit {
   createdAt DateTime @default(now())
 
   @@unique([songId, channelId, role])
+}
+
+model SongLanguage {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  songId     String @db.ObjectId
+  languageId String @db.ObjectId
+
+  song     song     @relation(fields: [songId], references: [id])
+  language language @relation(fields: [languageId], references: [id])
+
+  @@unique([songId, languageId])
 }
 
 model submission {
@@ -696,7 +724,6 @@ enum SetlistItemType {
   SONG
   NOTE
   SCRIPTURE
-
 }
 
 enum StatusType {

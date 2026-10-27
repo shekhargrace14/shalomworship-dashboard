@@ -1,4 +1,4 @@
-import { NormalizedAIOutput } from '../lyrics-schema';
+import type { NormalizedAIOutput } from '../lyrics-schema';
 
 export interface ParsedInputLine {
   sectionIndex: number;
@@ -8,13 +8,11 @@ export interface ParsedInputLine {
 
 export interface LyricsConversionInput {
   parsedLines: ParsedInputLine[];
-  sourceLanguage: string;
-  nativeLanguage: string;
-  nativeScript: string;
 }
 
 export interface LyricsAIProvider {
   readonly providerName: string;
   readonly modelName: string;
+
   convertLyrics(input: LyricsConversionInput): Promise<NormalizedAIOutput>;
 }

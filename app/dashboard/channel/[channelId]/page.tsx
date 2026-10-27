@@ -1,20 +1,11 @@
 'use client';
-
-import { CardDemo } from '@/components/card/card';
 import { CardProfile } from '@/components/card/card-profile';
-import { ChannelCards } from '@/components/channel-cards';
-import { ChannelDelete } from '@/components/channel/channel-delete';
-import ChannelFeatured from '@/components/channel/channel-featured';
-import ChannelForm from '@/components/channel/ChannelForm';
 import DataTable from '@/components/table/DataTable';
 import { Button } from '@/components/ui/button';
-import { useChannelsStore } from '@/store/useChannelsStore';
 import { useCurrentChannelStore } from '@/store/useCurrentChannelStore';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { title } from 'process';
-import { useEffect, useState } from 'react';
 
 type PageProps = {
   params: {
@@ -29,6 +20,7 @@ export default function Page() {
   const currentChannel = useCurrentChannelStore((state) => state.channel);
   const songs = currentChannel?.songs;
   const songCredits = currentChannel?.songCredits;
+
   const data = songCredits?.map((credit: any) => credit.song);
   if (!currentChannel) {
     return;
@@ -37,7 +29,7 @@ export default function Page() {
     <div className="flex gap-4 flex-col">
       {/* <ChannelForm initialData={currentChannel} isEdit/> */}
       <CardProfile data={currentChannel} />
-      <ChannelDelete channelId={currentChannel?.id} channelTitle={currentChannel?.title} />
+      {/* <ChannelDelete channelId={currentChannel?.id} channelTitle={currentChannel?.title} /> */}
       <div className="flex justify-end">
         <Link href={`/dashboard/channel/${currentChannel?.id}/songs/create`}>
           <Button variant="default">
